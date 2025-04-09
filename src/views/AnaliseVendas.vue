@@ -158,9 +158,20 @@ const taxaConversao = computed(() => {
   const total = filteredData.value.length
   if (total === 0) return '0%'
   
+  // Mapeamento de todos os status disponíveis para depuração
+  const statusMap = {};
+  filteredData.value.forEach(item => {
+    const status = item.status ? item.status.toLowerCase() : 'sem_status';
+    statusMap[status] = (statusMap[status] || 0) + 1;
+  });
+  
+  console.log('Mapeamento de status:', statusMap);
+  
   const vendas = filteredData.value.filter(item => 
     item.status === 'ganho' || item.status === 'won'
   ).length
+  
+  console.log('Total de registros:', total, 'Total de vendas (ganho/won):', vendas);
   
   // Calcular a porcentagem real de conversão baseada nos dados
   const porcentagem = (vendas / total) * 100
