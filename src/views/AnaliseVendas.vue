@@ -162,7 +162,9 @@ const taxaConversao = computed(() => {
     item.status === 'ganho' || item.status === 'won'
   ).length
   
-  return `${((vendas / total) * 100).toFixed(1)}%`
+  // Calcular a porcentagem real de conversão baseada nos dados
+  const porcentagem = (vendas / total) * 100
+  return `${porcentagem.toFixed(1)}%`
 })
 
 const ticketMedio = computed(() => {
