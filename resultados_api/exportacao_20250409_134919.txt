@@ -1,0 +1,103 @@
+Exportação de Origens via API - 2025-04-09 13:48:01
+Total de grupos: 2
+Total de origens encontradas: 20
+
+GRUPOS E ORIGENS PROCESSADOS:
+==================================================
+
+GRUPO: [Pay] Playbook Interativo
+----------------------------------------
+  • Origem: Compras expiradas (ID: 06ad055a-7211-48ea-87dd-05fabae21e91)
+  • Origem: Assinaturas ativas (ID: c44c1a04-d617-471c-95c2-2ced915748b0)
+  • Origem: Lista Geral (ID: 274d1c6a-a4ba-485c-90af-c153785bceed)
+  • Origem: Assinaturas canceladas (ID: b7059c51-f6a9-480e-9e19-682ebc38b46a)
+  • Origem: Compras em aberto (ID: fb474bfc-e559-4d17-8085-a65059638940)
+  • Origem: Compras aprovadas (ID: 08f55cd5-f5a5-4139-a040-01d305e2ba3a)
+  • Origem: Abandono de carrinho (ID: 53b98c99-101f-4d20-8b46-4671b8a88fab)
+  • Origem: Assinaturas em atraso (ID: fa3ccdf3-cd41-4b77-bbba-0c6cb78c111a)
+  • Origem: Reembolso/Chargeback (ID: 34958063-08c7-4de1-bbfc-8155b01f9d1d)
+  • Origem: Cartão recusado (ID: d2f42068-9b7c-4671-88ee-cdb8b9ccd8e3)
+
+GRUPO: Plateia Lotada
+----------------------------------------
+  • Origem: [Curso] Método Plateia Lotada (ID: acf564e7-1680-4e51-96f4-0d0c00cda13d)
+  • Origem: Mentoria em Grupo | Programa de Implementação Expoente (ID: ffedfae2-7cc6-4a54-9243-015de9833443)
+  • Origem: Workshop Plateia Lotada 2024 (ID: 0581aa4d-94f7-4e4b-ba7c-34d20dee3f25)
+  • Origem: Alunos (ID: e3003182-97e9-4668-b72d-90621b962815)
+  • Origem: Imersão Presencial Plateia Lotada (ID: 329ab048-5347-4bd0-8c08-972da386e835)
+  • Origem: TESTE DE AUTOMAÇÃO (ID: 9a89078b-9753-4d65-b585-d1660dfb5473)
+  • Origem: Lançamento Gratuito 2024 (ID: 98ad802b-0897-4f2b-9758-31641d99c088)
+  • Origem: Leads - Master Renner Silva (ID: c72008b8-0732-4e86-a534-1d0610db005d)
+  • Origem: Guia Prático | Playbook Interativo (ID: 14630133-b6bb-43d2-b4b9-f4f890cf8362)
+  • Origem: Instagram | Manychat (ID: e3c28cca-8c30-4764-8730-40f8cc09b0f3)
+
+
+RESUMO DE DOWNLOADS DE CSV:
+==================================================
+
+Total de origens processadas: 20
+Downloads com sucesso: 14
+Downloads com falha: 6
+
+DETALHES DOS DOWNLOADS:
+----------------------------------------
+Origem: Compras expiradas (Grupo: [Pay] Playbook Interativo)
+Status: sucesso
+----------------------------------------
+Origem: Assinaturas ativas (Grupo: [Pay] Playbook Interativo)
+Status: falha
+----------------------------------------
+Origem: Lista Geral (Grupo: [Pay] Playbook Interativo)
+Status: falha
+----------------------------------------
+Origem: Assinaturas canceladas (Grupo: [Pay] Playbook Interativo)
+Status: falha
+----------------------------------------
+Origem: Compras em aberto (Grupo: [Pay] Playbook Interativo)
+Status: sucesso
+----------------------------------------
+Origem: Compras aprovadas (Grupo: [Pay] Playbook Interativo)
+Status: sucesso
+----------------------------------------
+Origem: Abandono de carrinho (Grupo: [Pay] Playbook Interativo)
+Status: falha
+----------------------------------------
+Origem: Assinaturas em atraso (Grupo: [Pay] Playbook Interativo)
+Status: falha
+----------------------------------------
+Origem: Reembolso/Chargeback (Grupo: [Pay] Playbook Interativo)
+Status: falha
+----------------------------------------
+Origem: Cartão recusado (Grupo: [Pay] Playbook Interativo)
+Status: sucesso
+----------------------------------------
+Origem: [Curso] Método Plateia Lotada (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------
+Origem: Mentoria em Grupo | Programa de Implementação Expoente (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------
+Origem: Workshop Plateia Lotada 2024 (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------
+Origem: Alunos (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------
+Origem: Imersão Presencial Plateia Lotada (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------
+Origem: TESTE DE AUTOMAÇÃO (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------
+Origem: Lançamento Gratuito 2024 (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------
+Origem: Leads - Master Renner Silva (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------
+Origem: Guia Prático | Playbook Interativo (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------
+Origem: Instagram | Manychat (Grupo: Plateia Lotada)
+Status: sucesso
+----------------------------------------

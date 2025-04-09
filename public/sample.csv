@@ -1,0 +1,6 @@
+name,email,phone,grupo_origem,nome_origem,status,created_at,user_name
+João Silva,joao@example.com,11999998888,Plateia Lotada,Workshop Plateia Lotada 2024,Aberto,2025-04-08 10:30:00,Renner Silva
+Maria Souza,maria@example.com,11888887777,Plateia Lotada,Workshop Plateia Lotada 2024,Ganho,2025-04-07 14:45:00,Renner Silva
+Pedro Santos,pedro@example.com,11777776666,[Pay] Playbook Interativo,Compras aprovadas,Perdido,2025-04-06 09:15:00,Aline Costa
+Ana Ferreira,ana@example.com,11666665555,Plateia Lotada,Imersão Presencial Plateia Lotada,WON,2025-04-05 16:20:00,Renner Silva
+Carlos Oliveira,carlos@example.com,11555554444,[Pay] Playbook Interativo,Compras em aberto,LOST,2025-04-04 11:10:00,Aline Costa 

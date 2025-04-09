@@ -1,0 +1,1060 @@
+2025-04-09 08:54:27,237 - INFO - Iniciando automa��o de login na Clint Digital...
+2025-04-09 08:54:28,639 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 08:54:29,883 - INFO - P�gina acessada com sucesso!
+2025-04-09 08:54:30,349 - INFO - Email preenchido!
+2025-04-09 08:54:30,573 - INFO - Senha preenchida!
+2025-04-09 08:54:30,664 - INFO - Bot�o de login clicado!
+2025-04-09 08:54:35,671 - INFO - URL atual ap�s login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 08:54:40,815 - INFO - Procurando origens em aberto usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 08:54:40,819 - INFO - URL atual: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 08:54:40,966 - INFO - Elemento pai de origens encontrado!
+2025-04-09 08:54:41,106 - INFO - Total de origens em aberto: 2
+2025-04-09 08:54:41,106 - INFO - Extraindo detalhes das origens em aberto...
+2025-04-09 08:54:41,132 - INFO - Origem 1: 
+2025-04-09 08:54:41,175 - INFO - Origem 2: 
+2025-04-09 08:54:41,178 - INFO - Resultados salvos nos arquivos origens_20250409_085441.json e origens_20250409_085441.txt
+2025-04-09 08:54:41,181 - INFO - Finalizando a automa��o...
+2025-04-09 08:55:53,421 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 08:55:54,837 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 08:55:56,431 - INFO - Página acessada com sucesso!
+2025-04-09 08:55:57,076 - INFO - Email preenchido!
+2025-04-09 08:55:57,313 - INFO - Senha preenchida!
+2025-04-09 08:55:57,407 - INFO - Botão de login clicado!
+2025-04-09 08:56:02,414 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 08:56:07,587 - INFO - Procurando origens em aberto usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 08:56:07,592 - INFO - URL atual: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 08:56:07,894 - INFO - Elemento pai de origens encontrado!
+2025-04-09 08:56:08,244 - INFO - Total de origens em aberto: 2
+2025-04-09 08:56:08,244 - INFO - Extraindo detalhes das origens em aberto...
+2025-04-09 08:56:08,305 - ERROR - Não foi possível obter detalhes da origem 1: Message: element not interactable: [object HTMLDivElement] has no size and location
+  (Session info: chrome=135.0.7049.43)
+Stacktrace:
+	GetHandleVerifier [0x00007FF648735335+78597]
+	GetHandleVerifier [0x00007FF648735390+78688]
+	(No symbol) [0x00007FF6484E91AA]
+	(No symbol) [0x00007FF6484F0ABC]
+	(No symbol) [0x00007FF6484F3B1C]
+	(No symbol) [0x00007FF6484F3BEF]
+	(No symbol) [0x00007FF648546444]
+	(No symbol) [0x00007FF6485456A0]
+	(No symbol) [0x00007FF64859A591]
+	(No symbol) [0x00007FF6485670EA]
+	(No symbol) [0x00007FF64858F2BB]
+	(No symbol) [0x00007FF648566EC3]
+	(No symbol) [0x00007FF6485303F8]
+	(No symbol) [0x00007FF648531163]
+	GetHandleVerifier [0x00007FF6489DEEED+2870973]
+	GetHandleVerifier [0x00007FF6489D9698+2848360]
+	GetHandleVerifier [0x00007FF6489F6973+2967875]
+	GetHandleVerifier [0x00007FF64875017A+188746]
+	GetHandleVerifier [0x00007FF64875845F+222255]
+	GetHandleVerifier [0x00007FF64873D2B4+111236]
+	GetHandleVerifier [0x00007FF64873D462+111666]
+	GetHandleVerifier [0x00007FF648723589+5465]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 08:56:08,339 - ERROR - Não foi possível obter detalhes da origem 2: Message: element not interactable: [object HTMLDivElement] has no size and location
+  (Session info: chrome=135.0.7049.43)
+Stacktrace:
+	GetHandleVerifier [0x00007FF648735335+78597]
+	GetHandleVerifier [0x00007FF648735390+78688]
+	(No symbol) [0x00007FF6484E91AA]
+	(No symbol) [0x00007FF6484F0ABC]
+	(No symbol) [0x00007FF6484F3B1C]
+	(No symbol) [0x00007FF6484F3BEF]
+	(No symbol) [0x00007FF648546444]
+	(No symbol) [0x00007FF6485456A0]
+	(No symbol) [0x00007FF64859A591]
+	(No symbol) [0x00007FF6485670EA]
+	(No symbol) [0x00007FF64858F2BB]
+	(No symbol) [0x00007FF648566EC3]
+	(No symbol) [0x00007FF6485303F8]
+	(No symbol) [0x00007FF648531163]
+	GetHandleVerifier [0x00007FF6489DEEED+2870973]
+	GetHandleVerifier [0x00007FF6489D9698+2848360]
+	GetHandleVerifier [0x00007FF6489F6973+2967875]
+	GetHandleVerifier [0x00007FF64875017A+188746]
+	GetHandleVerifier [0x00007FF64875845F+222255]
+	GetHandleVerifier [0x00007FF64873D2B4+111236]
+	GetHandleVerifier [0x00007FF64873D462+111666]
+	GetHandleVerifier [0x00007FF648723589+5465]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 08:56:08,342 - INFO - Resultados salvos nos arquivos origens_20250409_085608.json e origens_20250409_085608.txt
+2025-04-09 08:56:08,342 - INFO - Finalizando a automação...
+2025-04-09 08:59:02,151 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 08:59:03,606 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 08:59:04,863 - INFO - Página acessada com sucesso!
+2025-04-09 08:59:05,489 - INFO - Email preenchido!
+2025-04-09 08:59:05,760 - INFO - Senha preenchida!
+2025-04-09 08:59:05,834 - INFO - Botão de login clicado!
+2025-04-09 08:59:10,939 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 08:59:16,102 - INFO - Procurando origens em aberto usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 08:59:16,109 - INFO - URL atual: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 08:59:16,302 - INFO - Elemento pai de origens encontrado!
+2025-04-09 08:59:16,346 - INFO - Total de origens em aberto: 2
+2025-04-09 08:59:16,346 - INFO - Extraindo detalhes das origens em aberto...
+2025-04-09 08:59:16,503 - INFO - Origem 1 extraída
+2025-04-09 08:59:16,696 - INFO - Origem 2 extraída
+2025-04-09 08:59:16,699 - INFO - Resultados salvos nos arquivos origens_20250409_085916.json e origens_20250409_085916.txt
+2025-04-09 08:59:16,699 - INFO - Finalizando a automação...
+2025-04-09 09:04:39,678 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:04:41,210 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:04:42,797 - INFO - Página acessada com sucesso!
+2025-04-09 09:04:43,935 - INFO - Email preenchido!
+2025-04-09 09:04:44,151 - INFO - Senha preenchida!
+2025-04-09 09:04:44,223 - INFO - Botão de login clicado!
+2025-04-09 09:04:49,228 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:04:54,378 - INFO - Procurando origens em aberto usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:04:54,383 - INFO - URL atual: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:04:54,654 - INFO - Elemento pai de origens encontrado!
+2025-04-09 09:04:54,724 - INFO - Total de origens em aberto: 2
+2025-04-09 09:04:54,724 - INFO - Extraindo detalhes das origens em aberto...
+2025-04-09 09:04:54,915 - INFO - Origem 1 extraída: [Pay] Playbook InterativoCartão recusadoCompras expiradasCompras em abertoAbandono de carrinhoReembo...
+2025-04-09 09:04:54,916 - INFO - Clicando na origem 1 para acessar seus grupos...
+2025-04-09 09:04:57,057 - INFO - Procurando grupos na origem 1 usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div/div[2]/div/div
+2025-04-09 09:04:57,187 - INFO - Total de 10 grupos encontrados na origem 1
+2025-04-09 09:04:57,198 - INFO - Grupo 1 da origem 1: Cartão recusado...
+2025-04-09 09:04:57,209 - INFO - Grupo 2 da origem 1: Compras expiradas...
+2025-04-09 09:04:57,219 - INFO - Grupo 3 da origem 1: Compras em aberto...
+2025-04-09 09:04:57,230 - INFO - Grupo 4 da origem 1: Abandono de carrinho...
+2025-04-09 09:04:57,241 - INFO - Grupo 5 da origem 1: Reembolso/Chargeback...
+2025-04-09 09:04:57,251 - INFO - Grupo 6 da origem 1: Compras aprovadas...
+2025-04-09 09:04:57,262 - INFO - Grupo 7 da origem 1: Assinaturas ativas...
+2025-04-09 09:04:57,271 - INFO - Grupo 8 da origem 1: Assinaturas em atraso...
+2025-04-09 09:04:57,281 - INFO - Grupo 9 da origem 1: Assinaturas canceladas...
+2025-04-09 09:04:57,292 - INFO - Grupo 10 da origem 1: Lista Geral...
+2025-04-09 09:05:00,277 - ERROR - Não foi possível obter detalhes da origem 2: Message: stale element reference: stale element not found
+  (Session info: chrome=135.0.7049.43); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
+Stacktrace:
+	GetHandleVerifier [0x00007FF7244F5335+78597]
+	GetHandleVerifier [0x00007FF7244F5390+78688]
+	(No symbol) [0x00007FF7242A91AA]
+	(No symbol) [0x00007FF7242BF524]
+	(No symbol) [0x00007FF7242BDFF3]
+	(No symbol) [0x00007FF7242B17E9]
+	(No symbol) [0x00007FF7242B1963]
+	(No symbol) [0x00007FF7242AF66F]
+	(No symbol) [0x00007FF7242B3EAC]
+	(No symbol) [0x00007FF7243504AB]
+	(No symbol) [0x00007FF7243270EA]
+	(No symbol) [0x00007FF72434F2BB]
+	(No symbol) [0x00007FF724326EC3]
+	(No symbol) [0x00007FF7242F03F8]
+	(No symbol) [0x00007FF7242F1163]
+	GetHandleVerifier [0x00007FF72479EEED+2870973]
+	GetHandleVerifier [0x00007FF724799698+2848360]
+	GetHandleVerifier [0x00007FF7247B6973+2967875]
+	GetHandleVerifier [0x00007FF72451017A+188746]
+	GetHandleVerifier [0x00007FF72451845F+222255]
+	GetHandleVerifier [0x00007FF7244FD2B4+111236]
+	GetHandleVerifier [0x00007FF7244FD462+111666]
+	GetHandleVerifier [0x00007FF7244E3589+5465]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:05:00,280 - INFO - Resultados salvos nos arquivos origens_20250409_090500.json e origens_20250409_090500.txt
+2025-04-09 09:05:00,280 - INFO - Finalizando a automação...
+2025-04-09 09:06:09,280 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:06:10,843 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:06:12,477 - INFO - Página acessada com sucesso!
+2025-04-09 09:06:13,087 - INFO - Email preenchido!
+2025-04-09 09:06:13,340 - INFO - Senha preenchida!
+2025-04-09 09:06:13,432 - INFO - Botão de login clicado!
+2025-04-09 09:06:18,456 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:06:23,627 - INFO - Procurando origens em aberto usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:06:23,630 - INFO - URL atual: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:06:23,775 - INFO - Elemento pai de origens encontrado!
+2025-04-09 09:06:23,780 - INFO - Número de origens via JavaScript: 1
+2025-04-09 09:06:23,780 - INFO - Buscando origem 1 usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div[1]
+2025-04-09 09:06:23,945 - INFO - Origem 1 extraída: [Pay] Playbook InterativoCartão recusadoCompras expiradasCompras em abertoAbandono de carrinhoReembo...
+2025-04-09 09:06:23,945 - INFO - Clicando na origem 1 para acessar seus grupos...
+2025-04-09 09:06:26,080 - INFO - Procurando grupos na origem 1 usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div/div[2]/div/div
+2025-04-09 09:06:26,086 - INFO - Total de 10 grupos encontrados na origem 1
+2025-04-09 09:06:26,096 - INFO - Grupo 1 da origem 1: Cartão recusado...
+2025-04-09 09:06:26,108 - INFO - Grupo 2 da origem 1: Compras expiradas...
+2025-04-09 09:06:26,124 - INFO - Grupo 3 da origem 1: Compras em aberto...
+2025-04-09 09:06:26,138 - INFO - Grupo 4 da origem 1: Abandono de carrinho...
+2025-04-09 09:06:26,148 - INFO - Grupo 5 da origem 1: Reembolso/Chargeback...
+2025-04-09 09:06:26,158 - INFO - Grupo 6 da origem 1: Compras aprovadas...
+2025-04-09 09:06:26,166 - INFO - Grupo 7 da origem 1: Assinaturas ativas...
+2025-04-09 09:06:26,175 - INFO - Grupo 8 da origem 1: Assinaturas em atraso...
+2025-04-09 09:06:26,183 - INFO - Grupo 9 da origem 1: Assinaturas canceladas...
+2025-04-09 09:06:26,192 - INFO - Grupo 10 da origem 1: Lista Geral...
+2025-04-09 09:06:26,192 - INFO - Voltando para a visão geral das origens...
+2025-04-09 09:06:29,308 - INFO - Resultados salvos nos arquivos origens_20250409_090629.json e origens_20250409_090629.txt
+2025-04-09 09:06:29,309 - INFO - Finalizando a automação...
+2025-04-09 09:10:56,158 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:10:57,604 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:10:59,338 - INFO - Página acessada com sucesso!
+2025-04-09 09:10:59,982 - INFO - Email preenchido!
+2025-04-09 09:11:00,266 - INFO - Senha preenchida!
+2025-04-09 09:11:00,355 - INFO - Botão de login clicado!
+2025-04-09 09:11:05,362 - INFO - URL atual após login: https://app.clint.digital/login
+2025-04-09 09:11:05,364 - INFO - Redirecionado para página de login. Tentando acessar a página de origens...
+2025-04-09 09:11:09,374 - INFO - Navegando para: https://app.clint.digital/login
+2025-04-09 09:11:14,504 - INFO - Tentando localizar origens usando XPath específico fornecido pelo usuário...
+2025-04-09 09:11:14,650 - INFO - Encontrados 0 elementos usando XPath específico
+2025-04-09 09:11:14,650 - WARNING - Não foram encontradas origens usando o XPath específico. Tentando método alternativo.
+2025-04-09 09:11:14,650 - INFO - Tentando método alternativo para encontrar origens...
+2025-04-09 09:11:14,650 - INFO - Buscando origens usando XPath específico...
+2025-04-09 09:11:14,658 - INFO - Encontrados 0 elementos usando o XPath específico
+2025-04-09 09:11:14,663 - ERROR - Erro durante a automação: Message: javascript error: logger is not defined
+  (Session info: chrome=135.0.7049.43)
+Stacktrace:
+	GetHandleVerifier [0x00007FF7244F5335+78597]
+	GetHandleVerifier [0x00007FF7244F5390+78688]
+	(No symbol) [0x00007FF7242A91AA]
+	(No symbol) [0x00007FF7242B0ABC]
+	(No symbol) [0x00007FF7242B3EAC]
+	(No symbol) [0x00007FF7243504AB]
+	(No symbol) [0x00007FF7243270EA]
+	(No symbol) [0x00007FF72434F2BB]
+	(No symbol) [0x00007FF724326EC3]
+	(No symbol) [0x00007FF7242F03F8]
+	(No symbol) [0x00007FF7242F1163]
+	GetHandleVerifier [0x00007FF72479EEED+2870973]
+	GetHandleVerifier [0x00007FF724799698+2848360]
+	GetHandleVerifier [0x00007FF7247B6973+2967875]
+	GetHandleVerifier [0x00007FF72451017A+188746]
+	GetHandleVerifier [0x00007FF72451845F+222255]
+	GetHandleVerifier [0x00007FF7244FD2B4+111236]
+	GetHandleVerifier [0x00007FF7244FD462+111666]
+	GetHandleVerifier [0x00007FF7244E3589+5465]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:11:14,818 - INFO - HTML da página salvo como page_source_20250409_091114.html
+2025-04-09 09:11:14,818 - INFO - Finalizando a automação...
+2025-04-09 09:15:39,928 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:15:41,449 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:15:43,222 - INFO - Página acessada com sucesso!
+2025-04-09 09:15:44,506 - INFO - Email preenchido!
+2025-04-09 09:15:44,734 - INFO - Senha preenchida!
+2025-04-09 09:15:44,831 - INFO - Botão de login clicado!
+2025-04-09 09:15:49,838 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:15:55,016 - INFO - Procurando container de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:15:55,025 - INFO - Container de origens encontrado!
+2025-04-09 09:15:55,172 - INFO - Buscando nomes de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div/div/div/div/div[1]/div
+2025-04-09 09:15:55,181 - INFO - Encontrados 2 possíveis nomes de origens
+2025-04-09 09:15:55,181 - INFO - Processando origens encontradas...
+2025-04-09 09:15:55,192 - INFO - Origem 1 (grupo): [Pay] Playbook Interativo...
+2025-04-09 09:15:55,362 - INFO - Origem 2 (grupo): Plateia Lotada...
+2025-04-09 09:15:55,499 - INFO - Tentando método alternativo com JavaScript...
+2025-04-09 09:15:55,523 - INFO - JavaScript encontrou 4 grupos de origens
+2025-04-09 09:15:55,524 - INFO - Total de origens via JavaScript: 40
+2025-04-09 09:15:55,526 - INFO - Resultados salvos nos arquivos origens_20250409_091555.json e origens_20250409_091555.txt
+2025-04-09 09:15:55,526 - INFO - Finalizando a automação...
+2025-04-09 09:19:26,906 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:19:28,588 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:19:30,211 - INFO - Página acessada com sucesso!
+2025-04-09 09:19:30,695 - INFO - Email preenchido!
+2025-04-09 09:19:30,914 - INFO - Senha preenchida!
+2025-04-09 09:19:31,058 - INFO - Botão de login clicado!
+2025-04-09 09:19:36,063 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:19:41,176 - INFO - Procurando container de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:19:41,183 - INFO - Container de origens encontrado!
+2025-04-09 09:19:41,288 - INFO - Buscando nomes de origens individuais usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div/div/div/div/div[1]/div/h5
+2025-04-09 09:19:41,288 - INFO - Utilizando método JavaScript para extrair grupos e origens...
+2025-04-09 09:19:41,298 - INFO - JavaScript encontrou 2 grupos de origens
+2025-04-09 09:19:41,298 - INFO - Grupo: [Pay] Playbook Interativo - 10 origens
+2025-04-09 09:19:41,298 - INFO -   Origem 1: Cartão recusado
+2025-04-09 09:19:41,299 - INFO -   Origem 2: Compras expiradas
+2025-04-09 09:19:41,299 - INFO -   Origem 3: Compras em aberto
+2025-04-09 09:19:41,299 - INFO -   Origem 4: Abandono de carrinho
+2025-04-09 09:19:41,299 - INFO -   Origem 5: Reembolso/Chargeback
+2025-04-09 09:19:41,299 - INFO -   Origem 6: Compras aprovadas
+2025-04-09 09:19:41,299 - INFO -   Origem 7: Assinaturas ativas
+2025-04-09 09:19:41,300 - INFO -   Origem 8: Assinaturas em atraso
+2025-04-09 09:19:41,300 - INFO -   Origem 9: Assinaturas canceladas
+2025-04-09 09:19:41,300 - INFO -   Origem 10: Lista Geral
+2025-04-09 09:19:41,300 - INFO - Grupo: Plateia Lotada - 10 origens
+2025-04-09 09:19:41,301 - INFO -   Origem 1: TESTE DE AUTOMAÇÃO
+2025-04-09 09:19:41,301 - INFO -   Origem 2: Imersão Presencial Plateia Lotada
+2025-04-09 09:19:41,301 - INFO -   Origem 3: Guia Prático | Playbook Interativo
+2025-04-09 09:19:41,301 - INFO -   Origem 4: Leads - Master Renner Silva
+2025-04-09 09:19:41,301 - INFO -   Origem 5: Mentoria em Grupo | Programa de Implementação Expoente
+2025-04-09 09:19:41,302 - INFO -   Origem 6: Instagram | Manychat
+2025-04-09 09:19:41,302 - INFO -   Origem 7: Workshop Plateia Lotada 2024
+2025-04-09 09:19:41,302 - INFO -   Origem 8: Lançamento Gratuito 2024
+2025-04-09 09:19:41,302 - INFO -   Origem 9: Alunos
+2025-04-09 09:19:41,303 - INFO -   Origem 10: [Curso] Método Plateia Lotada
+2025-04-09 09:19:41,303 - INFO - Tentando extrair origens individuais usando o XPath específico fornecido...
+2025-04-09 09:19:41,317 - INFO - XPath específico retornou 1 elementos
+2025-04-09 09:19:41,333 - INFO - Elemento 1 (grupo): [Pay] Playbook Interativo...
+2025-04-09 09:19:41,473 - INFO - Resultados salvos nos arquivos origens_20250409_091941.json e origens_20250409_091941.txt
+2025-04-09 09:19:41,473 - INFO - Finalizando a automação...
+2025-04-09 09:25:35,066 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:25:36,758 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:25:38,322 - INFO - Página acessada com sucesso!
+2025-04-09 09:25:38,748 - INFO - Email preenchido!
+2025-04-09 09:25:38,989 - INFO - Senha preenchida!
+2025-04-09 09:25:39,095 - INFO - Botão de login clicado!
+2025-04-09 09:25:44,103 - INFO - URL atual após login: https://app.clint.digital/login
+2025-04-09 09:25:44,107 - INFO - Redirecionado para página de login. Tentando acessar a página de origens...
+2025-04-09 09:25:48,040 - INFO - Navegando para: https://app.clint.digital/login
+2025-04-09 09:25:53,120 - ERROR - Erro durante a automação: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=135.0.7049.43)
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE91AA]
+	(No symbol) [0x00007FF6CDBD4EF5]
+	(No symbol) [0x00007FF6CDBF9F04]
+	(No symbol) [0x00007FF6CDC6ED0F]
+	(No symbol) [0x00007FF6CDC8EBB2]
+	(No symbol) [0x00007FF6CDC66EC3]
+	(No symbol) [0x00007FF6CDC303F8]
+	(No symbol) [0x00007FF6CDC31163]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	GetHandleVerifier [0x00007FF6CDE3D2B4+111236]
+	GetHandleVerifier [0x00007FF6CDE3D462+111666]
+	GetHandleVerifier [0x00007FF6CDE23589+5465]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:25:53,362 - INFO - Finalizando a automação...
+2025-04-09 09:26:50,996 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:26:52,467 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:26:54,130 - INFO - Página acessada com sucesso!
+2025-04-09 09:26:54,322 - INFO - Email preenchido!
+2025-04-09 09:26:54,781 - INFO - Senha preenchida!
+2025-04-09 09:26:54,859 - INFO - Botão de login clicado!
+2025-04-09 09:26:59,864 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:27:04,949 - INFO - Procurando container de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:27:04,962 - INFO - Container de origens encontrado!
+2025-04-09 09:27:05,062 - INFO - Buscando nomes de origens individuais usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div/div/div/div/div[1]/div/h5
+2025-04-09 09:27:05,062 - INFO - Utilizando método JavaScript para extrair grupos e origens...
+2025-04-09 09:27:05,081 - INFO - JavaScript encontrou 2 grupos de origens
+2025-04-09 09:27:05,082 - INFO - Grupo: [Pay] Playbook Interativo - 10 origens
+2025-04-09 09:27:05,082 - INFO -   Origem 1: Cartão recusado
+2025-04-09 09:27:05,082 - INFO -   Origem 2: Compras expiradas
+2025-04-09 09:27:05,082 - INFO -   Origem 3: Compras em aberto
+2025-04-09 09:27:05,083 - INFO -   Origem 4: Abandono de carrinho
+2025-04-09 09:27:05,083 - INFO -   Origem 5: Reembolso/Chargeback
+2025-04-09 09:27:05,083 - INFO -   Origem 6: Compras aprovadas
+2025-04-09 09:27:05,084 - INFO -   Origem 7: Assinaturas ativas
+2025-04-09 09:27:05,084 - INFO -   Origem 8: Assinaturas em atraso
+2025-04-09 09:27:05,084 - INFO -   Origem 9: Assinaturas canceladas
+2025-04-09 09:27:05,084 - INFO -   Origem 10: Lista Geral
+2025-04-09 09:27:05,085 - INFO - Grupo: Plateia Lotada - 10 origens
+2025-04-09 09:27:05,085 - INFO -   Origem 1: TESTE DE AUTOMAÇÃO
+2025-04-09 09:27:05,085 - INFO -   Origem 2: Imersão Presencial Plateia Lotada
+2025-04-09 09:27:05,086 - INFO -   Origem 3: Guia Prático | Playbook Interativo
+2025-04-09 09:27:05,086 - INFO -   Origem 4: Leads - Master Renner Silva
+2025-04-09 09:27:05,087 - INFO -   Origem 5: Mentoria em Grupo | Programa de Implementação Expoente
+2025-04-09 09:27:05,087 - INFO -   Origem 6: Instagram | Manychat
+2025-04-09 09:27:05,087 - INFO -   Origem 7: Workshop Plateia Lotada 2024
+2025-04-09 09:27:05,088 - INFO -   Origem 8: Lançamento Gratuito 2024
+2025-04-09 09:27:05,088 - INFO -   Origem 9: Alunos
+2025-04-09 09:27:05,088 - INFO -   Origem 10: [Curso] Método Plateia Lotada
+2025-04-09 09:27:05,089 - INFO - Arquivos CSV existentes antes dos downloads: 0
+2025-04-09 09:27:05,089 - INFO - Iniciando iteração sobre origens para exportar CSVs...
+2025-04-09 09:27:05,090 - INFO - Acessando origem 1/20: Cartão recusado (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:10,188 - WARNING - Não foi possível encontrar a origem Cartão recusado na interface - tentando método alternativo
+2025-04-09 09:27:10,533 - ERROR - Não foi possível acessar a origem Cartão recusado - pulando para a próxima
+2025-04-09 09:27:10,533 - INFO - Acessando origem 2/20: Compras expiradas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:15,475 - WARNING - Não foi possível encontrar a origem Compras expiradas na interface - tentando método alternativo
+2025-04-09 09:27:15,872 - ERROR - Não foi possível acessar a origem Compras expiradas - pulando para a próxima
+2025-04-09 09:27:15,872 - INFO - Acessando origem 3/20: Compras em aberto (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:20,773 - WARNING - Não foi possível encontrar a origem Compras em aberto na interface - tentando método alternativo
+2025-04-09 09:27:21,321 - ERROR - Não foi possível acessar a origem Compras em aberto - pulando para a próxima
+2025-04-09 09:27:21,321 - INFO - Acessando origem 4/20: Abandono de carrinho (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:26,460 - WARNING - Não foi possível encontrar a origem Abandono de carrinho na interface - tentando método alternativo
+2025-04-09 09:27:27,072 - ERROR - Não foi possível acessar a origem Abandono de carrinho - pulando para a próxima
+2025-04-09 09:27:27,072 - INFO - Acessando origem 5/20: Reembolso/Chargeback (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:31,935 - WARNING - Não foi possível encontrar a origem Reembolso/Chargeback na interface - tentando método alternativo
+2025-04-09 09:27:32,548 - ERROR - Não foi possível acessar a origem Reembolso/Chargeback - pulando para a próxima
+2025-04-09 09:27:32,548 - INFO - Acessando origem 6/20: Compras aprovadas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:37,876 - WARNING - Não foi possível encontrar a origem Compras aprovadas na interface - tentando método alternativo
+2025-04-09 09:27:38,351 - ERROR - Não foi possível acessar a origem Compras aprovadas - pulando para a próxima
+2025-04-09 09:27:38,351 - INFO - Acessando origem 7/20: Assinaturas ativas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:43,993 - WARNING - Não foi possível encontrar a origem Assinaturas ativas na interface - tentando método alternativo
+2025-04-09 09:27:44,527 - ERROR - Não foi possível acessar a origem Assinaturas ativas - pulando para a próxima
+2025-04-09 09:27:44,527 - INFO - Acessando origem 8/20: Assinaturas em atraso (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:49,827 - WARNING - Não foi possível encontrar a origem Assinaturas em atraso na interface - tentando método alternativo
+2025-04-09 09:27:50,161 - ERROR - Não foi possível acessar a origem Assinaturas em atraso - pulando para a próxima
+2025-04-09 09:27:50,161 - INFO - Acessando origem 9/20: Assinaturas canceladas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:54,088 - ERROR - Erro ao navegar até a origem Assinaturas canceladas: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=135.0.7049.43)
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE91AA]
+	(No symbol) [0x00007FF6CDBD4EF5]
+	(No symbol) [0x00007FF6CDBF9F04]
+	(No symbol) [0x00007FF6CDC6ED0F]
+	(No symbol) [0x00007FF6CDC8EBB2]
+	(No symbol) [0x00007FF6CDC66EC3]
+	(No symbol) [0x00007FF6CDC303F8]
+	(No symbol) [0x00007FF6CDC31163]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	GetHandleVerifier [0x00007FF6CDE3D2B4+111236]
+	GetHandleVerifier [0x00007FF6CDE3D462+111666]
+	GetHandleVerifier [0x00007FF6CDE23589+5465]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,088 - WARNING - Não foi possível encontrar a origem Assinaturas canceladas na interface - tentando método alternativo
+2025-04-09 09:27:54,259 - ERROR - Erro no método alternativo para acessar origem Assinaturas canceladas: Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,260 - ERROR - Não foi possível acessar a origem Assinaturas canceladas - pulando para a próxima
+2025-04-09 09:27:54,260 - INFO - Acessando origem 10/20: Lista Geral (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:27:54,262 - ERROR - Erro durante o processamento da origem 10 (Lista Geral): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,263 - INFO - Acessando origem 11/20: TESTE DE AUTOMAÇÃO (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,265 - ERROR - Erro durante o processamento da origem 11 (TESTE DE AUTOMAÇÃO): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,266 - INFO - Acessando origem 12/20: Imersão Presencial Plateia Lotada (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,268 - ERROR - Erro durante o processamento da origem 12 (Imersão Presencial Plateia Lotada): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,268 - INFO - Acessando origem 13/20: Guia Prático | Playbook Interativo (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,271 - ERROR - Erro durante o processamento da origem 13 (Guia Prático | Playbook Interativo): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,273 - INFO - Acessando origem 14/20: Leads - Master Renner Silva (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,276 - ERROR - Erro durante o processamento da origem 14 (Leads - Master Renner Silva): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,277 - INFO - Acessando origem 15/20: Mentoria em Grupo | Programa de Implementação Expoente (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,279 - ERROR - Erro durante o processamento da origem 15 (Mentoria em Grupo | Programa de Implementação Expoente): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,280 - INFO - Acessando origem 16/20: Instagram | Manychat (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,281 - ERROR - Erro durante o processamento da origem 16 (Instagram | Manychat): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,282 - INFO - Acessando origem 17/20: Workshop Plateia Lotada 2024 (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,284 - ERROR - Erro durante o processamento da origem 17 (Workshop Plateia Lotada 2024): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,284 - INFO - Acessando origem 18/20: Lançamento Gratuito 2024 (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,286 - ERROR - Erro durante o processamento da origem 18 (Lançamento Gratuito 2024): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,286 - INFO - Acessando origem 19/20: Alunos (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,288 - ERROR - Erro durante o processamento da origem 19 (Alunos): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,289 - INFO - Acessando origem 20/20: [Curso] Método Plateia Lotada (Grupo: Plateia Lotada)
+2025-04-09 09:27:54,291 - ERROR - Erro durante o processamento da origem 20 ([Curso] Método Plateia Lotada): Message: invalid session id
+Stacktrace:
+	GetHandleVerifier [0x00007FF6CDE35335+78597]
+	GetHandleVerifier [0x00007FF6CDE35390+78688]
+	(No symbol) [0x00007FF6CDBE8FDC]
+	(No symbol) [0x00007FF6CDC2F51F]
+	(No symbol) [0x00007FF6CDC66FB2]
+	(No symbol) [0x00007FF6CDC619CC]
+	(No symbol) [0x00007FF6CDC60AA9]
+	(No symbol) [0x00007FF6CDBB5AB5]
+	GetHandleVerifier [0x00007FF6CE0DEEED+2870973]
+	GetHandleVerifier [0x00007FF6CE0D9698+2848360]
+	GetHandleVerifier [0x00007FF6CE0F6973+2967875]
+	GetHandleVerifier [0x00007FF6CDE5017A+188746]
+	GetHandleVerifier [0x00007FF6CDE5845F+222255]
+	(No symbol) [0x00007FF6CDBB4B28]
+	GetHandleVerifier [0x00007FF6CE1E0668+3925560]
+	BaseThreadInitThunk [0x00007FFD9037E8D7+23]
+	RtlUserThreadStart [0x00007FFD91B314FC+44]
+
+2025-04-09 09:27:54,293 - INFO - RESUMO DE DOWNLOADS - Sucesso: 0, Falhas: 11
+2025-04-09 09:27:54,296 - INFO - Resultados salvos nos arquivos origens_20250409_092754.json e origens_20250409_092754.txt
+2025-04-09 09:27:54,296 - INFO - Finalizando a automação...
+2025-04-09 09:31:01,865 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:31:03,483 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:31:05,181 - INFO - Página acessada com sucesso!
+2025-04-09 09:31:05,830 - INFO - Email preenchido!
+2025-04-09 09:31:06,138 - INFO - Senha preenchida!
+2025-04-09 09:31:06,388 - INFO - Botão de login clicado!
+2025-04-09 09:31:11,533 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:31:16,693 - INFO - Procurando container de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:31:16,709 - INFO - Container de origens encontrado!
+2025-04-09 09:31:16,830 - INFO - Buscando nomes de origens individuais usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div/div/div/div/div[1]/div/h5
+2025-04-09 09:31:16,830 - INFO - Utilizando método JavaScript para extrair grupos e origens...
+2025-04-09 09:31:16,849 - INFO - JavaScript encontrou 2 grupos de origens
+2025-04-09 09:31:16,849 - INFO - Grupo: [Pay] Playbook Interativo - 10 origens
+2025-04-09 09:31:16,849 - INFO -   Origem 1: Cartão recusado
+2025-04-09 09:31:16,850 - INFO -   Origem 2: Compras expiradas
+2025-04-09 09:31:16,850 - INFO -   Origem 3: Compras em aberto
+2025-04-09 09:31:16,850 - INFO -   Origem 4: Abandono de carrinho
+2025-04-09 09:31:16,850 - INFO -   Origem 5: Reembolso/Chargeback
+2025-04-09 09:31:16,850 - INFO -   Origem 6: Compras aprovadas
+2025-04-09 09:31:16,851 - INFO -   Origem 7: Assinaturas ativas
+2025-04-09 09:31:16,851 - INFO -   Origem 8: Assinaturas em atraso
+2025-04-09 09:31:16,851 - INFO -   Origem 9: Assinaturas canceladas
+2025-04-09 09:31:16,851 - INFO -   Origem 10: Lista Geral
+2025-04-09 09:31:16,851 - INFO - Grupo: Plateia Lotada - 10 origens
+2025-04-09 09:31:16,852 - INFO -   Origem 1: TESTE DE AUTOMAÇÃO
+2025-04-09 09:31:16,852 - INFO -   Origem 2: Imersão Presencial Plateia Lotada
+2025-04-09 09:31:16,854 - INFO -   Origem 3: Guia Prático | Playbook Interativo
+2025-04-09 09:31:16,856 - INFO -   Origem 4: Leads - Master Renner Silva
+2025-04-09 09:31:16,857 - INFO -   Origem 5: Mentoria em Grupo | Programa de Implementação Expoente
+2025-04-09 09:31:16,857 - INFO -   Origem 6: Instagram | Manychat
+2025-04-09 09:31:16,858 - INFO -   Origem 7: Workshop Plateia Lotada 2024
+2025-04-09 09:31:16,859 - INFO -   Origem 8: Lançamento Gratuito 2024
+2025-04-09 09:31:16,860 - INFO -   Origem 9: Alunos
+2025-04-09 09:31:16,861 - INFO -   Origem 10: [Curso] Método Plateia Lotada
+2025-04-09 09:31:16,863 - INFO - Arquivos CSV existentes antes dos downloads: 0
+2025-04-09 09:31:16,863 - INFO - Iniciando iteração sobre origens para exportar CSVs...
+2025-04-09 09:31:16,865 - INFO - Acessando origem 1/20: Cartão recusado (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:31:27,021 - INFO - Origem Cartão recusado encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:31:32,119 - WARNING - Não foi possível confirmar acesso à página de origem Cartão recusado
+2025-04-09 09:31:37,343 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:31:38,486 - INFO - Botão exportar CSV clicado para origem Cartão recusado
+2025-04-09 09:31:52,489 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Cartão recusado
+2025-04-09 09:31:52,489 - INFO - Acessando origem 2/20: Compras expiradas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:32:03,078 - INFO - Origem Compras expiradas encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:32:08,181 - WARNING - Não foi possível confirmar acesso à página de origem Compras expiradas
+2025-04-09 09:32:13,405 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:32:14,532 - INFO - Botão exportar CSV clicado para origem Compras expiradas
+2025-04-09 09:32:28,534 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Compras expiradas
+2025-04-09 09:32:28,534 - INFO - Acessando origem 3/20: Compras em aberto (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:32:39,115 - INFO - Origem Compras em aberto encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:32:44,172 - WARNING - Não foi possível confirmar acesso à página de origem Compras em aberto
+2025-04-09 09:32:49,399 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:32:50,554 - INFO - Botão exportar CSV clicado para origem Compras em aberto
+2025-04-09 09:33:04,558 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Compras em aberto
+2025-04-09 09:33:04,559 - INFO - Acessando origem 4/20: Abandono de carrinho (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:33:11,072 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:33:12,687 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:33:14,737 - INFO - Página acessada com sucesso!
+2025-04-09 09:33:15,021 - INFO - Email preenchido!
+2025-04-09 09:33:15,314 - INFO - Senha preenchida!
+2025-04-09 09:33:15,403 - INFO - Botão de login clicado!
+2025-04-09 09:33:20,410 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:33:25,530 - INFO - Procurando container de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:33:25,555 - INFO - Container de origens encontrado!
+2025-04-09 09:33:25,651 - INFO - Buscando nomes de origens individuais usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div/div/div/div/div[1]/div/h5
+2025-04-09 09:33:25,652 - INFO - Utilizando método JavaScript para extrair grupos e origens...
+2025-04-09 09:33:25,673 - INFO - JavaScript encontrou 2 grupos de origens
+2025-04-09 09:33:25,673 - INFO - Grupo: [Pay] Playbook Interativo - 10 origens
+2025-04-09 09:33:25,673 - INFO -   Origem 1: Cartão recusado
+2025-04-09 09:33:25,674 - INFO -   Origem 2: Compras expiradas
+2025-04-09 09:33:25,674 - INFO -   Origem 3: Compras em aberto
+2025-04-09 09:33:25,674 - INFO -   Origem 4: Abandono de carrinho
+2025-04-09 09:33:25,674 - INFO -   Origem 5: Reembolso/Chargeback
+2025-04-09 09:33:25,674 - INFO -   Origem 6: Compras aprovadas
+2025-04-09 09:33:25,674 - INFO -   Origem 7: Assinaturas ativas
+2025-04-09 09:33:25,674 - INFO -   Origem 8: Assinaturas em atraso
+2025-04-09 09:33:25,674 - INFO -   Origem 9: Assinaturas canceladas
+2025-04-09 09:33:25,675 - INFO -   Origem 10: Lista Geral
+2025-04-09 09:33:25,675 - INFO - Grupo: Plateia Lotada - 10 origens
+2025-04-09 09:33:25,675 - INFO -   Origem 1: TESTE DE AUTOMAÇÃO
+2025-04-09 09:33:25,675 - INFO -   Origem 2: Imersão Presencial Plateia Lotada
+2025-04-09 09:33:25,675 - INFO -   Origem 3: Guia Prático | Playbook Interativo
+2025-04-09 09:33:25,675 - INFO -   Origem 4: Leads - Master Renner Silva
+2025-04-09 09:33:25,675 - INFO -   Origem 5: Mentoria em Grupo | Programa de Implementação Expoente
+2025-04-09 09:33:25,676 - INFO -   Origem 6: Instagram | Manychat
+2025-04-09 09:33:25,676 - INFO -   Origem 7: Workshop Plateia Lotada 2024
+2025-04-09 09:33:25,676 - INFO -   Origem 8: Lançamento Gratuito 2024
+2025-04-09 09:33:25,676 - INFO -   Origem 9: Alunos
+2025-04-09 09:33:25,676 - INFO -   Origem 10: [Curso] Método Plateia Lotada
+2025-04-09 09:33:25,676 - INFO - Arquivos CSV existentes antes dos downloads: 0
+2025-04-09 09:33:25,677 - INFO - Iniciando iteração sobre origens para exportar CSVs...
+2025-04-09 09:33:25,677 - INFO - Acessando origem 1/20: Cartão recusado (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:33:36,371 - INFO - Origem Cartão recusado encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:33:41,440 - WARNING - Não foi possível confirmar acesso à página de origem Cartão recusado
+2025-04-09 09:33:46,699 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:33:47,833 - INFO - Botão exportar CSV clicado para origem Cartão recusado
+2025-04-09 09:33:57,028 - INFO - Finalizando a automação...
+2025-04-09 09:33:57,033 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectionResetError(10054, 'Foi forçado o cancelamento de uma conexão existente pelo host remoto', None, 10054, None)': /session/6f17709ad528082bb34b3c3669fc89e8
+2025-04-09 09:34:01,124 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x00000260B83F4E00>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/6f17709ad528082bb34b3c3669fc89e8
+2025-04-09 09:34:05,170 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x00000260B83F4E30>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/6f17709ad528082bb34b3c3669fc89e8
+2025-04-09 09:36:53,530 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:36:55,039 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:36:56,227 - INFO - Página acessada com sucesso!
+2025-04-09 09:36:56,841 - INFO - Email preenchido!
+2025-04-09 09:36:57,041 - INFO - Senha preenchida!
+2025-04-09 09:36:57,108 - INFO - Botão de login clicado!
+2025-04-09 09:37:02,114 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:37:07,210 - INFO - Procurando container de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:37:07,219 - INFO - Container de origens encontrado!
+2025-04-09 09:37:07,299 - INFO - Buscando nomes de origens individuais usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div/div/div/div/div[1]/div/h5
+2025-04-09 09:37:07,300 - INFO - Utilizando método JavaScript para extrair grupos e origens...
+2025-04-09 09:37:07,313 - INFO - JavaScript encontrou 2 grupos de origens
+2025-04-09 09:37:07,313 - INFO - Grupo: [Pay] Playbook Interativo - 10 origens
+2025-04-09 09:37:07,314 - INFO -   Origem 1: Cartão recusado
+2025-04-09 09:37:07,314 - INFO -   Origem 2: Compras expiradas
+2025-04-09 09:37:07,314 - INFO -   Origem 3: Compras em aberto
+2025-04-09 09:37:07,314 - INFO -   Origem 4: Abandono de carrinho
+2025-04-09 09:37:07,315 - INFO -   Origem 5: Reembolso/Chargeback
+2025-04-09 09:37:07,315 - INFO -   Origem 6: Compras aprovadas
+2025-04-09 09:37:07,315 - INFO -   Origem 7: Assinaturas ativas
+2025-04-09 09:37:07,315 - INFO -   Origem 8: Assinaturas em atraso
+2025-04-09 09:37:07,315 - INFO -   Origem 9: Assinaturas canceladas
+2025-04-09 09:37:07,315 - INFO -   Origem 10: Lista Geral
+2025-04-09 09:37:07,316 - INFO - Grupo: Plateia Lotada - 10 origens
+2025-04-09 09:37:07,316 - INFO -   Origem 1: TESTE DE AUTOMAÇÃO
+2025-04-09 09:37:07,316 - INFO -   Origem 2: Imersão Presencial Plateia Lotada
+2025-04-09 09:37:07,316 - INFO -   Origem 3: Guia Prático | Playbook Interativo
+2025-04-09 09:37:07,316 - INFO -   Origem 4: Leads - Master Renner Silva
+2025-04-09 09:37:07,316 - INFO -   Origem 5: Mentoria em Grupo | Programa de Implementação Expoente
+2025-04-09 09:37:07,316 - INFO -   Origem 6: Instagram | Manychat
+2025-04-09 09:37:07,316 - INFO -   Origem 7: Workshop Plateia Lotada 2024
+2025-04-09 09:37:07,317 - INFO -   Origem 8: Lançamento Gratuito 2024
+2025-04-09 09:37:07,317 - INFO -   Origem 9: Alunos
+2025-04-09 09:37:07,317 - INFO -   Origem 10: [Curso] Método Plateia Lotada
+2025-04-09 09:37:07,318 - INFO - Arquivos CSV existentes antes dos downloads: 0
+2025-04-09 09:37:07,318 - INFO - Iniciando iteração sobre origens para exportar CSVs...
+2025-04-09 09:37:07,318 - INFO - Acessando origem 1/20: Cartão recusado (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:37:16,673 - INFO - Origem Cartão recusado encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:37:21,808 - WARNING - Não foi possível confirmar acesso à página de origem Cartão recusado
+2025-04-09 09:37:26,974 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:37:28,061 - INFO - Botão exportar CSV clicado para origem Cartão recusado
+2025-04-09 09:37:31,147 - INFO - Botão 'Sim' encontrado com XPath: //*[@id="popover-positioned-Tem certeza que deseja exportar os negócios dessa origem?"]/div[2]/div[2]/button
+2025-04-09 09:37:31,153 - INFO - Clicou no botão 'Sim' na caixa de confirmação
+2025-04-09 09:37:48,154 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Cartão recusado
+2025-04-09 09:37:48,155 - INFO - Acessando origem 2/20: Compras expiradas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:37:58,165 - INFO - Origem Compras expiradas encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:38:03,320 - WARNING - Não foi possível confirmar acesso à página de origem Compras expiradas
+2025-04-09 09:38:08,516 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:38:09,627 - INFO - Botão exportar CSV clicado para origem Compras expiradas
+2025-04-09 09:38:12,736 - INFO - Botão 'Sim' encontrado com XPath: //*[@id="popover-positioned-Tem certeza que deseja exportar os negócios dessa origem?"]/div[2]/div[2]/button
+2025-04-09 09:38:12,746 - INFO - Clicou no botão 'Sim' na caixa de confirmação
+2025-04-09 09:38:29,747 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Compras expiradas
+2025-04-09 09:38:29,748 - INFO - Acessando origem 3/20: Compras em aberto (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:38:40,471 - INFO - Origem Compras em aberto encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:38:45,600 - WARNING - Não foi possível confirmar acesso à página de origem Compras em aberto
+2025-04-09 09:38:50,922 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:38:52,058 - INFO - Botão exportar CSV clicado para origem Compras em aberto
+2025-04-09 09:38:55,151 - INFO - Botão 'Sim' encontrado com XPath: //*[@id="popover-positioned-Tem certeza que deseja exportar os negócios dessa origem?"]/div[2]/div[2]/button
+2025-04-09 09:38:55,159 - INFO - Clicou no botão 'Sim' na caixa de confirmação
+2025-04-09 09:39:12,161 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Compras em aberto
+2025-04-09 09:39:12,161 - INFO - Acessando origem 4/20: Abandono de carrinho (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:39:21,774 - INFO - Origem Abandono de carrinho encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:39:26,846 - WARNING - Não foi possível confirmar acesso à página de origem Abandono de carrinho
+2025-04-09 09:39:32,027 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:39:33,124 - INFO - Botão exportar CSV clicado para origem Abandono de carrinho
+2025-04-09 09:39:36,266 - WARNING - Não foi possível encontrar ou clicar no botão de confirmação, mas continuando...
+2025-04-09 09:39:53,268 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Abandono de carrinho
+2025-04-09 09:39:53,268 - INFO - Acessando origem 5/20: Reembolso/Chargeback (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:40:02,953 - INFO - Origem Reembolso/Chargeback encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:40:08,025 - WARNING - Não foi possível confirmar acesso à página de origem Reembolso/Chargeback
+2025-04-09 09:40:13,228 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:40:14,339 - INFO - Botão exportar CSV clicado para origem Reembolso/Chargeback
+2025-04-09 09:40:17,474 - WARNING - Não foi possível encontrar ou clicar no botão de confirmação, mas continuando...
+2025-04-09 09:40:34,476 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Reembolso/Chargeback
+2025-04-09 09:40:34,476 - INFO - Acessando origem 6/20: Compras aprovadas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:40:44,893 - INFO - Origem Compras aprovadas encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:40:49,984 - WARNING - Não foi possível confirmar acesso à página de origem Compras aprovadas
+2025-04-09 09:40:55,221 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:40:56,365 - INFO - Botão exportar CSV clicado para origem Compras aprovadas
+2025-04-09 09:40:59,497 - INFO - Botão 'Sim' encontrado com XPath: //*[@id="popover-positioned-Tem certeza que deseja exportar os negócios dessa origem?"]/div[2]/div[2]/button
+2025-04-09 09:40:59,507 - INFO - Clicou no botão 'Sim' na caixa de confirmação
+2025-04-09 09:41:16,510 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Compras aprovadas
+2025-04-09 09:41:16,510 - INFO - Acessando origem 7/20: Assinaturas ativas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:41:26,827 - INFO - Origem Assinaturas ativas encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:41:31,889 - WARNING - Não foi possível confirmar acesso à página de origem Assinaturas ativas
+2025-04-09 09:41:37,056 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:41:38,136 - INFO - Botão exportar CSV clicado para origem Assinaturas ativas
+2025-04-09 09:41:41,307 - WARNING - Não foi possível encontrar ou clicar no botão de confirmação, mas continuando...
+2025-04-09 09:41:58,316 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Assinaturas ativas
+2025-04-09 09:41:58,317 - INFO - Acessando origem 8/20: Assinaturas em atraso (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:42:08,807 - INFO - Origem Assinaturas em atraso encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:42:13,875 - WARNING - Não foi possível confirmar acesso à página de origem Assinaturas em atraso
+2025-04-09 09:42:19,057 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:42:20,155 - INFO - Botão exportar CSV clicado para origem Assinaturas em atraso
+2025-04-09 09:42:23,305 - WARNING - Não foi possível encontrar ou clicar no botão de confirmação, mas continuando...
+2025-04-09 09:42:40,310 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Assinaturas em atraso
+2025-04-09 09:42:40,311 - INFO - Acessando origem 9/20: Assinaturas canceladas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:42:49,741 - INFO - Origem Assinaturas canceladas encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:42:54,821 - WARNING - Não foi possível confirmar acesso à página de origem Assinaturas canceladas
+2025-04-09 09:42:59,973 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:43:01,054 - INFO - Botão exportar CSV clicado para origem Assinaturas canceladas
+2025-04-09 09:43:04,164 - WARNING - Não foi possível encontrar ou clicar no botão de confirmação, mas continuando...
+2025-04-09 09:43:21,165 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Assinaturas canceladas
+2025-04-09 09:43:21,166 - INFO - Acessando origem 10/20: Lista Geral (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:43:31,915 - INFO - Origem Lista Geral encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:43:37,011 - WARNING - Não foi possível confirmar acesso à página de origem Lista Geral
+2025-04-09 09:43:42,275 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:43:43,375 - INFO - Botão exportar CSV clicado para origem Lista Geral
+2025-04-09 09:43:46,561 - WARNING - Não foi possível encontrar ou clicar no botão de confirmação, mas continuando...
+2025-04-09 09:44:03,563 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Lista Geral
+2025-04-09 09:44:03,563 - INFO - Acessando origem 11/20: TESTE DE AUTOMAÇÃO (Grupo: Plateia Lotada)
+2025-04-09 09:44:12,780 - INFO - Origem TESTE DE AUTOMAÇÃO encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:44:17,852 - WARNING - Não foi possível confirmar acesso à página de origem TESTE DE AUTOMAÇÃO
+2025-04-09 09:44:23,055 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:44:24,152 - INFO - Botão exportar CSV clicado para origem TESTE DE AUTOMAÇÃO
+2025-04-09 09:44:27,330 - WARNING - Não foi possível encontrar ou clicar no botão de confirmação, mas continuando...
+2025-04-09 09:44:44,342 - INFO - Download do CSV concluído: resultados\csvs\negocios_09_04_2025_12_44_27.csv
+2025-04-09 09:44:44,344 - INFO - Arquivo renomeado para: 11_TESTE_DE_AUTOMAÇÃO_negocios_09_04_2025_12_44_27.csv
+2025-04-09 09:44:44,344 - INFO - Acessando origem 12/20: Imersão Presencial Plateia Lotada (Grupo: Plateia Lotada)
+2025-04-09 09:44:54,452 - INFO - Origem Imersão Presencial Plateia Lotada encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:44:59,523 - WARNING - Não foi possível confirmar acesso à página de origem Imersão Presencial Plateia Lotada
+2025-04-09 09:45:04,719 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:45:05,828 - INFO - Botão exportar CSV clicado para origem Imersão Presencial Plateia Lotada
+2025-04-09 09:45:08,906 - INFO - Botão 'Sim' encontrado com XPath: //*[@id="popover-positioned-Tem certeza que deseja exportar os negócios dessa origem?"]/div[2]/div[2]/button
+2025-04-09 09:45:08,914 - INFO - Clicou no botão 'Sim' na caixa de confirmação
+2025-04-09 09:45:11,321 - INFO - Finalizando a automação...
+2025-04-09 09:45:15,399 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001FBAE453B90>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/4a7ecc9dd8cb3079d090a90a787b9f69
+2025-04-09 09:46:45,671 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:46:47,681 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:46:49,146 - INFO - Página acessada com sucesso!
+2025-04-09 09:46:49,776 - INFO - Email preenchido!
+2025-04-09 09:46:50,050 - INFO - Senha preenchida!
+2025-04-09 09:46:50,172 - INFO - Botão de login clicado!
+2025-04-09 09:46:55,181 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:47:00,317 - INFO - Procurando container de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:47:00,352 - INFO - Container de origens encontrado!
+2025-04-09 09:47:00,467 - INFO - Buscando nomes de origens individuais usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div/div/div/div/div[1]/div/h5
+2025-04-09 09:47:00,469 - INFO - Utilizando método JavaScript para extrair grupos e origens...
+2025-04-09 09:47:00,501 - INFO - JavaScript encontrou 2 grupos de origens
+2025-04-09 09:47:00,502 - INFO - Grupo: [Pay] Playbook Interativo - 10 origens
+2025-04-09 09:47:00,502 - INFO -   Origem 1: Cartão recusado
+2025-04-09 09:47:00,502 - INFO -   Origem 2: Compras expiradas
+2025-04-09 09:47:00,503 - INFO -   Origem 3: Compras em aberto
+2025-04-09 09:47:00,503 - INFO -   Origem 4: Abandono de carrinho
+2025-04-09 09:47:00,503 - INFO -   Origem 5: Reembolso/Chargeback
+2025-04-09 09:47:00,503 - INFO -   Origem 6: Compras aprovadas
+2025-04-09 09:47:00,503 - INFO -   Origem 7: Assinaturas ativas
+2025-04-09 09:47:00,503 - INFO -   Origem 8: Assinaturas em atraso
+2025-04-09 09:47:00,503 - INFO -   Origem 9: Assinaturas canceladas
+2025-04-09 09:47:00,503 - INFO -   Origem 10: Lista Geral
+2025-04-09 09:47:00,503 - INFO - Grupo: Plateia Lotada - 10 origens
+2025-04-09 09:47:00,504 - INFO -   Origem 1: TESTE DE AUTOMAÇÃO
+2025-04-09 09:47:00,504 - INFO -   Origem 2: Imersão Presencial Plateia Lotada
+2025-04-09 09:47:00,504 - INFO -   Origem 3: Guia Prático | Playbook Interativo
+2025-04-09 09:47:00,505 - INFO -   Origem 4: Leads - Master Renner Silva
+2025-04-09 09:47:00,505 - INFO -   Origem 5: Mentoria em Grupo | Programa de Implementação Expoente
+2025-04-09 09:47:00,506 - INFO -   Origem 6: Instagram | Manychat
+2025-04-09 09:47:00,506 - INFO -   Origem 7: Workshop Plateia Lotada 2024
+2025-04-09 09:47:00,506 - INFO -   Origem 8: Lançamento Gratuito 2024
+2025-04-09 09:47:00,507 - INFO -   Origem 9: Alunos
+2025-04-09 09:47:00,507 - INFO -   Origem 10: [Curso] Método Plateia Lotada
+2025-04-09 09:47:00,509 - INFO - Arquivos CSV existentes antes dos downloads: 0
+2025-04-09 09:47:00,510 - INFO - Iniciando iteração sobre origens para exportar CSVs...
+2025-04-09 09:47:00,513 - INFO - Acessando origem 1/20: Cartão recusado (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:47:10,725 - INFO - Origem Cartão recusado encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:47:15,855 - WARNING - Não foi possível confirmar acesso à página de origem Cartão recusado
+2025-04-09 09:47:21,085 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:47:22,266 - INFO - Botão exportar CSV clicado para origem Cartão recusado
+2025-04-09 09:47:25,481 - INFO - Clicou no botão 'Sim' usando espera explícita
+2025-04-09 09:47:25,660 - INFO - Resultado do script JavaScript para confirmação: BOTAO_GENERICO_CLICADO
+2025-04-09 09:47:25,661 - INFO - Confirmação realizada via JavaScript direto
+2025-04-09 09:47:42,662 - INFO - Download do CSV concluído: resultados\csvs\negocios_09_04_2025_12_47_25.csv
+2025-04-09 09:47:42,663 - INFO - Arquivo renomeado para: 1_Cartão_recusado_negocios_09_04_2025_12_47_25.csv
+2025-04-09 09:47:42,664 - INFO - Acessando origem 2/20: Compras expiradas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:47:52,625 - INFO - Origem Compras expiradas encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:47:57,803 - WARNING - Não foi possível confirmar acesso à página de origem Compras expiradas
+2025-04-09 09:48:03,035 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:48:04,145 - INFO - Botão exportar CSV clicado para origem Compras expiradas
+2025-04-09 09:48:07,280 - INFO - Clicou no botão 'Sim' usando espera explícita
+2025-04-09 09:48:07,398 - INFO - Resultado do script JavaScript para confirmação: BOTAO_GENERICO_CLICADO
+2025-04-09 09:48:07,399 - INFO - Confirmação realizada via JavaScript direto
+2025-04-09 09:51:39,017 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 09:51:40,631 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 09:51:42,226 - INFO - Página acessada com sucesso!
+2025-04-09 09:51:42,407 - INFO - Email preenchido!
+2025-04-09 09:51:42,720 - INFO - Senha preenchida!
+2025-04-09 09:51:42,819 - INFO - Botão de login clicado!
+2025-04-09 09:51:47,826 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 09:51:52,833 - INFO - Procurando container de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 09:51:52,860 - INFO - Container de origens encontrado!
+2025-04-09 09:51:52,860 - INFO - Buscando nomes de origens individuais usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div/div/div/div/div[1]/div/h5
+2025-04-09 09:51:52,860 - INFO - Utilizando método JavaScript para extrair grupos e origens...
+2025-04-09 09:51:52,875 - INFO - JavaScript encontrou 2 grupos de origens
+2025-04-09 09:51:52,875 - INFO - Grupo: [Pay] Playbook Interativo - 10 origens
+2025-04-09 09:51:52,876 - INFO -   Origem 1: Cartão recusado
+2025-04-09 09:51:52,876 - INFO -   Origem 2: Compras expiradas
+2025-04-09 09:51:52,876 - INFO -   Origem 3: Compras em aberto
+2025-04-09 09:51:52,876 - INFO -   Origem 4: Abandono de carrinho
+2025-04-09 09:51:52,877 - INFO -   Origem 5: Reembolso/Chargeback
+2025-04-09 09:51:52,877 - INFO -   Origem 6: Compras aprovadas
+2025-04-09 09:51:52,877 - INFO -   Origem 7: Assinaturas ativas
+2025-04-09 09:51:52,877 - INFO -   Origem 8: Assinaturas em atraso
+2025-04-09 09:51:52,877 - INFO -   Origem 9: Assinaturas canceladas
+2025-04-09 09:51:52,877 - INFO -   Origem 10: Lista Geral
+2025-04-09 09:51:52,877 - INFO - Grupo: Plateia Lotada - 10 origens
+2025-04-09 09:51:52,878 - INFO -   Origem 1: TESTE DE AUTOMAÇÃO
+2025-04-09 09:51:52,878 - INFO -   Origem 2: Imersão Presencial Plateia Lotada
+2025-04-09 09:51:52,879 - INFO -   Origem 3: Guia Prático | Playbook Interativo
+2025-04-09 09:51:52,879 - INFO -   Origem 4: Leads - Master Renner Silva
+2025-04-09 09:51:52,880 - INFO -   Origem 5: Mentoria em Grupo | Programa de Implementação Expoente
+2025-04-09 09:51:52,880 - INFO -   Origem 6: Instagram | Manychat
+2025-04-09 09:51:52,880 - INFO -   Origem 7: Workshop Plateia Lotada 2024
+2025-04-09 09:51:52,881 - INFO -   Origem 8: Lançamento Gratuito 2024
+2025-04-09 09:51:52,881 - INFO -   Origem 9: Alunos
+2025-04-09 09:51:52,881 - INFO -   Origem 10: [Curso] Método Plateia Lotada
+2025-04-09 09:51:52,882 - INFO - Arquivos CSV existentes antes dos downloads: 0
+2025-04-09 09:51:52,882 - INFO - Iniciando iteração sobre origens para exportar CSVs...
+2025-04-09 09:51:52,885 - INFO - Acessando origem 1/20: Cartão recusado (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:52:03,208 - INFO - Origem Cartão recusado encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:52:08,415 - WARNING - Não foi possível confirmar acesso à página de origem Cartão recusado
+2025-04-09 09:52:13,427 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:52:14,446 - INFO - Botão exportar CSV clicado para origem Cartão recusado
+2025-04-09 09:52:17,612 - INFO - Clicou no botão 'Sim' usando espera explícita
+2025-04-09 09:52:17,641 - INFO - Resultado do script JavaScript para confirmação: BOTAO_GENERICO_CLICADO
+2025-04-09 09:52:17,642 - INFO - Confirmação realizada via JavaScript direto
+2025-04-09 09:52:34,644 - INFO - Download do CSV concluído: resultados\csvs\negocios_09_04_2025_12_52_17.csv
+2025-04-09 09:52:34,649 - INFO - Arquivo renomeado para: 1_Cartão_recusado_negocios_09_04_2025_12_52_17.csv
+2025-04-09 09:52:34,650 - INFO - Acessando origem 2/20: Compras expiradas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 09:52:44,397 - INFO - Origem Compras expiradas encontrada e acessada com sucesso via JavaScript
+2025-04-09 09:52:49,584 - WARNING - Não foi possível confirmar acesso à página de origem Compras expiradas
+2025-04-09 09:52:54,605 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 09:52:55,638 - INFO - Botão exportar CSV clicado para origem Compras expiradas
+2025-04-09 09:52:58,691 - INFO - Clicou no botão 'Sim' usando espera explícita
+2025-04-09 09:52:58,716 - INFO - Resultado do script JavaScript para confirmação: BOTAO_GENERICO_CLICADO
+2025-04-09 09:52:58,717 - INFO - Confirmação realizada via JavaScript direto
+2025-04-09 10:02:53,796 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 10:35:04,748 - INFO - Iniciando automação de login na Clint Digital...
+2025-04-09 10:35:06,565 - INFO - Webdriver iniciado com sucesso!
+2025-04-09 10:35:08,183 - INFO - Página acessada com sucesso!
+2025-04-09 10:35:08,454 - INFO - Email preenchido!
+2025-04-09 10:35:08,692 - INFO - Senha preenchida!
+2025-04-09 10:35:08,859 - INFO - Botão de login clicado!
+2025-04-09 10:35:13,866 - INFO - URL atual após login: https://app.clint.digital/origin/06ad055a-7211-48ea-87dd-05fabae21e91
+2025-04-09 10:35:18,871 - INFO - Procurando container de origens usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div
+2025-04-09 10:35:18,880 - INFO - Container de origens encontrado!
+2025-04-09 10:35:18,880 - INFO - Buscando nomes de origens individuais usando XPath: //*[@id="main-content"]/div[2]/div/div[2]/div[2]/div/div[2]/div[2]/div[2]/div/div/div/div/div/div[1]/div/h5
+2025-04-09 10:35:18,880 - INFO - Utilizando método JavaScript para extrair grupos e origens...
+2025-04-09 10:35:18,896 - INFO - JavaScript encontrou 2 grupos de origens
+2025-04-09 10:35:18,896 - INFO - Grupo: [Pay] Playbook Interativo - 10 origens
+2025-04-09 10:35:18,896 - INFO -   Origem 1: Cartão recusado
+2025-04-09 10:35:18,897 - INFO -   Origem 2: Compras expiradas
+2025-04-09 10:35:18,897 - INFO -   Origem 3: Compras em aberto
+2025-04-09 10:35:18,897 - INFO -   Origem 4: Abandono de carrinho
+2025-04-09 10:35:18,898 - INFO -   Origem 5: Reembolso/Chargeback
+2025-04-09 10:35:18,898 - INFO -   Origem 6: Compras aprovadas
+2025-04-09 10:35:18,898 - INFO -   Origem 7: Assinaturas ativas
+2025-04-09 10:35:18,898 - INFO -   Origem 8: Assinaturas em atraso
+2025-04-09 10:35:18,899 - INFO -   Origem 9: Assinaturas canceladas
+2025-04-09 10:35:18,899 - INFO -   Origem 10: Lista Geral
+2025-04-09 10:35:18,899 - INFO - Grupo: Plateia Lotada - 10 origens
+2025-04-09 10:35:18,899 - INFO -   Origem 1: TESTE DE AUTOMAÇÃO
+2025-04-09 10:35:18,899 - INFO -   Origem 2: Imersão Presencial Plateia Lotada
+2025-04-09 10:35:18,899 - INFO -   Origem 3: Guia Prático | Playbook Interativo
+2025-04-09 10:35:18,900 - INFO -   Origem 4: Leads - Master Renner Silva
+2025-04-09 10:35:18,900 - INFO -   Origem 5: Mentoria em Grupo | Programa de Implementação Expoente
+2025-04-09 10:35:18,900 - INFO -   Origem 6: Instagram | Manychat
+2025-04-09 10:35:18,900 - INFO -   Origem 7: Workshop Plateia Lotada 2024
+2025-04-09 10:35:18,900 - INFO -   Origem 8: Lançamento Gratuito 2024
+2025-04-09 10:35:18,900 - INFO -   Origem 9: Alunos
+2025-04-09 10:35:18,901 - INFO -   Origem 10: [Curso] Método Plateia Lotada
+2025-04-09 10:35:18,901 - INFO - Arquivos CSV existentes antes dos downloads: 0
+2025-04-09 10:35:18,901 - INFO - Iniciando iteração sobre origens para exportar CSVs...
+2025-04-09 10:35:18,902 - INFO - Acessando origem 1/20: Cartão recusado (Grupo: [Pay] Playbook Interativo)
+2025-04-09 10:35:29,094 - INFO - Origem Cartão recusado encontrada e acessada com sucesso via JavaScript
+2025-04-09 10:35:34,175 - WARNING - Não foi possível confirmar acesso à página de origem Cartão recusado
+2025-04-09 10:35:39,184 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 10:35:40,201 - INFO - Botão exportar CSV clicado para origem Cartão recusado
+2025-04-09 10:35:43,265 - INFO - Clicou no botão 'Sim' usando espera explícita
+2025-04-09 10:35:43,293 - INFO - Resultado do script JavaScript para confirmação: BOTAO_GENERICO_CLICADO
+2025-04-09 10:35:43,294 - INFO - Confirmação realizada via JavaScript direto
+2025-04-09 10:36:00,295 - WARNING - Nenhum novo arquivo CSV encontrado após tentativa de download para Cartão recusado
+2025-04-09 10:36:00,296 - INFO - Acessando origem 2/20: Compras expiradas (Grupo: [Pay] Playbook Interativo)
+2025-04-09 10:36:10,637 - INFO - Origem Compras expiradas encontrada e acessada com sucesso via JavaScript
+2025-04-09 10:36:15,708 - WARNING - Não foi possível confirmar acesso à página de origem Compras expiradas
+2025-04-09 10:36:20,713 - INFO - Botão de exportação encontrado com XPath: //*[@id="origin-header"]/div/div[3]/div[4]/span/button
+2025-04-09 10:36:21,745 - INFO - Botão exportar CSV clicado para origem Compras expiradas
+2025-04-09 10:36:24,789 - INFO - Clicou no botão 'Sim' usando espera explícita
+2025-04-09 10:36:24,805 - INFO - Resultado do script JavaScript para confirmação: BOTAO_GENERICO_CLICADO
+2025-04-09 10:36:24,805 - INFO - Confirmação realizada via JavaScript direto
+2025-04-09 10:36:41,807 - INFO - Download do CSV concluído: resultados\csvs\negocios_09_04_2025_13_36_25.csv
+2025-04-09 10:36:41,808 - INFO - Arquivo renomeado para: 2_Compras_expiradas_negocios_09_04_2025_13_36_25.csv
+2025-04-09 10:36:41,808 - INFO - Acessando origem 3/20: Compras em aberto (Grupo: [Pay] Playbook Interativo)
+2025-04-09 10:36:44,372 - INFO - Finalizando a automação...
+2025-04-09 10:36:44,376 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectionResetError(10054, 'Foi forçado o cancelamento de uma conexão existente pelo host remoto', None, 10054, None)': /session/4e58581cab2bf7073b130b0bd5786339
+2025-04-09 10:36:48,428 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002D293191B80>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/4e58581cab2bf7073b130b0bd5786339
