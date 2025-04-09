@@ -155,49 +155,95 @@ const totalVendas = computed(() => {
 })
 
 const taxaConversao = computed(() => {
-  const total = filteredData.value.length
-  if (total === 0) return '0%'
-  
-  // Mapeamento de todos os status disponíveis para depuração
-  const statusMap = {};
+  // Contagem de IDs únicos para total de clientes
+  const idsUnicos = new Set();
   filteredData.value.forEach(item => {
-    const status = item.status ? item.status.toLowerCase() : 'sem_status';
-    statusMap[status] = (statusMap[status] || 0) + 1;
+    if (item.id) idsUnicos.add(item.id);
   });
   
-  console.log('Mapeamento de status:', statusMap);
+  const totalClientes = idsUnicos.size;
+  if (totalClientes === 0) return '0%';
   
-  const vendas = filteredData.value.filter(item => 
-    item.status === 'ganho' || item.status === 'won'
-  ).length
+  // Valor total vendido e contagem de vendas realizadas
+  let valorTotalVendido = 0;
+  const idsVendas = new Set();
   
-  console.log('Total de registros:', total, 'Total de vendas (ganho/won):', vendas);
+  filteredData.value.forEach(item => {
+    if (item.id && item.status && (item.status.toLowerCase() === 'ganho' || item.status.toLowerCase() === 'won')) {
+      idsVendas.add(item.id);
+      
+      // Adicionar valor da venda se disponível
+      if (item.value) {
+        const valorNumerico = parseFloat(item.value);
+        if (!isNaN(valorNumerico)) {
+          valorTotalVendido += valorNumerico;
+        }
+      }
+    }
+  });
   
-  // Calcular a porcentagem real de conversão baseada nos dados
-  const porcentagem = (vendas / total) * 100
-  return `${porcentagem.toFixed(1)}%`
+  const totalVendas = idsVendas.size;
+  
+  // Log para depuração
+  console.log('Total de clientes (IDs únicos):', totalClientes);
+  console.log('Total de vendas realizadas (IDs únicos):', totalVendas);
+  console.log('Valor total vendido:', valorTotalVendido);
+  
+  // Calcular a porcentagem de conversão (clientes que compraram / total de clientes)
+  const porcentagemConversao = (totalVendas / totalClientes) * 100;
+  return `${porcentagemConversao.toFixed(1)}%`;
 })
 
 const ticketMedio = computed(() => {
-  const vendas = filteredData.value.filter(item => 
-    item.status === 'ganho' || item.status === 'won'
-  )
+  // Filtrar vendas concluídas (status ganho ou won, independente de maiúscula/minúscula)
+  const vendas = filteredData.value.filter(item => {
+    if (!item.status) return false;
+    
+    const status = item.status.toLowerCase();
+    return status === 'ganho' || status === 'won';
+  });
   
-  if (vendas.length === 0) return 'R$ 0'
+  // Log para depuração
+  console.log('Número de vendas para cálculo do ticket médio:', vendas.length);
   
-  // Simulando valor de vendas para demonstração
-  const valorTotal = calcularTotalVendas()
-  return `R$ ${formatarNumero(valorTotal / vendas.length)}`
+  if (vendas.length === 0) return 'R$ 0';
+  
+  // Calcular o valor total usando os valores reais do campo 'value'
+  let valorTotal = 0;
+  let vendasComValor = 0;
+  
+  vendas.forEach(item => {
+    if (item.value !== undefined && item.value !== null) {
+      const valorNumerico = parseFloat(item.value);
+      if (!isNaN(valorNumerico)) {
+        // Aceita valores zero ou positivos
+        valorTotal += valorNumerico;
+        vendasComValor++;
+      }
+    }
+  });
+  
+  // Log para depuração
+  console.log('Valor total das vendas:', valorTotal);
+  console.log('Vendas com valor válido (incluindo zeros):', vendasComValor);
+  
+  // Se não houver vendas com valor válido, retorna zero
+  if (vendasComValor === 0) return 'R$ 0';
+  
+  // Calcular o ticket médio (valor total / número de vendas com valor)
+  const media = valorTotal / vendasComValor;
+  return `R$ ${formatarNumero(media)}`;
 })
 
 const totalClientes = computed(() => {
-  // Contagem de clientes únicos por email
-  const clientes = new Set()
+  // Contagem de clientes únicos por ID
+  const idsUnicos = new Set();
   filteredData.value.forEach(item => {
-    if (item.email) clientes.add(item.email)
-  })
+    if (item.id) idsUnicos.add(item.id);
+  });
   
-  return clientes.size
+  console.log('Total de IDs únicos (clientes):', idsUnicos.size);
+  return idsUnicos.size;
 })
 
 // Dados para gráficos
