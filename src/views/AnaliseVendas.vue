@@ -179,88 +179,68 @@ onMounted(() => {
   }, 2));
 });
 
-// Função auxiliar para verificar se um item está dentro do período de filtro
+// Verifica se um item está dentro do intervalo de datas
 function isItemWithinDateRange(item, startDate, endDate) {
-  // Se não houver filtro de data ativo, retorna verdadeiro
-  if (!startDate || !endDate) return true;
+  if (!startDate || !endDate) {
+    // Se não houver filtro de data, retorna verdadeiro
+    return true;
+  }
+
+  // Obter a data do item (dataObj é baseado em created_at)
+  let itemDate = null;
   
-  // Log para facilitar depuração
-  console.log('Verificando item', item.id, 'contra intervalo de data:', 
-    startDate ? startDate.toLocaleDateString() : 'nenhuma data', 
-    'até', 
-    endDate ? endDate.toLocaleDateString() : 'nenhuma data');
-  
-  // Extrair data do item
-  let dataItem;
-  
-  // Usar won_at para a data se disponível, caso contrário usar dataObj
-  if (item.won_at) {
-    // Tentar parser o formato dd/mm/aaaa hh:mm:ss
+  // Usar dataObj para filtro (que é a data de criação do lead)
+  if (item.dataObj && item.dataObj instanceof Date && !isNaN(item.dataObj.getTime())) {
+    // Se dataObj já é um objeto Date válido
+    itemDate = item.dataObj;
+  } else if (item.created_at) {
+    // Se dataObj não existir ou não for válido, mas temos created_at
     try {
-      const partes = item.won_at.split(' ')[0].split('/');
-      if (partes.length === 3) {
-        // Formato brasileiro: dd/mm/aaaa
-        const dia = parseInt(partes[0], 10);
-        const mes = parseInt(partes[1], 10) - 1; // Mês em JavaScript é 0-based
-        const ano = parseInt(partes[2], 10);
+      // Verificar se created_at está no formato brasileiro (dd/mm/aaaa hh:mm:ss)
+      const parts = item.created_at.split(' ')[0].split('/');
+      if (parts.length === 3) {
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Mês em JavaScript é 0-based
+        const year = parseInt(parts[2], 10);
         
-        dataItem = new Date(ano, mes, dia);
+        itemDate = new Date(year, month, day);
         
         // Verificar se a data é válida
-        if (isNaN(dataItem.getTime())) {
-          console.warn('Data inválida após parsing do formato brasileiro:', item.won_at);
+        if (isNaN(itemDate.getTime())) {
           // Fallback para formato ISO
-          dataItem = new Date(item.won_at);
+          itemDate = new Date(item.created_at);
         }
       } else {
-        console.warn('Formato de data não reconhecido para won_at:', item.won_at);
         // Tentar como formato ISO
-        dataItem = new Date(item.won_at);
+        itemDate = new Date(item.created_at);
       }
     } catch (error) {
-      console.error('Erro ao processar data won_at:', error, item.won_at);
-      dataItem = null;
+      console.error('Erro ao converter created_at para Date:', error, item.created_at);
+      return false;
     }
-  } else if (item.dataObj) {
-    dataItem = item.dataObj;
-  } else {
-    console.warn('Item sem data válida (won_at ou dataObj):', item.id);
-    return false; // Sem data válida
   }
   
-  // Verificar se a data é válida
-  if (!dataItem || isNaN(dataItem.getTime())) {
-    console.warn('Data final inválida:', item.won_at || item.dataObj);
+  // Se não conseguimos uma data válida, não incluir o item
+  if (!itemDate || isNaN(itemDate.getTime())) {
+    console.warn('Data inválida para filtro:', item.created_at);
     return false;
   }
   
-  // Log da data extraída do item
-  console.log('Data extraída do item:', dataItem.toLocaleDateString());
+  // Normalizar as datas para comparação (ignorar tempo)
+  const itemDateNormalized = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
+  const startDateNormalized = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const endDateNormalized = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
   
-  // Definir hora para comparação de data
-  const dataItemMeiaNoite = new Date(dataItem);
-  dataItemMeiaNoite.setHours(0, 0, 0, 0);
+  // Logging para debug
+  if (Math.random() < 0.05) { // Log apenas 5% dos itens para não sobrecarregar o console
+    console.log('Filtro data:', 
+      'Item:', itemDateNormalized.toLocaleDateString(), 
+      'Range:', startDateNormalized.toLocaleDateString(), '-', endDateNormalized.toLocaleDateString(),
+      'Dentro?', itemDateNormalized >= startDateNormalized && itemDateNormalized <= endDateNormalized);
+  }
   
-  const startDateMeiaNoite = new Date(startDate);
-  startDateMeiaNoite.setHours(0, 0, 0, 0);
-  
-  const endDateFimDoDia = new Date(endDate);
-  endDateFimDoDia.setHours(23, 59, 59, 999);
-  
-  // Log para comparação
-  console.log('Comparando:', 
-    dataItemMeiaNoite.toISOString(), 
-    'está entre', 
-    startDateMeiaNoite.toISOString(), 
-    'e', 
-    endDateFimDoDia.toISOString()
-  );
-  
-  // Retorna verdadeiro se a data estiver dentro do intervalo
-  const dentroDoIntervalo = dataItemMeiaNoite >= startDateMeiaNoite && dataItemMeiaNoite <= endDateFimDoDia;
-  console.log('Resultado da comparação:', dentroDoIntervalo ? 'dentro do intervalo' : 'fora do intervalo');
-  
-  return dentroDoIntervalo;
+  // Verificar se a data está dentro do intervalo
+  return itemDateNormalized >= startDateNormalized && itemDateNormalized <= endDateNormalized;
 }
 
 // Estatísticas de vendas
@@ -392,89 +372,164 @@ const vendasPorMesChart = computed(() => {
   // Usar o valor de triggerUpdate para forçar recálculo
   const update = triggerUpdate.value;
   
-  // Agrupa vendas por mês
-  const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-  const vendasPorMes = Array(12).fill(0);
-  const idsProcessados = new Map(); // Para controlar IDs já processados em cada mês
+  console.log('[vendasPorMesChart] Iniciando cálculo de vendas por mês...');
   
-  // Inicializa o mapa para cada mês
-  for (let i = 0; i < 12; i++) {
-    idsProcessados.set(i, new Set());
+  if (!filteredData.value || filteredData.value.length === 0) {
+    console.log('Sem dados de vendas disponíveis.');
+    return {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Vendas (R$)',
+          data: [],
+          borderColor: '#8b5cf6',
+          backgroundColor: 'rgba(139, 92, 246, 0.2)',
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `R$ ${formatarNumero(context.raw || 0)}`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return 'R$ ' + formatarNumero(value);
+              }
+            }
+          }
+        }
+      }
+    };
   }
-  
+
   // Obter intervalo de datas do filtro
   const dateRange = store.getState().filters.dateRange;
   const startDate = dateRange.start;
   const endDate = dateRange.end;
   
-  // Log para depuração dos filtros de data
-  console.log('Filtro de data ativo:', startDate && endDate ? 'Sim' : 'Não');
+  // Log de filtro de data ativo
   if (startDate && endDate) {
-    console.log('Período:', startDate.toLocaleDateString(), 'até', endDate.toLocaleDateString());
+    console.log(`Filtro de data ativo: ${startDate.toLocaleDateString()} até ${endDate.toLocaleDateString()}`);
+  } else {
+    console.log('Sem filtro de data ativo, processando todos os registros.');
   }
+
+  // Inicializar objeto de contagem por mês
+  const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  const vendasPorMes = Array(12).fill(0);
   
+  // Contador para log
+  let totalVendas = 0;
+  let totalValor = 0;
+  
+  // Filtrar e contar vendas por mês
   filteredData.value.forEach(item => {
-    if (!item.id) return;
-    
-    // Verificar se o status é de venda concluída (converter para minúsculas)
+    // Verificar se é uma venda (status ganho/won)
     const status = item.status ? item.status.toLowerCase() : '';
     if (status !== 'ganho' && status !== 'won') return;
     
     // Verificar se o item está dentro do período filtrado
     if (!isItemWithinDateRange(item, startDate, endDate)) return;
     
-    // Usar won_at para a data se disponível, caso contrário usar dataObj
-    let dataVenda;
+    // Obter data para agrupar por mês (podemos usar dataObj, created_at ou won_at)
+    let dataItem;
+    
+    // Tentar usar won_at, dataObj ou created_at, nessa ordem de prioridade
     if (item.won_at) {
-      // Tentar parser o formato dd/mm/aaaa hh:mm:ss
-      const partes = item.won_at.split(' ')[0].split('/');
-      if (partes.length === 3) {
-        // Formato brasileiro: dd/mm/aaaa
-        const dia = parseInt(partes[0], 10);
-        const mes = parseInt(partes[1], 10) - 1; // Mês em JavaScript é 0-based
-        const ano = parseInt(partes[2], 10);
-        
-        dataVenda = new Date(ano, mes, dia);
-        
-        // Verificar se a data é válida
-        if (isNaN(dataVenda.getTime())) {
-          // Fallback para formato ISO
-          dataVenda = new Date(item.won_at);
+      try {
+        // Verificar se won_at está no formato brasileiro (dd/mm/aaaa)
+        const partes = item.won_at.split(' ')[0].split('/');
+        if (partes.length === 3) {
+          const dia = parseInt(partes[0], 10);
+          const mes = parseInt(partes[1], 10) - 1; // Mês em JavaScript é 0-based
+          const ano = parseInt(partes[2], 10);
+          
+          dataItem = new Date(ano, mes, dia);
+          
+          // Verificar se a data é válida
+          if (isNaN(dataItem.getTime())) {
+            // Fallback para formato ISO
+            dataItem = new Date(item.won_at);
+          }
+        } else {
+          // Tentar como formato ISO
+          dataItem = new Date(item.won_at);
         }
-      } else {
-        // Tentar como formato ISO
-        dataVenda = new Date(item.won_at);
+        
+        // Verificar se a data é válida após parsing
+        if (isNaN(dataItem.getTime())) {
+          // Se won_at falhou, tentar dataObj
+          dataItem = item.dataObj;
+        }
+      } catch (error) {
+        // Se won_at falhou, tentar dataObj
+        dataItem = item.dataObj;
       }
     } else if (item.dataObj) {
-      dataVenda = item.dataObj;
-    } else {
-      return; // Pular item sem data válida
-    }
-    
-    // Verificar se data é válida
-    if (!dataVenda || isNaN(dataVenda.getTime())) {
-      console.log('Data inválida para gráfico de vendas por mês:', item.won_at);
-      return;
-    }
-    
-    const mes = dataVenda.getMonth();
-    
-    // Se este ID já foi processado para este mês, ignorar
-    if (idsProcessados.get(mes).has(item.id)) return;
-    
-    // Adicionar o valor da venda ao mês correspondente
-    if (item.value !== undefined && item.value !== null) {
-      const valor = parseFloat(item.value);
-      if (!isNaN(valor)) {
-        vendasPorMes[mes] += valor;
-        // Marcar este ID como processado para este mês
-        idsProcessados.get(mes).add(item.id);
+      // Se não tiver won_at, usar dataObj
+      dataItem = item.dataObj;
+    } else if (item.created_at) {
+      // Se não tiver dataObj, tentar created_at
+      try {
+        const partes = item.created_at.split(' ')[0].split('/');
+        if (partes.length === 3) {
+          const dia = parseInt(partes[0], 10);
+          const mes = parseInt(partes[1], 10) - 1; // Mês em JavaScript é 0-based
+          const ano = parseInt(partes[2], 10);
+          
+          dataItem = new Date(ano, mes, dia);
+        } else {
+          dataItem = new Date(item.created_at);
+        }
+      } catch (error) {
+        console.warn('Erro ao parsear created_at:', error);
+        return; // Pular este item
       }
+    } else {
+      return; // Pular este item sem data válida
     }
+    
+    // Verificar se a data é válida
+    if (!dataItem || isNaN(dataItem.getTime())) {
+      return; // Pular se a data não for válida
+    }
+    
+    // Obter mês da data
+    const mes = dataItem.getMonth();
+    
+    // Obter valor da venda
+    let valor = 0;
+    if (item.value !== undefined && item.value !== null) {
+      valor = parseFloat(item.value);
+      if (isNaN(valor)) valor = 0;
+    }
+    
+    // Somar valor ao mês correspondente
+    vendasPorMes[mes] += valor;
+    
+    // Registrar para log
+    totalVendas++;
+    totalValor += valor;
   });
   
   // Log para depuração
-  console.log('Vendas por mês usando won_at (valores):', vendasPorMes);
+  console.log(`Total de vendas processadas: ${totalVendas}, Valor total: R$ ${formatarNumero(totalValor)}`);
+  console.log('Vendas por mês (valores):', vendasPorMes);
   
   return {
     type: 'line',
