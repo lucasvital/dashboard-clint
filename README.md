@@ -155,3 +155,79 @@ git push -u origin main
 3. Comite suas mudanças (`git commit -m 'Add some amazing feature'`)
 4. Push para a branch (`git push origin feature/amazing-feature`)
 5. Abra um Pull Request 
+
+## Sistema de Banco de Dados Local
+
+### Requisitos
+
+- MySQL 5.7+ ou MariaDB 10.2+
+- Node.js 14+ 
+- NPM ou Yarn
+
+### Configurando o Banco de Dados Local
+
+1. Navegue até o diretório `database`:
+   ```bash
+   cd database
+   ```
+
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+
+3. Execute o script de configuração:
+   ```bash
+   npm run setup
+   ```
+
+   Isso irá:
+   - Criar o banco de dados `clint_db` (se não existir)
+   - Criar as tabelas necessárias
+   - Inserir dados de usuários iniciais
+
+### Usuários Padrão
+
+O script cria os seguintes usuários para teste:
+
+| Nome        | Email                     | Senha    | Cargo        |
+|-------------|---------------------------|----------|--------------|
+| Admin       | admin@clint.com           | admin123 | Administrador|
+| Lucas Vital | lucasvitalsilva17@gmail.com | lucas123 | Gerente      |
+| João Silva  | joao.silva@exemplo.com    | joao123  | Analista     |
+| Maria Santos| maria.santos@exemplo.com  | maria123 | Assistente   |
+
+### Executando o Sistema Completo
+
+Para configurar e iniciar todo o sistema de uma vez, execute:
+
+```bash
+node setup-all.js
+```
+
+Isso irá:
+1. Verificar dependências
+2. Instalar dependências do projeto
+3. Configurar o banco de dados
+4. Compilar o front-end
+5. Iniciar o servidor
+
+### Migrando para um Servidor
+
+Quando estiver pronto para migrar para um ambiente de produção:
+
+1. Configure o banco de dados no servidor usando os scripts em `database/`
+2. Ajuste as variáveis de ambiente para conectar ao banco de dados:
+   ```
+   DB_HOST=seu_host_db
+   DB_USER=seu_usuario
+   DB_PASSWORD=sua_senha
+   DB_NAME=clint_db
+   ```
+3. Execute a compilação e inicialização:
+   ```bash
+   npm run build
+   node server.js
+   ```
+
+Para mais detalhes, consulte [database/README.md](database/README.md). 

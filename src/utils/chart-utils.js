@@ -219,4 +219,61 @@ export const createBarChart = (labels, values, label) => {
       }
     }
   }
+}
+
+/**
+ * Criar gráfico de pizza/doughnut
+ * @param {Array} labels - Rótulos para as fatias
+ * @param {Array} values - Valores para as fatias
+ * @param {String} label - Rótulo para o dataset
+ * @param {Boolean} isDoughnut - Se verdadeiro, cria um gráfico de rosca, senão um de pizza
+ * @returns {Object} Configuração do gráfico de pizza
+ */
+export const createPieChart = (labels, values, label, isDoughnut = true) => {
+  return {
+    type: isDoughnut ? 'doughnut' : 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: label,
+        data: values,
+        backgroundColor: [
+          chartColors.primary,
+          chartColors.secondary,
+          chartColors.tertiary,
+          chartColors.quaternary,
+          'rgba(236, 72, 153, 0.6)',   // Rosa
+          'rgba(59, 130, 246, 0.6)',    // Azul
+          'rgba(245, 158, 11, 0.6)',    // Âmbar
+          'rgba(16, 185, 129, 0.6)',    // Verde
+          'rgba(251, 113, 133, 0.6)',   // Rosa claro
+          'rgba(99, 102, 241, 0.6)'     // Índigo
+        ],
+        borderColor: [
+          chartColors.borders.primary,
+          chartColors.borders.secondary,
+          chartColors.borders.tertiary,
+          chartColors.borders.quaternary,
+          'rgba(236, 72, 153, 1)',
+          'rgba(59, 130, 246, 1)',
+          'rgba(245, 158, 11, 1)',
+          'rgba(16, 185, 129, 1)',
+          'rgba(251, 113, 133, 1)',
+          'rgba(99, 102, 241, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      ...baseChartOptions,
+      cutout: isDoughnut ? '60%' : 0,
+      plugins: {
+        ...baseChartOptions.plugins,
+        legend: {
+          ...baseChartOptions.plugins.legend,
+          position: 'right'
+        }
+      }
+    }
+  }
 } 

@@ -3,7 +3,7 @@
     <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">Perfil de Clientes</h1>
     
     <!-- Cards de indicadores principais -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <StatCard 
         title="Total de clientes" 
         :value="totalClientes" 
@@ -14,22 +14,6 @@
             <span class="text-blue-600 dark:text-blue-400">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </span>
-          </div>
-        </template>
-      </StatCard>
-      
-      <StatCard 
-        title="Valor do cliente" 
-        :value="valorCliente" 
-        subtitle="Valor médio por cliente"
-      >
-        <template #icon>
-          <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-            <span class="text-green-600 dark:text-green-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </span>
           </div>
@@ -325,35 +309,6 @@ const totalClientes = computed(() => {
   
   console.log('Total de clientes únicos (por ID):', clientes.size);
   return clientes.size
-})
-
-const valorCliente = computed(() => {
-  // Calcular valor médio de cliente baseado em IDs únicos e valores reais
-  const clientesMap = new Map() // Mapa de ID -> valor total
-  
-  filteredData.value.forEach(item => {
-    // Verificar se o item tem ID e é uma venda concluída
-    if (item.id && item.status && (item.status.toLowerCase() === 'ganho' || item.status.toLowerCase() === 'won')) {
-      if (!clientesMap.has(item.id)) {
-        clientesMap.set(item.id, 0)
-      }
-      
-      // Adicionar valor real da venda se disponível
-      if (item.value && !isNaN(parseFloat(item.value))) {
-        clientesMap.set(item.id, clientesMap.get(item.id) + parseFloat(item.value))
-      }
-    }
-  })
-  
-  // Calcular valor médio
-  const clienteIds = Array.from(clientesMap.keys())
-  const valorTotal = Array.from(clientesMap.values()).reduce((sum, value) => sum + value, 0)
-  
-  console.log('Clientes com valor processado:', clienteIds.length, 'Valor total:', valorTotal);
-  
-  if (clienteIds.length === 0) return 'R$ 0,00'
-  
-  return `R$ ${formatarNumero(valorTotal / clienteIds.length)}`
 })
 
 const taxaRetencao = computed(() => {

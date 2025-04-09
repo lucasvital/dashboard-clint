@@ -1,0 +1,14 @@
+{
+  "name": "clint-database",
+  "version": "1.0.0",
+  "description": "Scripts de configuração de banco de dados para o sistema Clint",
+  "main": "setup.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "generate-hash": "node -e \"const bcrypt = require('bcryptjs'); console.log('Hash gerado:', bcrypt.hashSync(process.argv[1] || 'senha123', 10))\" --"
+  },
+  "dependencies": {
+    "mysql2": "^3.2.0",
+    "bcryptjs": "^2.4.3"
+  }
+} 
