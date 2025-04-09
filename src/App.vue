@@ -1,5 +1,5 @@
 <template>
-  <div :class="darkMode ? 'dark bg-gray-900' : 'bg-slate-50'" class="min-h-screen transition-colors duration-300">
+  <div class="min-h-screen transition-colors duration-300 bg-slate-50 dark:bg-gray-900">
     <header class="bg-white dark:bg-gray-800 shadow-sm">
       <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <h1 class="text-2xl font-semibold text-purple-600 dark:text-purple-400">Dashboard Clint</h1>
@@ -88,12 +88,16 @@ const toggleDarkMode = () => {
   darkMode.value = !darkMode.value
   localStorage.setItem('darkMode', darkMode.value)
   
+  console.log(`Modo escuro: ${darkMode.value ? 'ativado' : 'desativado'}`)
+  
   // Aplica imediatamente a classe ao elemento html
   if (typeof document !== 'undefined') {
     if (darkMode.value) {
       document.documentElement.classList.add('dark')
+      console.log('Adicionada classe dark ao HTML')
     } else {
       document.documentElement.classList.remove('dark')
+      console.log('Removida classe dark do HTML')
     }
   }
   
