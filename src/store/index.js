@@ -39,14 +39,55 @@ function parseCSVData(data) {
     // Converte strings de data para objetos Date usando o campo created_at
     if (parsedItem.created_at) {
       try {
-        // Formato ISO ou similar (yyyy-mm-dd hh:mm:ss)
-        const date = new Date(parsedItem.created_at)
-        
-        if (!isNaN(date)) {
-          parsedItem.dataObj = date
+        // Tenta processar o formato brasileiro: dd/mm/aaaa hh:mm:ss
+        const dateParts = parsedItem.created_at.split(' ');
+        if (dateParts.length >= 1) {
+          const dateComponent = dateParts[0];
+          const [day, month, year] = dateComponent.split('/').map(num => parseInt(num, 10));
+          
+          // Se conseguiu extrair dia, mês e ano corretamente
+          if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+            // Cria a data (mês em JavaScript é 0-based)
+            let date;
+            
+            // Se tiver componente de horário
+            if (dateParts.length > 1) {
+              const timeComponent = dateParts[1];
+              const [hours, minutes, seconds] = timeComponent.split(':').map(num => parseInt(num, 10));
+              
+              // Cria data com horário
+              date = new Date(year, month - 1, day, 
+                             !isNaN(hours) ? hours : 0, 
+                             !isNaN(minutes) ? minutes : 0, 
+                             !isNaN(seconds) ? seconds : 0);
+            } else {
+              // Cria data sem horário
+              date = new Date(year, month - 1, day);
+            }
+            
+            if (!isNaN(date.getTime())) {
+              parsedItem.dataObj = date;
+              console.log(`Data processada com sucesso: ${parsedItem.created_at} -> ${date.toLocaleDateString()}`);
+            } else {
+              console.warn(`Data inválida após processamento: ${parsedItem.created_at}`);
+              // Fallback para o parser padrão
+              const fallbackDate = new Date(parsedItem.created_at);
+              if (!isNaN(fallbackDate.getTime())) {
+                parsedItem.dataObj = fallbackDate;
+              }
+            }
+          } else {
+            // Fallback para o parser padrão
+            const fallbackDate = new Date(parsedItem.created_at);
+            if (!isNaN(fallbackDate.getTime())) {
+              parsedItem.dataObj = fallbackDate;
+            } else {
+              console.warn(`Não foi possível processar a data: ${parsedItem.created_at}`);
+            }
+          }
         }
       } catch (error) {
-        console.error('Erro ao formatar data:', error, parsedItem.created_at)
+        console.error('Erro ao formatar data:', error, parsedItem.created_at);
       }
     }
     // Suporte legado para o formato dd/mm/yyyy
