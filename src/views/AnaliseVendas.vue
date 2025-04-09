@@ -249,22 +249,47 @@ const totalClientes = computed(() => {
 // Dados para gráficos
 const vendasPorMesChart = computed(() => {
   // Agrupa vendas por mês
-  const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-  const vendasPorMes = Array(12).fill(0)
+  const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  const vendasPorMes = Array(12).fill(0);
+  const idsProcessados = new Map(); // Para controlar IDs já processados em cada mês
+  
+  // Inicializa o mapa para cada mês
+  for (let i = 0; i < 12; i++) {
+    idsProcessados.set(i, new Set());
+  }
   
   filteredData.value.forEach(item => {
-    if (item.dataObj && (item.status === 'ganho' || item.status === 'won')) {
-      const mes = item.dataObj.getMonth()
-      vendasPorMes[mes]++
+    if (!item.dataObj || !item.id) return;
+    
+    // Verificar se o status é de venda concluída (converter para minúsculas)
+    const status = item.status ? item.status.toLowerCase() : '';
+    if (status !== 'ganho' && status !== 'won') return;
+    
+    const mes = item.dataObj.getMonth();
+    
+    // Se este ID já foi processado para este mês, ignorar
+    if (idsProcessados.get(mes).has(item.id)) return;
+    
+    // Adicionar o valor da venda ao mês correspondente
+    if (item.value !== undefined && item.value !== null) {
+      const valor = parseFloat(item.value);
+      if (!isNaN(valor)) {
+        vendasPorMes[mes] += valor;
+        // Marcar este ID como processado para este mês
+        idsProcessados.get(mes).add(item.id);
+      }
     }
-  })
+  });
+  
+  // Log para depuração
+  console.log('Vendas por mês (valores):', vendasPorMes);
   
   return {
     type: 'line',
     data: {
       labels: meses,
       datasets: [{
-        label: 'Vendas',
+        label: 'Vendas (R$)',
         data: vendasPorMes,
         borderColor: '#8b5cf6',
         backgroundColor: 'rgba(139, 92, 246, 0.2)',
@@ -277,18 +302,28 @@ const vendasPorMesChart = computed(() => {
       plugins: {
         legend: {
           display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const value = context.raw;
+              return `R$ ${formatarNumero(value)}`;
+            }
+          }
         }
       },
       scales: {
         y: {
           beginAtZero: true,
           ticks: {
-            precision: 0
+            callback: function(value) {
+              return 'R$ ' + formatarNumero(value);
+            }
           }
         }
       }
     }
-  }
+  };
 })
 
 const vendasPorStatusChart = computed(() => {
