@@ -379,6 +379,14 @@ const store = {
   },
   
   /**
+   * Verifica se já existem dados carregados na store
+   * @returns {Boolean} True se existem dados, False caso contrário
+   */
+  hasData() {
+    return state.rawData && state.rawData.length > 0
+  },
+  
+  /**
    * Limpa filtros de grupo e origem
    */
   clearFilters() {
@@ -437,6 +445,132 @@ const store = {
    */
   getSelectedTag() {
     return state.filters.tags.length > 0 ? state.filters.tags[0] : null
+  },
+  
+  // Obter opções de grupo
+  getGroupOptions() {
+    const uniqueGroups = new Set()
+    
+    state.rawData.forEach(item => {
+      if (item.grupo_origem) {
+        uniqueGroups.add(item.grupo_origem)
+      }
+    })
+    
+    return Array.from(uniqueGroups)
+      .sort()
+      .map(group => ({ value: group, label: group }))
+  },
+  
+  // Obter opções de origem
+  getOriginOptions() {
+    const origins = []
+    const originMap = new Map()
+    
+    state.rawData.forEach(item => {
+      if (item.nome_origem && !originMap.has(item.nome_origem)) {
+        originMap.set(item.nome_origem, true)
+        origins.push({
+          value: item.nome_origem,
+          label: item.nome_origem,
+          groupId: item.grupo_origem || ''
+        })
+      }
+    })
+    
+    return origins.sort((a, b) => a.label.localeCompare(b.label))
+  },
+  
+  // Aplicar filtros aos dados
+  setFilters(filters) {
+    state.filters = { ...filters }
+    applyFilters()
+  },
+  
+  // Função para aplicar os filtros
+  applyFilters() {
+    // Começamos com os dados brutos
+    let filtered = [...state.rawData]
+    
+    // Aplicar filtro de data
+    if (state.filters.dateRange.start && state.filters.dateRange.end) {
+      const startDate = new Date(state.filters.dateRange.start)
+      const endDate = new Date(state.filters.dateRange.end)
+      
+      filtered = filtered.filter(item => {
+        if (!item.dataObj) return true
+        
+        const itemDate = new Date(item.dataObj)
+        return itemDate >= startDate && itemDate <= endDate
+      })
+    }
+    
+    // Aplicar filtro de grupo
+    if (state.selectedGroup) {
+      filtered = filtered.filter(item => 
+        item.grupo_origem === state.selectedGroup
+      )
+    }
+    
+    // Aplicar filtro de origem
+    if (state.selectedOrigin) {
+      filtered = filtered.filter(item => 
+        item.nome_origem === state.selectedOrigin
+      )
+    }
+    
+    // Aplicar filtro de usuário
+    if (state.filters.user) {
+      filtered = filtered.filter(item => 
+        item.user_name === state.filters.user
+      )
+    }
+    
+    // Aplicar filtro de tag
+    if (state.filters.tags.length > 0) {
+      filtered = filtered.filter(item => {
+        if (!item.tags) return false
+        
+        const tagsList = String(item.tags)
+          .split(',')
+          .map(tag => tag.trim())
+        
+        return tagsList.some(tag => state.filters.tags.includes(tag))
+      })
+    }
+    
+    // Atualizar estado
+    state.rawData = filtered
+    state.filteredData = filtered
+    
+    console.log(`Filtros aplicados: ${filtered.length} registros encontrados`)
+    return filtered
+  },
+  
+  getUsers() {
+    if (!state.rawData || !state.rawData.length) return []
+    const users = []
+    state.rawData.forEach(row => {
+      if (row.user_name && !users.includes(row.user_name)) {
+        users.push(row.user_name)
+      }
+    })
+    return users
+  },
+  
+  getTags() {
+    if (!state.rawData || !state.rawData.length) return []
+    const tags = new Set()
+    
+    state.rawData.forEach(row => {
+      if (row.tags && Array.isArray(row.tags)) {
+        row.tags.forEach(tag => {
+          if (tag) tags.add(tag)
+        })
+      }
+    })
+    
+    return Array.from(tags)
   }
 }
 
