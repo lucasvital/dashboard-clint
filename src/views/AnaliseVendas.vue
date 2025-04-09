@@ -259,13 +259,36 @@ const vendasPorMesChart = computed(() => {
   }
   
   filteredData.value.forEach(item => {
-    if (!item.dataObj || !item.id) return;
+    if (!item.id) return;
     
     // Verificar se o status é de venda concluída (converter para minúsculas)
     const status = item.status ? item.status.toLowerCase() : '';
     if (status !== 'ganho' && status !== 'won') return;
     
-    const mes = item.dataObj.getMonth();
+    // Usar won_at para a data se disponível, caso contrário usar dataObj
+    let dataVenda;
+    if (item.won_at) {
+      // Tentar converter won_at para objeto Date
+      dataVenda = new Date(item.won_at);
+      if (isNaN(dataVenda.getTime())) {
+        // Se a data for inválida, tentar outro formato comum (DD/MM/YYYY)
+        const parts = item.won_at.split('/');
+        if (parts.length === 3) {
+          dataVenda = new Date(parts[2], parts[1] - 1, parts[0]);
+        }
+      }
+    } else if (item.dataObj) {
+      dataVenda = item.dataObj;
+    } else {
+      return; // Pular item sem data válida
+    }
+    
+    // Verificar se data é válida
+    if (!dataVenda || isNaN(dataVenda.getTime())) {
+      return;
+    }
+    
+    const mes = dataVenda.getMonth();
     
     // Se este ID já foi processado para este mês, ignorar
     if (idsProcessados.get(mes).has(item.id)) return;
@@ -282,7 +305,7 @@ const vendasPorMesChart = computed(() => {
   });
   
   // Log para depuração
-  console.log('Vendas por mês (valores):', vendasPorMes);
+  console.log('Vendas por mês usando won_at (valores):', vendasPorMes);
   
   return {
     type: 'line',
