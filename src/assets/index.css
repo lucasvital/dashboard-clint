@@ -93,4 +93,45 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-purple-300;
+}
+
+/* Customizações para modo escuro */
+.dark .card {
+  @apply bg-gray-800 text-white;
+}
+
+.dark .stat-value {
+  @apply text-purple-400;
+}
+
+.dark .stat-label {
+  @apply text-gray-400;
+}
+
+.dark .smooth-table th {
+  @apply bg-gray-700 text-gray-300 border-gray-600;
+}
+
+.dark .smooth-table td {
+  @apply border-gray-700 text-gray-300;
+}
+
+.dark .smooth-table tbody tr:hover {
+  @apply bg-gray-700;
+}
+
+.dark .btn-secondary {
+  @apply bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600;
+}
+
+.dark ::-webkit-scrollbar-track {
+  @apply bg-gray-700;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-purple-700;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-purple-600;
 } 

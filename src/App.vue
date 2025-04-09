@@ -64,7 +64,11 @@
 import { ref, watch } from 'vue'
 
 // Estado do tema escuro
-const darkMode = ref(localStorage.getItem('darkMode') === 'true')
+const darkMode = ref(
+  localStorage.getItem('darkMode') === 'true' || 
+  (localStorage.getItem('darkMode') === null && 
+   window.matchMedia('(prefers-color-scheme: dark)').matches)
+)
 const userMenuOpen = ref(false)
 
 // Alternar menu de usuário
@@ -118,6 +122,17 @@ watch(darkMode, (newValue) => {
     }))
   }
 }, { immediate: true })
+
+// Listener para detectar mudanças na preferência de cor do sistema
+if (typeof window !== 'undefined') {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+    // Só alteramos automaticamente se o usuário não definiu uma preferência
+    if (localStorage.getItem('darkMode') === null) {
+      darkMode.value = event.matches
+      localStorage.setItem('darkMode', event.matches.toString())
+    }
+  })
+}
 </script>
 
 <style>

@@ -8,5 +8,15 @@
 <body>
   <div id="app"></div>
   <script type="module" src="/src/main.js"></script>
+  <script>
+    // Aplica o tema escuro antes da renderização para evitar flash de tela branca
+    if (localStorage.getItem("darkMode") === "true") {
+      document.documentElement.classList.add("dark");
+    } else if (localStorage.getItem("darkMode") === null && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      // Se não houver preferência salva, use a preferência do sistema
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("darkMode", "true");
+    }
+  </script>
 </body>
 </html> 
