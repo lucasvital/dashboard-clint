@@ -29,8 +29,8 @@
           v-model="selectedUser"
           @change="onUserChange"
         >
-          <option value="">Selecione</option>
-          <option v-for="user in users" :key="user" :value="user">{{ user }}</option>
+          <option value="">Todos</option>
+          <option v-for="user in uniqueUsers" :key="user" :value="user">{{ user }}</option>
         </select>
       </div>
       
@@ -69,8 +69,8 @@
           v-model="selectedTag"
           @change="onTagChange"
         >
-          <option value="">Selecione</option>
-          <option v-for="tag in tags" :key="tag" :value="tag">{{ tag }}</option>
+          <option value="">Todas</option>
+          <option v-for="tag in uniqueTags" :key="tag" :value="tag">{{ tag }}</option>
         </select>
       </div>
     </div>
@@ -89,7 +89,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import store from '../store'
+import store from '@/store'
 
 // Propriedades
 const props = defineProps({
@@ -114,6 +114,10 @@ const selectedTag = ref('')
 // Obtém grupos e origens do store
 const groups = computed(() => store.getGroups())
 const origins = computed(() => store.getOrigins())
+
+// Adicionar propriedades computadas para usuários e tags
+const uniqueUsers = computed(() => store.getUsers().length ? store.getUsers() : props.users)
+const uniqueTags = computed(() => store.getTags().length ? store.getTags() : props.tags)
 
 // Manipuladores de eventos
 const onGroupChange = () => {
@@ -145,13 +149,38 @@ const clearFilters = () => {
 
 const applyFilters = () => {
   if (startDate.value && endDate.value) {
-    store.setDateRange({
-      start: new Date(startDate.value),
-      end: new Date(endDate.value)
-    })
+    console.log('Aplicando filtro de data:', startDate.value, 'até', endDate.value);
+    
+    try {
+      // Converter strings para objetos Date
+      const startDateObj = new Date(startDate.value);
+      const endDateObj = new Date(endDate.value);
+      
+      // Verificar se as datas são válidas
+      if (isNaN(startDateObj.getTime()) || isNaN(endDateObj.getTime())) {
+        console.error('Datas inválidas fornecidas:', startDate.value, endDate.value);
+        return;
+      }
+      
+      // Ajustar fim do dia para capturar todos os eventos daquele dia
+      endDateObj.setHours(23, 59, 59, 999);
+      
+      console.log('Data de início convertida:', startDateObj.toISOString());
+      console.log('Data de fim convertida:', endDateObj.toISOString());
+      
+      // Definir o intervalo de datas como objetos Date
+      store.setDateRange(startDateObj, endDateObj);
+    } catch (error) {
+      console.error('Erro ao processar datas:', error);
+    }
+  } else {
+    console.log('Intervalo de datas não definido ou incompleto.');
+    // Limpar o filtro de data se não houver ambas datas
+    store.setDateRange(null, null);
   }
   
-  store.applyFilters()
+  // Aplicar os filtros após definir as datas
+  store.applyFilters();
 }
 
 // Definir data atual para endDate se não estiver definido

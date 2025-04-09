@@ -275,15 +275,58 @@ const store = {
   },
   
   /**
-   * Define um intervalo de datas personalizado
-   * @param {Date} startDate - Data de início
-   * @param {Date} endDate - Data de fim
+   * Define um intervalo de datas para filtrar os dados
+   * @param {Date|null} startDate - Data de início (ou null para limpar)
+   * @param {Date|null} endDate - Data de fim (ou null para limpar)
    */
   setDateRange(startDate, endDate) {
-    state.filters.dateRange = {
-      start: startDate,
-      end: endDate
+    // Verificar se as datas são válidas antes de definir
+    let validStartDate = null;
+    let validEndDate = null;
+    
+    if (startDate) {
+      try {
+        // Converter para objeto Date se ainda não for
+        const dateObj = startDate instanceof Date ? startDate : new Date(startDate);
+        
+        // Verificar se é uma data válida
+        if (!isNaN(dateObj.getTime())) {
+          validStartDate = dateObj;
+        } else {
+          console.warn('Data de início inválida:', startDate);
+        }
+      } catch (error) {
+        console.error('Erro ao processar data de início:', error);
+      }
     }
+    
+    if (endDate) {
+      try {
+        // Converter para objeto Date se ainda não for
+        const dateObj = endDate instanceof Date ? endDate : new Date(endDate);
+        
+        // Verificar se é uma data válida
+        if (!isNaN(dateObj.getTime())) {
+          validEndDate = dateObj;
+        } else {
+          console.warn('Data de fim inválida:', endDate);
+        }
+      } catch (error) {
+        console.error('Erro ao processar data de fim:', error);
+      }
+    }
+    
+    // Definir o intervalo de datas no estado
+    state.filters.dateRange = {
+      start: validStartDate,
+      end: validEndDate
+    };
+    
+    console.log('Intervalo de datas definido:', 
+      validStartDate ? validStartDate.toLocaleDateString() : 'não definido',
+      'até',
+      validEndDate ? validEndDate.toLocaleDateString() : 'não definido'
+    );
   },
   
   /**
@@ -447,9 +490,47 @@ const store = {
    * Aplica os filtros atuais
    */
   applyFilters() {
-    // Aplica filtros já está implementado através de getFilteredData
-    // Esta função pode ser usada para notificar a UI ou fazer outras ações quando os filtros são aplicados
-    console.log('Filtros aplicados')
+    console.log('Aplicando filtros aos dados...');
+    
+    // Verificar se as datas são objetos Date antes de chamar toLocaleDateString
+    let startDateStr = 'não definido';
+    let endDateStr = 'não definido';
+    
+    if (state.filters.dateRange.start) {
+      // Garantir que a data é um objeto Date válido
+      const startDate = state.filters.dateRange.start instanceof Date ? 
+                       state.filters.dateRange.start : 
+                       new Date(state.filters.dateRange.start);
+      
+      if (!isNaN(startDate.getTime())) {
+        startDateStr = startDate.toLocaleDateString();
+      }
+    }
+    
+    if (state.filters.dateRange.end) {
+      // Garantir que a data é um objeto Date válido
+      const endDate = state.filters.dateRange.end instanceof Date ? 
+                     state.filters.dateRange.end : 
+                     new Date(state.filters.dateRange.end);
+      
+      if (!isNaN(endDate.getTime())) {
+        endDateStr = endDate.toLocaleDateString();
+      }
+    }
+    
+    console.log('Filtro de data:', startDateStr, 'até', endDateStr);
+    console.log('Filtro de grupo:', state.selectedGroup || 'não definido');
+    console.log('Filtro de origem:', state.selectedOrigin || 'não definido');
+    console.log('Filtro de usuário:', state.filters.user || 'não definido');
+    console.log('Filtro de tags:', state.filters.tags.length ? state.filters.tags.join(', ') : 'não definido');
+    
+    // Importante: NÃO MODIFICAR os dados brutos originais
+    // Apenas filtrar e retornar o resultado filtrado
+    // Esta função agora apenas registra que os filtros foram aplicados
+    
+    // Os filtros já são aplicados na função getFilteredData()
+    console.log('Filtros aplicados com sucesso');
+    return this.getFilteredData();
   },
   
   /**
@@ -525,67 +606,7 @@ const store = {
   // Aplicar filtros aos dados
   setFilters(filters) {
     state.filters = { ...filters }
-    applyFilters()
-  },
-  
-  // Função para aplicar os filtros
-  applyFilters() {
-    // Começamos com os dados brutos
-    let filtered = [...state.rawData]
-    
-    // Aplicar filtro de data
-    if (state.filters.dateRange.start && state.filters.dateRange.end) {
-      const startDate = new Date(state.filters.dateRange.start)
-      const endDate = new Date(state.filters.dateRange.end)
-      
-      filtered = filtered.filter(item => {
-        if (!item.dataObj) return true
-        
-        const itemDate = new Date(item.dataObj)
-        return itemDate >= startDate && itemDate <= endDate
-      })
-    }
-    
-    // Aplicar filtro de grupo
-    if (state.selectedGroup) {
-      filtered = filtered.filter(item => 
-        item.grupo_origem === state.selectedGroup
-      )
-    }
-    
-    // Aplicar filtro de origem
-    if (state.selectedOrigin) {
-      filtered = filtered.filter(item => 
-        item.nome_origem === state.selectedOrigin
-      )
-    }
-    
-    // Aplicar filtro de usuário
-    if (state.filters.user) {
-      filtered = filtered.filter(item => 
-        item.user_name === state.filters.user
-      )
-    }
-    
-    // Aplicar filtro de tag
-    if (state.filters.tags.length > 0) {
-      filtered = filtered.filter(item => {
-        if (!item.tags) return false
-        
-        const tagsList = String(item.tags)
-          .split(',')
-          .map(tag => tag.trim())
-        
-        return tagsList.some(tag => state.filters.tags.includes(tag))
-      })
-    }
-    
-    // Atualizar estado
-    state.rawData = filtered
-    state.filteredData = filtered
-    
-    console.log(`Filtros aplicados: ${filtered.length} registros encontrados`)
-    return filtered
+    this.applyFilters()
   },
   
   getUsers() {

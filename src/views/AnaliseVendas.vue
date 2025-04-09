@@ -134,7 +134,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, watch, onMounted } from 'vue'
 import StatCard from '../components/StatCard.vue'
 import ChartCard from '../components/ChartCard.vue'
 import store from '../store'
@@ -149,10 +149,46 @@ import {
 // Dados para a página
 const filteredData = computed(() => store.getFilteredData())
 
+// Ref para forçar atualização dos gráficos
+const triggerUpdate = ref(0)
+
+// Monitorar alterações nos filtros para forçar atualização
+watch(() => store.getState().filters.dateRange, (newDateRange) => {
+  console.log('Filtro de data alterado:', 
+    newDateRange.start ? newDateRange.start.toLocaleDateString() : 'nenhuma data inicial',
+    'até',
+    newDateRange.end ? newDateRange.end.toLocaleDateString() : 'nenhuma data final'
+  );
+  triggerUpdate.value++;
+}, { deep: true });
+
+watch(() => store.getState().filters, (newFilters) => {
+  console.log('Filtros alterados:', JSON.stringify(newFilters, (key, value) => {
+    // Converter datas para string no formato local
+    if (value instanceof Date) return value.toLocaleDateString();
+    return value;
+  }, 2));
+  triggerUpdate.value++;
+}, { deep: true });
+
+onMounted(() => {
+  console.log('AnaliseVendas montado. Filtros iniciais:', JSON.stringify(store.getState().filters, (key, value) => {
+    // Converter datas para string no formato local
+    if (value instanceof Date) return value.toLocaleDateString();
+    return value;
+  }, 2));
+});
+
 // Função auxiliar para verificar se um item está dentro do período de filtro
 function isItemWithinDateRange(item, startDate, endDate) {
   // Se não houver filtro de data ativo, retorna verdadeiro
   if (!startDate || !endDate) return true;
+  
+  // Log para facilitar depuração
+  console.log('Verificando item', item.id, 'contra intervalo de data:', 
+    startDate ? startDate.toLocaleDateString() : 'nenhuma data', 
+    'até', 
+    endDate ? endDate.toLocaleDateString() : 'nenhuma data');
   
   // Extrair data do item
   let dataItem;
@@ -160,35 +196,46 @@ function isItemWithinDateRange(item, startDate, endDate) {
   // Usar won_at para a data se disponível, caso contrário usar dataObj
   if (item.won_at) {
     // Tentar parser o formato dd/mm/aaaa hh:mm:ss
-    const partes = item.won_at.split(' ')[0].split('/');
-    if (partes.length === 3) {
-      // Formato brasileiro: dd/mm/aaaa
-      const dia = parseInt(partes[0], 10);
-      const mes = parseInt(partes[1], 10) - 1; // Mês em JavaScript é 0-based
-      const ano = parseInt(partes[2], 10);
-      
-      dataItem = new Date(ano, mes, dia);
-      
-      // Verificar se a data é válida
-      if (isNaN(dataItem.getTime())) {
-        // Fallback para formato ISO
+    try {
+      const partes = item.won_at.split(' ')[0].split('/');
+      if (partes.length === 3) {
+        // Formato brasileiro: dd/mm/aaaa
+        const dia = parseInt(partes[0], 10);
+        const mes = parseInt(partes[1], 10) - 1; // Mês em JavaScript é 0-based
+        const ano = parseInt(partes[2], 10);
+        
+        dataItem = new Date(ano, mes, dia);
+        
+        // Verificar se a data é válida
+        if (isNaN(dataItem.getTime())) {
+          console.warn('Data inválida após parsing do formato brasileiro:', item.won_at);
+          // Fallback para formato ISO
+          dataItem = new Date(item.won_at);
+        }
+      } else {
+        console.warn('Formato de data não reconhecido para won_at:', item.won_at);
+        // Tentar como formato ISO
         dataItem = new Date(item.won_at);
       }
-    } else {
-      // Tentar como formato ISO
-      dataItem = new Date(item.won_at);
+    } catch (error) {
+      console.error('Erro ao processar data won_at:', error, item.won_at);
+      dataItem = null;
     }
   } else if (item.dataObj) {
     dataItem = item.dataObj;
   } else {
+    console.warn('Item sem data válida (won_at ou dataObj):', item.id);
     return false; // Sem data válida
   }
   
   // Verificar se a data é válida
   if (!dataItem || isNaN(dataItem.getTime())) {
-    console.log('Data inválida:', item.won_at);
+    console.warn('Data final inválida:', item.won_at || item.dataObj);
     return false;
   }
+  
+  // Log da data extraída do item
+  console.log('Data extraída do item:', dataItem.toLocaleDateString());
   
   // Definir hora para comparação de data
   const dataItemMeiaNoite = new Date(dataItem);
@@ -200,8 +247,20 @@ function isItemWithinDateRange(item, startDate, endDate) {
   const endDateFimDoDia = new Date(endDate);
   endDateFimDoDia.setHours(23, 59, 59, 999);
   
+  // Log para comparação
+  console.log('Comparando:', 
+    dataItemMeiaNoite.toISOString(), 
+    'está entre', 
+    startDateMeiaNoite.toISOString(), 
+    'e', 
+    endDateFimDoDia.toISOString()
+  );
+  
   // Retorna verdadeiro se a data estiver dentro do intervalo
-  return dataItemMeiaNoite >= startDateMeiaNoite && dataItemMeiaNoite <= endDateFimDoDia;
+  const dentroDoIntervalo = dataItemMeiaNoite >= startDateMeiaNoite && dataItemMeiaNoite <= endDateFimDoDia;
+  console.log('Resultado da comparação:', dentroDoIntervalo ? 'dentro do intervalo' : 'fora do intervalo');
+  
+  return dentroDoIntervalo;
 }
 
 // Estatísticas de vendas
@@ -330,6 +389,9 @@ const totalClientes = computed(() => {
 
 // Dados para gráficos
 const vendasPorMesChart = computed(() => {
+  // Usar o valor de triggerUpdate para forçar recálculo
+  const update = triggerUpdate.value;
+  
   // Agrupa vendas por mês
   const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
   const vendasPorMes = Array(12).fill(0);
@@ -457,6 +519,9 @@ const vendasPorMesChart = computed(() => {
 })
 
 const vendasPorStatusChart = computed(() => {
+  // Usar o valor de triggerUpdate para forçar recálculo
+  const update = triggerUpdate.value;
+  
   // Conta vendas por status
   const statusCount = {
     'ganho': 0,
@@ -519,6 +584,9 @@ const vendasPorStatusChart = computed(() => {
 
 // Desempenho por origem
 const desempenhoOrigens = computed(() => {
+  // Usar o valor de triggerUpdate para forçar recálculo
+  const update = triggerUpdate.value;
+  
   const origensMap = new Map()
   
   // Obter intervalo de datas do filtro

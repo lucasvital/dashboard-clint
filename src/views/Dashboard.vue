@@ -1,54 +1,18 @@
 <template>
-  <div>
-    <!-- Carregamento de CSV -->
-    <div v-if="!csvLoaded" class="card mb-6 bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-      <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Carregar dados do CSV</h2>
-      
-      <div v-if="loading" class="flex flex-col items-center justify-center py-8">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 dark:border-purple-400 mb-4"></div>
-        <p class="text-gray-700 dark:text-gray-300">Carregando dados do arquivo mais recente...</p>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Isso pode levar alguns segundos</p>
-      </div>
-      
-      <div v-else>
-        <div class="flex gap-4">
-          <div class="flex-1">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL do arquivo CSV</label>
-            <input 
-              type="text" 
-              v-model="csvUrl" 
-              placeholder="https://exemplo.com/dados.csv" 
-              class="filter-dropdown w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-gray-800 dark:text-gray-200"
-            />
-          </div>
-          <div class="flex items-end">
-            <button @click="loadCSV" class="btn btn-primary bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white font-semibold py-2 px-4 rounded transition-colors" :disabled="loading">
-              <span v-if="loading">Carregando...</span>
-              <span v-else>Carregar dados</span>
-            </button>
-          </div>
-        </div>
-        
-        <div v-if="error" class="mt-4 p-3 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
-          <p class="font-semibold">Erro ao carregar dados:</p>
-          <p>{{ error }}</p>
-          <p class="text-sm mt-2">
-            O arquivo de dados pode não ter sido gerado ainda. Execute a exportação 
-            para criar o arquivo CSV e tente novamente.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div v-else>
-      <!-- Barra de filtros -->
-      <FilterBar :users="users" :tags="tags" />
-      
+  <CSVLoader>
+    <!-- Componente de navegação por abas -->
+    <NavigationTabs
+      :tabs="navigationTabs"
+      v-model:activeTab="activeTab"
+    />
+    
+    <!-- Conteúdo com base na aba selecionada -->
+    <div v-if="activeTab === 'visao-geral'">
       <!-- Estatísticas principais -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <StatCard 
           title="Novas conversas" 
-          :value="stats.total" 
+          :value="getFilteredStats.total" 
           subtitle="Total de registros"
         >
           <template #icon>
@@ -64,7 +28,7 @@
         
         <StatCard 
           title="Conversas trabalhadas" 
-          :value="stats.byStatus.aberto" 
+          :value="getFilteredStats.byStatus.aberto" 
           subtitle="Status aberto"
         >
           <template #icon>
@@ -80,7 +44,7 @@
         
         <StatCard 
           title="Conversas recebidas" 
-          :value="stats.byStatus.ganho" 
+          :value="getFilteredStats.byStatus.ganho" 
           subtitle="Status ganho"
         >
           <template #icon>
@@ -108,31 +72,48 @@
         />
       </div>
       
-      <!-- Resumo por origem - NOVO COMPONENTE -->
+      <!-- Resumo por origem -->
       <div class="mb-6">
         <OriginSummary 
           title="Resumo por Origem" 
           :data="filteredData"
         />
       </div>
-      
-      <!-- Tabela de dados -->
-      <DataTable 
-        title="Registros" 
-        :data="filteredData" 
-        :columns="tableColumns"
-      />
     </div>
-  </div>
+
+    <!-- Conteúdo da aba de Análise de Vendas -->
+    <div v-else-if="activeTab === 'analise-vendas'">
+      <AnaliseVendas />
+    </div>
+
+    <!-- Conteúdo da aba de Perfil de Clientes -->
+    <div v-else-if="activeTab === 'perfil-clientes'">
+      <PerfilClientes />
+    </div>
+
+    <!-- Conteúdo da aba de Análise de Marketing -->
+    <div v-else-if="activeTab === 'analise-marketing'">
+      <AnaliseMarketing />
+    </div>
+    
+    <!-- Tabela de dados sempre visível, independente da aba -->
+    <DataTable 
+      v-if="activeTab === 'visao-geral'"
+      title="Registros" 
+      :data="filteredData" 
+      :columns="tableColumns"
+    />
+  </CSVLoader>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import FilterBar from '../components/FilterBar.vue'
+import { ref, computed, inject, watch } from 'vue'
 import StatCard from '../components/StatCard.vue'
 import ChartCard from '../components/ChartCard.vue'
 import DataTable from '../components/DataTable.vue'
 import OriginSummary from '../components/OriginSummary.vue'
+import CSVLoader from '../components/CSVLoader.vue'
+import NavigationTabs from '../components/NavigationTabs.vue'
 import store from '../store'
 import { calculateStats } from '../utils/csv-parser'
 import { 
@@ -140,47 +121,158 @@ import {
   createLineChart, 
   groupDataByDay 
 } from '../utils/chart-utils'
+import AnaliseVendas from '../views/AnaliseVendas.vue'
+import PerfilClientes from '../views/PerfilClientes.vue'
+import AnaliseMarketing from '../views/AnaliseMarketing.vue'
 
-// Estado
-const csvUrl = ref('/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_09-04-2025.csv')
-const csvLoaded = ref(false)
-const loading = ref(false)
-const error = ref(null)
+// Configuração das abas de navegação
+const navigationTabs = [
+  { id: 'visao-geral', label: 'Visão Geral' },
+  { id: 'analise-vendas', label: 'Análise de Vendas' },
+  { id: 'perfil-clientes', label: 'Perfil de Clientes' },
+  { id: 'analise-marketing', label: 'Análise de Marketing' }
+]
 
-// Dados derivados do store
+// Aba ativa
+const activeTab = ref('visao-geral')
+
+// Ref para forçar atualização
+const triggerUpdate = ref(0)
+
+// Monitorar alterações nos filtros
+watch(() => store.getState().filters, () => {
+  console.log('Dashboard: Filtros alterados, atualizando visualização...');
+  triggerUpdate.value++;
+}, { deep: true });
+
+// Recebe os dados filtrados do componente pai
 const filteredData = computed(() => store.getFilteredData())
-const stats = computed(() => calculateStats(filteredData.value))
 
-// Coleções únicas de utilizadores e tags
-const users = computed(() => {
-  const uniqueUsers = new Set()
-  filteredData.value.forEach(item => {
-    if (item.user_name) uniqueUsers.add(item.user_name)
-  })
-  return Array.from(uniqueUsers).sort()
-})
+// Função para verificar se um item está dentro do intervalo de datas
+function isItemWithinDateRange(item, startDate, endDate) {
+  if (!startDate || !endDate) {
+    // Se não houver filtro de data, retorna verdadeiro
+    return true;
+  }
 
-const tags = computed(() => {
-  const uniqueTags = new Set()
-  filteredData.value.forEach(item => {
-    if (item.tags) {
-      const tagsList = String(item.tags).split(',')
-      tagsList.forEach(tag => {
-        if (tag.trim()) uniqueTags.add(tag.trim())
-      })
+  // Obter a data do item (dataObj é baseado em created_at)
+  let itemDate = null;
+  
+  // Usar dataObj para filtro (que é a data de criação do lead)
+  if (item.dataObj && item.dataObj instanceof Date && !isNaN(item.dataObj.getTime())) {
+    // Se dataObj já é um objeto Date válido
+    itemDate = item.dataObj;
+  } else if (item.created_at) {
+    // Se dataObj não existir ou não for válido, mas temos created_at
+    try {
+      // Verificar se created_at está no formato brasileiro (dd/mm/aaaa hh:mm:ss)
+      const parts = item.created_at.split(' ')[0].split('/');
+      if (parts.length === 3) {
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Mês em JavaScript é 0-based
+        const year = parseInt(parts[2], 10);
+        
+        itemDate = new Date(year, month, day);
+        
+        // Verificar se a data é válida
+        if (isNaN(itemDate.getTime())) {
+          // Fallback para formato ISO
+          itemDate = new Date(item.created_at);
+        }
+      } else {
+        // Tentar como formato ISO
+        itemDate = new Date(item.created_at);
+      }
+    } catch (error) {
+      console.error('Erro ao converter created_at para Date:', error, item.created_at);
+      return false;
     }
-  })
-  return Array.from(uniqueTags).sort()
-})
+  }
+  
+  // Se não conseguimos uma data válida, não incluir o item
+  if (!itemDate || isNaN(itemDate.getTime())) {
+    console.warn('Data inválida para filtro:', item.created_at);
+    return false;
+  }
+  
+  // Normalizar as datas para comparação (ignorar tempo)
+  const itemDateNormalized = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
+  const startDateNormalized = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const endDateNormalized = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+  
+  // Verificar se a data está dentro do intervalo
+  return itemDateNormalized >= startDateNormalized && itemDateNormalized <= endDateNormalized;
+}
+
+// Função para calcular estatísticas considerando o filtro de data
+const getFilteredStats = computed(() => {
+  // Forçar recálculo quando os filtros mudam
+  const update = triggerUpdate.value;
+
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
+  // Verificar se o filtro de data está ativo
+  if (startDate && endDate) {
+    console.log(`Dashboard: Filtro de data ativo: ${startDate.toLocaleDateString()} até ${endDate.toLocaleDateString()}`);
+    
+    // Filtrar dados por data
+    const dataFiltradaPorData = filteredData.value.filter(
+      item => isItemWithinDateRange(item, startDate, endDate)
+    );
+    
+    // Calcular estatísticas apenas com os dados dentro do período de filtro
+    return calculateStats(dataFiltradaPorData);
+  } else {
+    // Se não houver filtro de data, usar todos os dados
+    return calculateStats(filteredData.value);
+  }
+});
 
 // Configuração dos gráficos
 const dailyChart = computed(() => {
-  const groupedData = groupDataByDay(filteredData.value)
-  return createLineChart(groupedData, 'Registros por dia')
+  // Forçar recálculo quando os filtros mudam
+  const update = triggerUpdate.value;
+
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
+  // Filtrar dados por data se necessário
+  let dadosParaGrafico = filteredData.value;
+  
+  if (startDate && endDate) {
+    dadosParaGrafico = filteredData.value.filter(
+      item => isItemWithinDateRange(item, startDate, endDate)
+    );
+  }
+  
+  const groupedData = groupDataByDay(dadosParaGrafico);
+  return createLineChart(groupedData, 'Registros por dia');
 })
 
 const statusChart = computed(() => {
-  return createStatusChart(filteredData.value)
+  // Forçar recálculo quando os filtros mudam
+  const update = triggerUpdate.value;
+
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
+  // Filtrar dados por data se necessário
+  let dadosParaGrafico = filteredData.value;
+  
+  if (startDate && endDate) {
+    dadosParaGrafico = filteredData.value.filter(
+      item => isItemWithinDateRange(item, startDate, endDate)
+    );
+  }
+  
+  return createStatusChart(dadosParaGrafico);
 })
 
 // Colunas da tabela
@@ -193,96 +285,4 @@ const tableColumns = [
   { key: 'status', label: 'Status' },
   { key: 'created_at', label: 'Data de criação' }
 ]
-
-// Encontrar o CSV mais recente
-const findLatestCSV = async () => {
-  try {
-    // Usa a data atual para formar o nome do arquivo esperado
-    const hoje = new Date()
-    const dia = hoje.getDate().toString().padStart(2, '0')
-    const mes = (hoje.getMonth() + 1).toString().padStart(2, '0')
-    const ano = hoje.getFullYear()
-    
-    // Verificar padrão específico primeiro (com data de hoje)
-    const dataFormatada = `${dia}-${mes}-${ano}`
-    const nomeArquivo = `[alberto_at_shortmidia.com.br]_Dados_Gerais_${dataFormatada}.csv`
-    const caminhoArquivo = `/resultados_api/${nomeArquivo}`
-    
-    console.log(`Tentando encontrar o arquivo CSV mais recente: ${caminhoArquivo}`)
-    
-    // Se não encontrar com a data de hoje, tenta com datas anteriores (até 7 dias atrás)
-    for (let i = 0; i < 7; i++) {
-      const dataAnterior = new Date(hoje)
-      dataAnterior.setDate(hoje.getDate() - i)
-      
-      const diaAnt = dataAnterior.getDate().toString().padStart(2, '0')
-      const mesAnt = (dataAnterior.getMonth() + 1).toString().padStart(2, '0')
-      const anoAnt = dataAnterior.getFullYear()
-      
-      const dataFormatadaAnt = `${diaAnt}-${mesAnt}-${anoAnt}`
-      const nomeArquivoAnt = `[alberto_at_shortmidia.com.br]_Dados_Gerais_${dataFormatadaAnt}.csv`
-      const caminhoArquivoAnt = `/resultados_api/${nomeArquivoAnt}`
-      
-      if (i > 0) {
-        console.log(`Tentando alternativa ${i}: ${caminhoArquivoAnt}`)
-      }
-      
-      // Verificamos se o arquivo existe tentando carregá-lo
-      try {
-        // Tentativa de verificar se o arquivo existe
-        const response = await fetch(caminhoArquivoAnt, { method: 'HEAD' })
-        if (response.ok) {
-          console.log(`Arquivo encontrado: ${caminhoArquivoAnt}`)
-          return caminhoArquivoAnt
-        }
-      } catch (e) {
-        console.log(`Arquivo não encontrado: ${caminhoArquivoAnt}`)
-        // Continua com a próxima data
-      }
-    }
-    
-    // Se chegou aqui, não encontrou nenhum arquivo recente
-    console.warn('Não foi possível encontrar um arquivo CSV recente')
-    return caminhoArquivo // Retorna o caminho original como fallback
-  } catch (error) {
-    console.error('Erro ao buscar arquivo CSV mais recente:', error)
-    return null
-  }
-}
-
-// Carregar dados do CSV
-const loadCSV = async () => {
-  if (!csvUrl.value) {
-    error.value = 'Por favor, insira uma URL para o arquivo CSV'
-    return
-  }
-  
-  loading.value = true
-  error.value = null
-  
-  console.log('Tentando carregar dados do CSV:', csvUrl.value)
-  
-  try {
-    const data = await store.loadCSVData(csvUrl.value)
-    console.log('Dados carregados com sucesso:', data.length, 'registros')
-    csvLoaded.value = true
-  } catch (err) {
-    console.error('Erro detalhado ao carregar CSV:', err)
-    error.value = `Erro ao carregar o CSV: ${err.message || 'Erro desconhecido'}`
-  } finally {
-    loading.value = false
-  }
-}
-
-// Carregar dados na inicialização
-onMounted(async () => {
-  // Tenta encontrar o arquivo mais recente
-  const latestCSV = await findLatestCSV()
-  if (latestCSV) {
-    csvUrl.value = latestCSV
-  }
-  
-  // Carrega o CSV (seja o padrão, seja o encontrado)
-  loadCSV()
-})
 </script> 
