@@ -40,6 +40,7 @@
         title="Custo por lead" 
         :value="custoPorLead" 
         subtitle="Médio estimado"
+        class="filter-blur"
       >
         <template #icon>
           <div class="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center">
@@ -56,6 +57,7 @@
         title="ROI de marketing" 
         :value="roiMarketing" 
         subtitle="Retorno sobre investimento"
+        class="filter-blur"
       >
         <template #icon>
           <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
@@ -126,6 +128,109 @@
                       ></div>
                       <span class="ml-2 text-sm" :class="getEficienciaTextColor(origem.eficiencia)">
                         {{ origem.eficiencia.toFixed(1) }}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Análise de UTM Medium -->
+    <div class="mb-6">
+      <div class="card bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Análise por Meio (UTM Medium)</h3>
+        </div>
+        
+        <div class="p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <ChartCard 
+                title="Distribuição de Leads por Meio" 
+                :chartConfig="utmMediumDistribuicaoChart" 
+              />
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Meio</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Leads</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Conversões</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Taxa</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  <tr 
+                    v-for="meio in utmMediumAnalise" 
+                    :key="meio.nome"
+                    class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">{{ meio.nome }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{{ meio.leads }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                        {{ meio.conversoes }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{{ meio.taxa }}%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Análise de UTM Campaign -->
+    <div class="mb-6">
+      <div class="card bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Desempenho de Campanhas</h3>
+        </div>
+        
+        <div class="p-4">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Campanha</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Meio</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Leads</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Conversões</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Taxa</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Desempenho</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                <tr 
+                  v-for="campanha in utmCampaignAnalise" 
+                  :key="campanha.nome"
+                  class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-200">{{ campanha.nome }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ campanha.meio }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{{ campanha.leads }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                      {{ campanha.conversoes }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{{ campanha.taxa }}%</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div 
+                        class="h-2 rounded-full" 
+                        :class="getEficienciaColor(campanha.desempenho)"
+                        :style="`width: ${campanha.desempenho}%`"
+                      ></div>
+                      <span class="ml-2 text-sm" :class="getEficienciaTextColor(campanha.desempenho)">
+                        {{ campanha.desempenho.toFixed(1) }}
                       </span>
                     </div>
                   </td>
@@ -388,6 +493,144 @@ const eficienciaOrigens = computed(() => {
     .sort((a, b) => b.eficiencia - a.eficiencia) // Ordena do mais eficiente para o menos
 })
 
+// Análise de UTM Medium
+const utmMediumAnalise = computed(() => {
+  const meios = new Map()
+  
+  // Processa dados por UTM Medium
+  filteredData.value.forEach(item => {
+    const nome = item.organization_utm_medium || 'Não especificado'
+    
+    if (!meios.has(nome)) {
+      meios.set(nome, {
+        nome,
+        leads: 0,
+        conversoes: 0
+      })
+    }
+    
+    const meio = meios.get(nome)
+    meio.leads++
+    
+    if (item.status && (item.status.toLowerCase() === 'ganho' || item.status.toLowerCase() === 'won')) {
+      meio.conversoes++
+    }
+  })
+  
+  // Calcula taxa de conversão
+  return Array.from(meios.values())
+    .map(meio => {
+      const taxa = meio.leads > 0 ? (meio.conversoes / meio.leads) * 100 : 0
+      
+      return {
+        ...meio,
+        taxa: Math.round(taxa)
+      }
+    })
+    .sort((a, b) => b.leads - a.leads) // Ordena por volume de leads
+})
+
+const utmMediumDistribuicaoChart = computed(() => {
+  // Gráfico de pizza para UTM Medium
+  const dadosGrafico = utmMediumAnalise.value.slice(0, 7) // Limita aos 7 principais meios
+  const outros = utmMediumAnalise.value.slice(7).reduce(
+    (acc, meio) => {
+      acc.leads += meio.leads
+      acc.conversoes += meio.conversoes
+      return acc
+    },
+    { nome: 'Outros', leads: 0, conversoes: 0 }
+  )
+  
+  // Adiciona categoria "Outros" se houver mais de 7 meios
+  if (outros.leads > 0) {
+    dadosGrafico.push(outros)
+  }
+  
+  // Cores personalizadas para o gráfico
+  const coresPie = defaultColors;
+  
+  return {
+    type: 'pie',
+    data: {
+      labels: dadosGrafico.map(item => item.nome),
+      datasets: [{
+        data: dadosGrafico.map(item => item.leads),
+        backgroundColor: coresPie.slice(0, dadosGrafico.length),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            boxWidth: 15
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.formattedValue || '';
+              const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+              const percentage = Math.round((context.raw / total) * 100);
+              return `${label}: ${value} (${percentage}%)`;
+            }
+          }
+        }
+      }
+    }
+  }
+})
+
+// Análise de UTM Campaign
+const utmCampaignAnalise = computed(() => {
+  const campanhas = new Map()
+  
+  // Processa dados por UTM Campaign e Medium
+  filteredData.value.forEach(item => {
+    const nome = item.utm_campaign || 'Não especificado'
+    const meio = item.organization_utm_medium || 'Não especificado'
+    const chave = `${nome}_${meio}`
+    
+    if (!campanhas.has(chave)) {
+      campanhas.set(chave, {
+        nome,
+        meio,
+        leads: 0,
+        conversoes: 0
+      })
+    }
+    
+    const campanha = campanhas.get(chave)
+    campanha.leads++
+    
+    if (item.status && (item.status.toLowerCase() === 'ganho' || item.status.toLowerCase() === 'won')) {
+      campanha.conversoes++
+    }
+  })
+  
+  // Calcula taxa de conversão e desempenho
+  return Array.from(campanhas.values())
+    .map(campanha => {
+      const taxa = campanha.leads > 0 ? (campanha.conversoes / campanha.leads) * 100 : 0
+      
+      // Desempenho é calculado considerando taxa de conversão e volume
+      const desempenho = taxa * Math.log10(Math.max(campanha.leads, 1)) * 5
+      
+      return {
+        ...campanha,
+        taxa: Math.round(taxa),
+        desempenho: Math.min(desempenho, 100) // Limita a 100%
+      }
+    })
+    .filter(campanha => campanha.leads >= 3) // Filtra apenas campanhas com pelo menos 3 leads
+    .sort((a, b) => b.desempenho - a.desempenho) // Ordena por desempenho
+    .slice(0, 15) // Limita aos 15 principais resultados
+})
+
 // Funções auxiliares
 function gerarCustoTotal() {
   // Simula custo total de marketing
@@ -416,14 +659,39 @@ function gerarCustoTotal() {
 }
 
 function calcularValorVendas() {
-  // Simula valor total de vendas para calcular ROI
+  // Calcula valor total das vendas usando valor real do campo value
   let valorTotal = 0
+  
+  // Contar vendas para log
+  let contadorVendas = 0
+  let vendasComValor = 0
   
   filteredData.value.forEach(item => {
     if (item.status && (item.status.toLowerCase() === 'ganho' || item.status.toLowerCase() === 'won')) {
-      valorTotal += gerarValorVenda(item.email || '', 500, 2000)
+      contadorVendas++
+      
+      // Usar o valor real do campo 'value' se disponível
+      if (item.value && !isNaN(parseFloat(item.value))) {
+        const valor = parseFloat(item.value)
+        valorTotal += valor
+        vendasComValor++
+      }
     }
   })
+  
+  console.log(`Total de vendas: ${contadorVendas}, vendas com valor: ${vendasComValor}, valor total: R$ ${formatarNumero(valorTotal)}`)
+  
+  // Se não houver vendas com valor, gerar um valor simulado para evitar ROI zero
+  if (valorTotal === 0) {
+    console.log('Sem valores reais disponíveis, usando valor simulado')
+    
+    // Gerar valor simulado baseado no email
+    filteredData.value.forEach(item => {
+      if (item.status && (item.status.toLowerCase() === 'ganho' || item.status.toLowerCase() === 'won')) {
+        valorTotal += gerarValorVenda(item.email || '', 500, 2000)
+      }
+    })
+  }
   
   return valorTotal
 }
@@ -456,4 +724,40 @@ function getEficienciaTextColor(valor) {
   if (valor >= 40) return 'text-yellow-600 dark:text-yellow-400'
   return 'text-red-600 dark:text-red-400'
 }
-</script> 
+
+// Cores padrão para gráficos
+const defaultColors = [
+  'rgba(139, 92, 246, 0.7)',    // Roxo
+  'rgba(59, 130, 246, 0.7)',    // Azul
+  'rgba(16, 185, 129, 0.7)',    // Verde
+  'rgba(245, 158, 11, 0.7)',    // Âmbar
+  'rgba(239, 68, 68, 0.7)',     // Vermelho
+  'rgba(236, 72, 153, 0.7)',    // Rosa
+  'rgba(99, 102, 241, 0.7)',    // Índigo
+  'rgba(75, 85, 99, 0.7)'       // Cinza
+];
+</script>
+
+<style scoped>
+.filter-blur {
+  filter: blur(3px);
+  opacity: 0.7;
+  position: relative;
+}
+
+.filter-blur::after {
+  content: "Dados indisponíveis";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  filter: blur(0);
+  opacity: 1;
+  z-index: 10;
+}
+</style> 
