@@ -149,15 +149,78 @@ import {
 // Dados para a página
 const filteredData = computed(() => store.getFilteredData())
 
+// Função auxiliar para verificar se um item está dentro do período de filtro
+function isItemWithinDateRange(item, startDate, endDate) {
+  // Se não houver filtro de data ativo, retorna verdadeiro
+  if (!startDate || !endDate) return true;
+  
+  // Extrair data do item
+  let dataItem;
+  
+  // Usar won_at para a data se disponível, caso contrário usar dataObj
+  if (item.won_at) {
+    // Tentar parser o formato dd/mm/aaaa hh:mm:ss
+    const partes = item.won_at.split(' ')[0].split('/');
+    if (partes.length === 3) {
+      // Formato brasileiro: dd/mm/aaaa
+      const dia = parseInt(partes[0], 10);
+      const mes = parseInt(partes[1], 10) - 1; // Mês em JavaScript é 0-based
+      const ano = parseInt(partes[2], 10);
+      
+      dataItem = new Date(ano, mes, dia);
+      
+      // Verificar se a data é válida
+      if (isNaN(dataItem.getTime())) {
+        // Fallback para formato ISO
+        dataItem = new Date(item.won_at);
+      }
+    } else {
+      // Tentar como formato ISO
+      dataItem = new Date(item.won_at);
+    }
+  } else if (item.dataObj) {
+    dataItem = item.dataObj;
+  } else {
+    return false; // Sem data válida
+  }
+  
+  // Verificar se a data é válida
+  if (!dataItem || isNaN(dataItem.getTime())) {
+    console.log('Data inválida:', item.won_at);
+    return false;
+  }
+  
+  // Definir hora para comparação de data
+  const dataItemMeiaNoite = new Date(dataItem);
+  dataItemMeiaNoite.setHours(0, 0, 0, 0);
+  
+  const startDateMeiaNoite = new Date(startDate);
+  startDateMeiaNoite.setHours(0, 0, 0, 0);
+  
+  const endDateFimDoDia = new Date(endDate);
+  endDateFimDoDia.setHours(23, 59, 59, 999);
+  
+  // Retorna verdadeiro se a data estiver dentro do intervalo
+  return dataItemMeiaNoite >= startDateMeiaNoite && dataItemMeiaNoite <= endDateFimDoDia;
+}
+
 // Estatísticas de vendas
 const totalVendas = computed(() => {
   return formatarNumero(calcularTotalVendas())
 })
 
 const taxaConversao = computed(() => {
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
   // Contagem de IDs únicos para total de clientes
   const idsUnicos = new Set();
   filteredData.value.forEach(item => {
+    // Verificar se o item está dentro do período filtrado
+    if (!isItemWithinDateRange(item, startDate, endDate)) return;
+    
     if (item.id) idsUnicos.add(item.id);
   });
   
@@ -169,6 +232,9 @@ const taxaConversao = computed(() => {
   const idsVendas = new Set();
   
   filteredData.value.forEach(item => {
+    // Verificar se o item está dentro do período filtrado
+    if (!isItemWithinDateRange(item, startDate, endDate)) return;
+    
     if (item.id && item.status && (item.status.toLowerCase() === 'ganho' || item.status.toLowerCase() === 'won')) {
       idsVendas.add(item.id);
       
@@ -195,8 +261,16 @@ const taxaConversao = computed(() => {
 })
 
 const ticketMedio = computed(() => {
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
   // Filtrar vendas concluídas (status ganho ou won, independente de maiúscula/minúscula)
   const vendas = filteredData.value.filter(item => {
+    // Verificar se o item está dentro do período filtrado
+    if (!isItemWithinDateRange(item, startDate, endDate)) return false;
+    
     if (!item.status) return false;
     
     const status = item.status.toLowerCase();
@@ -236,9 +310,17 @@ const ticketMedio = computed(() => {
 })
 
 const totalClientes = computed(() => {
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
   // Contagem de clientes únicos por ID
   const idsUnicos = new Set();
   filteredData.value.forEach(item => {
+    // Verificar se o item está dentro do período filtrado
+    if (!isItemWithinDateRange(item, startDate, endDate)) return;
+    
     if (item.id) idsUnicos.add(item.id);
   });
   
@@ -258,6 +340,17 @@ const vendasPorMesChart = computed(() => {
     idsProcessados.set(i, new Set());
   }
   
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
+  // Log para depuração dos filtros de data
+  console.log('Filtro de data ativo:', startDate && endDate ? 'Sim' : 'Não');
+  if (startDate && endDate) {
+    console.log('Período:', startDate.toLocaleDateString(), 'até', endDate.toLocaleDateString());
+  }
+  
   filteredData.value.forEach(item => {
     if (!item.id) return;
     
@@ -265,17 +358,30 @@ const vendasPorMesChart = computed(() => {
     const status = item.status ? item.status.toLowerCase() : '';
     if (status !== 'ganho' && status !== 'won') return;
     
+    // Verificar se o item está dentro do período filtrado
+    if (!isItemWithinDateRange(item, startDate, endDate)) return;
+    
     // Usar won_at para a data se disponível, caso contrário usar dataObj
     let dataVenda;
     if (item.won_at) {
-      // Tentar converter won_at para objeto Date
-      dataVenda = new Date(item.won_at);
-      if (isNaN(dataVenda.getTime())) {
-        // Se a data for inválida, tentar outro formato comum (DD/MM/YYYY)
-        const parts = item.won_at.split('/');
-        if (parts.length === 3) {
-          dataVenda = new Date(parts[2], parts[1] - 1, parts[0]);
+      // Tentar parser o formato dd/mm/aaaa hh:mm:ss
+      const partes = item.won_at.split(' ')[0].split('/');
+      if (partes.length === 3) {
+        // Formato brasileiro: dd/mm/aaaa
+        const dia = parseInt(partes[0], 10);
+        const mes = parseInt(partes[1], 10) - 1; // Mês em JavaScript é 0-based
+        const ano = parseInt(partes[2], 10);
+        
+        dataVenda = new Date(ano, mes, dia);
+        
+        // Verificar se a data é válida
+        if (isNaN(dataVenda.getTime())) {
+          // Fallback para formato ISO
+          dataVenda = new Date(item.won_at);
         }
+      } else {
+        // Tentar como formato ISO
+        dataVenda = new Date(item.won_at);
       }
     } else if (item.dataObj) {
       dataVenda = item.dataObj;
@@ -285,6 +391,7 @@ const vendasPorMesChart = computed(() => {
     
     // Verificar se data é válida
     if (!dataVenda || isNaN(dataVenda.getTime())) {
+      console.log('Data inválida para gráfico de vendas por mês:', item.won_at);
       return;
     }
     
@@ -357,7 +464,15 @@ const vendasPorStatusChart = computed(() => {
     'aberto': 0
   }
   
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
   filteredData.value.forEach(item => {
+    // Verificar se o item está dentro do período filtrado
+    if (!isItemWithinDateRange(item, startDate, endDate)) return;
+    
     const status = item.status ? item.status.toLowerCase() : 'outro'
     if (status === 'ganho' || status === 'won') {
       statusCount['ganho']++
@@ -367,6 +482,9 @@ const vendasPorStatusChart = computed(() => {
       statusCount['aberto']++
     }
   })
+  
+  // Log para depuração
+  console.log('Distribuição de status com filtro de data:', statusCount);
   
   return {
     type: 'doughnut',
@@ -403,8 +521,16 @@ const vendasPorStatusChart = computed(() => {
 const desempenhoOrigens = computed(() => {
   const origensMap = new Map()
   
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
   // Processa os dados agrupando por origem
   filteredData.value.forEach(item => {
+    // Verificar se o item está dentro do período filtrado
+    if (!isItemWithinDateRange(item, startDate, endDate)) return;
+    
     const origem = item.nome_origem || 'Sem origem'
     const grupo = item.grupo_origem || 'Sem grupo'
     
@@ -435,6 +561,9 @@ const desempenhoOrigens = computed(() => {
     }
   })
   
+  // Log para depuração
+  console.log('Origens processadas com filtro de data:', origensMap.size);
+  
   // Converte o Map para array e calcula a taxa de conversão
   return Array.from(origensMap.values())
     .map(item => {
@@ -446,10 +575,18 @@ const desempenhoOrigens = computed(() => {
     .sort((a, b) => b.valor - a.valor) // Ordena por valor (maior para menor)
 })
 
-// Funções auxiliares
+// Alterar a função calcularTotalVendas para usar o filtro de data
 function calcularTotalVendas() {
+  // Obter intervalo de datas do filtro
+  const dateRange = store.getState().filters.dateRange;
+  const startDate = dateRange.start;
+  const endDate = dateRange.end;
+  
   let total = 0
   filteredData.value.forEach(item => {
+    // Verificar se o item está dentro do período filtrado
+    if (!isItemWithinDateRange(item, startDate, endDate)) return;
+    
     if (item.status && (item.status.toLowerCase() === 'ganho' || item.status.toLowerCase() === 'won')) {
       // Usar o valor real do campo 'value' se disponível
       if (item.value) {
