@@ -148,6 +148,38 @@ const clearFilters = () => {
 }
 
 const applyFilters = () => {
+  // Aplicar seleção de grupo e origem explicitamente
+  if (selectedGroup.value) {
+    store.selectGroup(selectedGroup.value);
+    console.log('Aplicando filtro de grupo:', selectedGroup.value);
+  } else {
+    store.selectGroup(null);
+  }
+  
+  if (selectedOrigin.value) {
+    store.selectOrigin(selectedOrigin.value);
+    console.log('Aplicando filtro de origem:', selectedOrigin.value);
+  } else {
+    store.selectOrigin(null);
+  }
+  
+  // Aplicar filtro de usuário
+  if (selectedUser.value) {
+    store.selectUser(selectedUser.value);
+    console.log('Aplicando filtro de usuário:', selectedUser.value);
+  } else {
+    store.selectUser(null);
+  }
+  
+  // Aplicar filtro de tag
+  if (selectedTag.value) {
+    store.selectTag(selectedTag.value);
+    console.log('Aplicando filtro de tag:', selectedTag.value);
+  } else {
+    store.selectTag(null);
+  }
+  
+  // Aplicar filtro de data
   if (startDate.value && endDate.value) {
     console.log('Aplicando filtro de data:', startDate.value, 'até', endDate.value);
     
@@ -179,8 +211,17 @@ const applyFilters = () => {
     store.setDateRange(null, null);
   }
   
-  // Aplicar os filtros após definir as datas
+  // Aplicar todos os filtros
   store.applyFilters();
+  
+  console.log('Filtros aplicados com sucesso. Estado atual:', {
+    grupo: store.getSelectedGroup(),
+    origem: store.getSelectedOrigin(),
+    usuario: store.getSelectedUser(),
+    tag: store.getSelectedTag(),
+    dataInicio: store.getState().filters.dateRange.start ? store.getState().filters.dateRange.start.toLocaleDateString() : 'não definido',
+    dataFim: store.getState().filters.dateRange.end ? store.getState().filters.dateRange.end.toLocaleDateString() : 'não definido'
+  });
 }
 
 // Definir data atual para endDate se não estiver definido

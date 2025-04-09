@@ -139,6 +139,16 @@ const store = {
    * Retorna dados filtrados com base nos filtros atuais
    */
   getFilteredData() {
+    // Para debugging 
+    console.log('Aplicando filtros em getFilteredData com:',
+      'grupo:', state.selectedGroup,
+      'origem:', state.selectedOrigin,
+      'usuário:', state.filters.user,
+      'tags:', state.filters.tags,
+      'data início:', state.filters.dateRange.start ? state.filters.dateRange.start.toLocaleDateString() : 'não definido',
+      'data fim:', state.filters.dateRange.end ? state.filters.dateRange.end.toLocaleDateString() : 'não definido'
+    );
+    
     return state.rawData.filter(item => {
       // Filtro de texto de busca (verifica em múltiplos campos)
       if (state.filters.searchText.trim()) {
@@ -174,10 +184,13 @@ const store = {
       if (state.filters.dateRange.start && state.filters.dateRange.end) {
         if (!item.dataObj) return false
         
-        return (
-          item.dataObj >= state.filters.dateRange.start &&
-          item.dataObj <= state.filters.dateRange.end
-        )
+        const startTime = state.filters.dateRange.start.getTime();
+        const endTime = state.filters.dateRange.end.getTime();
+        const itemTime = item.dataObj.getTime();
+        
+        if (itemTime < startTime || itemTime > endTime) {
+          return false;
+        }
       }
       
       // Filtro de grupo
@@ -185,7 +198,7 @@ const store = {
         return false
       }
       
-      // Filtro de origem
+      // Filtro de origem - aplicado apenas se houver um valor selecionado
       if (state.selectedOrigin && item.nome_origem !== state.selectedOrigin) {
         return false
       }
