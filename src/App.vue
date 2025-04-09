@@ -1,75 +1,132 @@
 <template>
-  <div class="min-h-screen transition-colors duration-300 bg-slate-50 dark:bg-gray-900">
-    <header class="bg-white dark:bg-gray-800 shadow-sm">
-      <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        <h1 class="text-2xl font-semibold text-purple-600 dark:text-purple-400">Dashboard Clint</h1>
-        
-        <!-- Menu de usuário -->
-        <div class="relative">
+  <div class="app-container" :class="{ 'auth-route': isAuthRoute }">
+    <!-- Cabeçalho (oculto nas rotas de autenticação) -->
+    <header v-if="!isAuthRoute" class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-4 shadow-md">
+      <div class="container mx-auto flex justify-between items-center">
+             <h1 class="text-xl font-bold text-purple-600 dark:text-purple-400">Dashboard Clint</h1>
+   
+        <!-- Botões de ação -->
+        <div class="flex items-center space-x-4">
+          <!-- Botão de alternância de tema -->
           <button 
-            @click="toggleUserMenu" 
-            class="flex items-center space-x-2 rounded-full p-2 hover:bg-purple-50 dark:hover:bg-purple-900 transition-colors duration-200"
+            @click="toggleTheme"
+            class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none"
+            :title="isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'"
           >
-            <span class="text-gray-700 dark:text-gray-300">Usuário</span>
-            <div class="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-800 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600 dark:text-purple-300" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-              </svg>
-            </div>
+            <svg v-if="isDarkMode" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
           </button>
           
-          <!-- Menu dropdown -->
-          <div 
-            v-if="userMenuOpen" 
-            class="absolute right-0 mt-2 w-48 py-2 bg-white dark:bg-gray-800 rounded-md shadow-xl z-10 border border-gray-200 dark:border-gray-700"
-          >
-            <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-              <p class="text-sm text-gray-700 dark:text-gray-300">Configurações</p>
+          <!-- Perfil do usuário -->
+          <div class="flex items-center space-x-2 relative">
+            <span class="text-sm text-gray-700 dark:text-gray-300">{{ userName }}</span>
+            <div class="w-8 h-8 rounded-full bg-purple-600 dark:bg-purple-700 flex items-center justify-center cursor-pointer" @click="toggleUserMenu">
+              <span class="text-white text-sm">{{ userInitial }}</span>
             </div>
             
-            <button 
-              @click="toggleDarkMode" 
-              class="w-full px-4 py-2 text-left hover:bg-purple-50 dark:hover:bg-purple-900 transition-colors duration-200"
-            >
-              <div class="flex items-center space-x-2">
-                <span v-if="darkMode" class="text-gray-700 dark:text-gray-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
-                  </svg>
-                </span>
-                <span v-else class="text-gray-700 dark:text-gray-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                  </svg>
-                </span>
-                <span class="text-sm text-gray-700 dark:text-gray-300">
-                  {{ darkMode ? 'Modo Claro' : 'Modo Escuro' }}
-                </span>
+            <!-- Menu do usuário -->
+            <div v-if="userMenuOpen" class="absolute right-0 top-full mt-2 py-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-10">
+              <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ userName || 'Convidado' }}</p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 truncate">{{ userEmail }}</p>
               </div>
-            </button>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                Meu Perfil
+              </a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                Configurações
+              </a>
+              <a href="#" @click.prevent="handleLogout" class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+                Sair
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </header>
     
-    <main class="dark:bg-gray-900">
-      <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+    <!-- Conteúdo principal -->
+    <main :class="{ 'full-width': isAuthRoute }">
+      <Transition name="fade" mode="out-in">
         <router-view />
-      </div>
+      </Transition>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, watchEffect, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
-// Estado do tema escuro
-const darkMode = ref(
-  localStorage.getItem('darkMode') === 'true' || 
-  (localStorage.getItem('darkMode') === null && 
-   window.matchMedia('(prefers-color-scheme: dark)').matches)
-)
+// Acessar a rota atual
+const route = useRoute()
+const router = useRouter()
+
+// Verificar se está em uma rota de autenticação (login ou cadastro)
+const isAuthRoute = computed(() => {
+  return route.path === '/login' || route.path === '/signup'
+})
+
+// Estado para o modo escuro
+const isDarkMode = ref(localStorage.getItem('darkMode') === 'true')
 const userMenuOpen = ref(false)
+
+// Dados do usuário
+const userName = ref(localStorage.getItem('userName') || '')
+const userEmail = ref(localStorage.getItem('userEmail') || '')
+const userInitial = computed(() => {
+  if (userName.value) {
+    return userName.value.charAt(0).toUpperCase()
+  }
+  return 'U'
+})
+
+// Função para alternar o modo escuro
+const toggleTheme = () => {
+  isDarkMode.value = !isDarkMode.value
+  localStorage.setItem('darkMode', isDarkMode.value)
+  applyTheme()
+}
+
+// Função para atualizar o tema com base no estado atual
+const applyTheme = () => {
+  if (isDarkMode.value) {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
+}
+
+// Inicializar o tema ao carregar a aplicação
+onMounted(() => {
+  // Verificar se há preferência de tema salva
+  if (localStorage.getItem('darkMode') === null) {
+    // Se não houver, verificar preferência do sistema
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    isDarkMode.value = prefersDark
+    localStorage.setItem('darkMode', prefersDark)
+  }
+  applyTheme()
+})
+
+// Observar mudanças no modo escuro
+watchEffect(() => {
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+  const handler = (e) => {
+    // Apenas aplicar preferência do sistema se não houver preferência salva
+    if (localStorage.getItem('darkMode') === null) {
+      isDarkMode.value = e.matches
+      applyTheme()
+    }
+  }
+  
+  mediaQuery.addEventListener('change', handler)
+  return () => mediaQuery.removeEventListener('change', handler)
+})
 
 // Alternar menu de usuário
 const toggleUserMenu = () => {
@@ -83,85 +140,91 @@ window.addEventListener('click', (e) => {
   }
 })
 
-// Alternar modo escuro
-const toggleDarkMode = () => {
-  darkMode.value = !darkMode.value
-  localStorage.setItem('darkMode', darkMode.value)
-  
-  console.log(`Modo escuro: ${darkMode.value ? 'ativado' : 'desativado'}`)
-  
-  // Aplica imediatamente a classe ao elemento html
-  if (typeof document !== 'undefined') {
-    if (darkMode.value) {
-      document.documentElement.classList.add('dark')
-      console.log('Adicionada classe dark ao HTML')
-    } else {
-      document.documentElement.classList.remove('dark')
-      console.log('Removida classe dark do HTML')
-    }
+// Observar mudança de rota para remover classes específicas do body quando sair das páginas de auth
+watch(() => route.path, (newPath, oldPath) => {
+  // Se estiver saindo de uma rota de autenticação
+  if ((oldPath === '/login' || oldPath === '/signup') && 
+      (newPath !== '/login' && newPath !== '/signup')) {
+    document.body.classList.remove('auth-page-body');
   }
-  
-  // Fecha o menu após alternar o tema
+}, { immediate: true });
+
+// Função para logout
+const handleLogout = () => {
+  localStorage.removeItem('isAuthenticated')
+  localStorage.removeItem('userName')
+  localStorage.removeItem('userEmail')
+  router.push('/login')
   userMenuOpen.value = false
-  
-  // Disparar evento para notificar os componentes que usam temas personalizados
-  window.dispatchEvent(new CustomEvent('theme-change', { 
-    detail: { isDark: darkMode.value } 
-  }))
-}
-
-// Observar mudanças no modo escuro e atualizar variáveis CSS
-watch(darkMode, (newValue) => {
-  // Aplicar classes ao elemento html para estilização global
-  if (typeof document !== 'undefined') {
-    if (newValue) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-    
-    // Disparar evento para notificar os componentes que usam temas personalizados
-    window.dispatchEvent(new CustomEvent('theme-change', { 
-      detail: { isDark: newValue } 
-    }))
-  }
-}, { immediate: true })
-
-// Listener para detectar mudanças na preferência de cor do sistema
-if (typeof window !== 'undefined') {
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-    // Só alteramos automaticamente se o usuário não definiu uma preferência
-    if (localStorage.getItem('darkMode') === null) {
-      darkMode.value = event.matches
-      localStorage.setItem('darkMode', event.matches.toString())
-    }
-  })
 }
 </script>
 
 <style>
-/* Adicionando estilos globais para modo escuro */
-.dark {
-  --bg-primary: #1f2937;
-  --text-primary: #f3f4f6;
+@import './assets/styles.css';
+
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
-.dark text,
-.dark tspan {
-  fill: var(--text-primary) !important;
-}
-
-/* Adicionando transições suaves para mudanças de tema */
 html {
-  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
 
-html.dark {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
+.app-container {
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+.app-container:not(.auth-route) {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
+.dark .app-container:not(.auth-route) {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+main {
+  flex: 1;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+main.full-width {
+  padding: 0;
+  max-width: none;
+}
+
+/* Animações de transição entre rotas */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.card {
+  transition: all 0.3s ease;
+}
+
+.filter-dropdown {
+  min-height: 42px;
 }
 </style> 

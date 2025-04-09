@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" fill="none">
+  <!-- Cubo de fundo -->
+  <g filter="url(#shadow)">
+    <rect x="8" y="8" width="24" height="24" rx="4" fill="#8B5CF6"/>
+  </g>
+  
+  <!-- Detalhes do cubo -->
+  <path d="M20 14 L15 17 L15 23 L20 26 L25 23 L25 17 L20 14Z" fill="#4C1D95"/>
+  <path d="M20 14 L20 20 L25 23 L25 17 L20 14Z" fill="#7C3AED"/>
+  <path d="M20 20 L20 26 L15 23 L15 17 L20 20Z" fill="#6D28D9"/>
+  
+  <!-- Texto -->
+  <path d="M40 15 H44 Q46 15, 46 17 V17 Q46 19, 44 19 H42 V23 H40 V15 Z M42 17.5 H43 Q43.5 17.5, 43.5 17 V17 Q43.5 16.5, 43 16.5 H42 V17.5 Z" fill="#4C1D95"/>
+  <path d="M47 15 H49 V21 H52 V23 H47 V15 Z" fill="#4C1D95"/>
+  <path d="M54 15 H59 Q61 15, 61 17 V21 Q61 23, 59 23 H54 V15 Z M56 17 V21 H58 Q58.5 21, 58.5 20.5 V17.5 Q58.5 17, 58 17 H56 Z" fill="#4C1D95"/>
+  <path d="M62 15 H67 V17 H64 V18 H67 V20 H64 V21 H67 V23 H62 V15 Z" fill="#4C1D95"/>
+  
+  <path d="M70 15 H75 Q77 15, 77 17 V21 Q77 23, 75 23 H70 V15 Z M72 17 V21 H74 Q74.5 21, 74.5 20.5 V17.5 Q74.5 17, 74 17 H72 Z" fill="#4C1D95"/>
+  <path d="M78 15 H83 V17 H80 V18 H83 V20 H80 V21 H83 V23 H78 V15 Z" fill="#4C1D95"/>
+  <path d="M84 15 H87 L89 19 V15 H91 V23 H88 L86 19 V23 H84 V15 Z" fill="#4C1D95"/>
+  <path d="M92 15 H97 V17 H94 V18 H97 V20 H94 V21 H97 V23 H92 V15 Z" fill="#4C1D95"/>
+  <path d="M98 23 V15 H103 Q105 15, 105 17 V17 Q105 18.5, 103.5 19 L105 23 H102.5 L101.5 19.5 H100 V23 H98 Z M100 16.5 V18.5 H102 Q102.5 18.5, 102.5 17.5 V17.5 Q102.5 16.5, 102 16.5 H100 Z" fill="#4C1D95"/>
+  <path d="M107 23 L111 15 H114 L118 23 H115.5 L115 21.5 H110 L109.5 23 H107 Z M111 19.5 H114 L112.5 16.5 L111 19.5 Z" fill="#4C1D95"/>
+  
+  <!-- Sombra -->
+  <defs>
+    <filter id="shadow" x="4" y="6" width="32" height="32" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
+      <feOffset dy="2"/>
+      <feGaussianBlur stdDeviation="2"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+  </defs>
+</svg> 

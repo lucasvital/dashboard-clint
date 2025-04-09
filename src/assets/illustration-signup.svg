@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" fill="none">
+  <!-- Fundo da ilustração -->
+  <path d="M468.841 221.523C496.654 270.082 510.246 329.623 481.192 366.926C452.138 404.229 380.437 419.293 316.67 411.812C252.903 404.331 197.07 374.305 143.822 341.007C90.5743 307.709 39.9117 271.14 17.5099 222.38C-4.89188 173.62 1.06714 112.669 36.6296 71.9863C72.1921 31.3037 137.358 10.8898 202.229 6.78101C267.1 2.67221 331.676 14.8691 386.158 47.6308C440.641 80.3926 485.031 133.719 468.841 221.523Z" fill="#EDE9FE"/>
+
+  <!-- Elementos decorativos -->
+  <circle cx="400" cy="100" r="25" fill="#C4B5FD" opacity="0.5"/>
+  <circle cx="180" cy="350" r="20" fill="#C4B5FD" opacity="0.5"/>
+  <circle cx="100" cy="150" r="15" fill="#8B5CF6" opacity="0.3"/>
+
+  <!-- Formulário -->
+  <rect x="140" y="80" width="220" height="240" rx="8" fill="white" stroke="#8B5CF6" stroke-width="2"/>
+  <rect x="160" y="100" width="180" height="20" rx="3" fill="#EDE9FE"/>
+  <rect x="160" y="140" width="180" height="20" rx="3" fill="#EDE9FE"/>
+  <rect x="160" y="180" width="180" height="20" rx="3" fill="#EDE9FE"/>
+  <rect x="160" y="220" width="180" height="20" rx="3" fill="#EDE9FE"/>
+  <rect x="170" y="260" width="160" height="30" rx="5" fill="#8B5CF6"/>
+
+  <!-- Ícone de pessoa -->
+  <circle cx="250" cy="50" r="30" fill="#8B5CF6"/>
+  <circle cx="250" cy="35" r="12" fill="white"/>
+  <path d="M225 80 Q250 105, 275 80" stroke="white" stroke-width="3" fill="none"/>
+
+  <!-- Ícones decorativos -->
+  <circle cx="70" cy="200" r="10" fill="#C4B5FD"/>
+  <path d="M65 200 L70 205 L80 195" stroke="#4C1D95" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="420" cy="240" r="10" fill="#C4B5FD"/>
+  <path d="M415 240 L420 245 L430 235" stroke="#4C1D95" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Estrelas decorativas -->
+  <path d="M400 180 L403 187 L410 187 L405 192 L407 200 L400 195 L393 200 L395 192 L390 187 L397 187 Z" fill="#8B5CF6" opacity="0.6"/>
+  <path d="M100 300 L102 305 L107 305 L103 308 L105 313 L100 310 L95 313 L97 308 L93 305 L98 305 Z" fill="#8B5CF6" opacity="0.6"/>
+  <path d="M350 50 L352 55 L357 55 L353 58 L355 63 L350 60 L345 63 L347 58 L343 55 L348 55 Z" fill="#8B5CF6" opacity="0.6"/>
+
+  <!-- Linhas onduladas -->
+  <path d="M50 260 Q 75 240, 100 260 Q 125 280, 150 260" stroke="#8B5CF6" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M350 120 Q 375 100, 400 120 Q 425 140, 450 120" stroke="#8B5CF6" stroke-width="2" fill="none" opacity="0.5"/>
+  
+  <!-- Bolhas decorativas -->
+  <circle cx="80" cy="120" r="6" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="430" cy="290" r="8" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="370" cy="330" r="5" fill="#C4B5FD" opacity="0.7"/>
+  <circle cx="430" cy="150" r="4" fill="#C4B5FD" opacity="0.7"/>
+</svg> 

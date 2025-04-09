@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" fill="none">
+  <!-- Fundo da ilustração -->
+  <path d="M424.742 115.522C459.294 162.09 488.369 219.133 475.073 266.84C461.777 314.547 406.11 352.919 348.202 366.916C290.293 380.913 230.143 370.536 179.384 347.532C128.625 324.528 87.2576 288.897 56.2822 240.992C25.3067 193.087 4.7232 132.907 28.2651 89.5813C51.8069 46.2555 119.474 19.785 184.387 10.5328C249.301 1.28051 311.46 9.24731 358.894 34.1921C406.328 59.1369 439.037 101.059 424.742 115.522Z" fill="#EDE9FE"/>
+
+  <!-- Elementos decorativos -->
+  <circle cx="125" cy="125" r="20" fill="#C4B5FD" opacity="0.5"/>
+  <circle cx="380" cy="280" r="15" fill="#C4B5FD" opacity="0.5"/>
+  <circle cx="320" cy="80" r="10" fill="#8B5CF6" opacity="0.3"/>
+
+  <!-- Dispositivo/Monitor -->
+  <rect x="150" y="80" width="200" height="150" rx="5" fill="#4C1D95" />
+  <rect x="160" y="90" width="180" height="130" rx="2" fill="#F9FAFB" />
+  <rect x="185" y="230" width="130" height="10" rx="2" fill="#4C1D95" />
+  <rect x="215" y="240" width="70" height="20" rx="2" fill="#4C1D95" />
+  
+  <!-- Pessoa -->
+  <circle cx="250" cy="150" r="40" fill="#8B5CF6" />
+  <path d="M230 140 A20 20 0 0 1 270 140" stroke="#F9FAFB" stroke-width="3" fill="none" />
+  <circle cx="235" cy="130" r="5" fill="#F9FAFB" />
+  <circle cx="265" cy="130" r="5" fill="#F9FAFB" />
+  
+  <!-- Ícones de check/verificação -->
+  <circle cx="350" cy="120" r="15" fill="#C4B5FD" />
+  <path d="M343 120 L348 125 L358 115" stroke="#4C1D95" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <circle cx="150" cy="180" r="15" fill="#C4B5FD" />
+  <path d="M143 180 L148 185 L158 175" stroke="#4C1D95" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Ondas decorativas -->
+  <path d="M80 310 Q 100 290, 120 310 Q 140 330, 160 310 Q 180 290, 200 310" stroke="#8B5CF6" stroke-width="2" fill="none" opacity="0.6" />
+  <path d="M280 310 Q 300 290, 320 310 Q 340 330, 360 310 Q 380 290, 400 310" stroke="#8B5CF6" stroke-width="2" fill="none" opacity="0.6" />
+  
+  <!-- Bolhas -->
+  <circle cx="100" cy="200" r="5" fill="#C4B5FD" opacity="0.7" />
+  <circle cx="400" cy="150" r="8" fill="#C4B5FD" opacity="0.7" />
+  <circle cx="420" cy="180" r="4" fill="#C4B5FD" opacity="0.7" />
+  <circle cx="370" cy="200" r="6" fill="#C4B5FD" opacity="0.7" />
+</svg> 
