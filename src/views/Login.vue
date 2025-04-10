@@ -35,6 +35,16 @@
         <h1 class="auth-title">Bem-vindo de volta</h1>
         <p class="auth-subtitle">Entre na sua conta para continuar</p>
 
+        <!-- Mensagem de erro -->
+        <div v-if="errorMessage" class="error-message">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+
         <!-- Formulário de login com animação de slide-in -->
         <form @submit.prevent="handleLogin" class="auth-form">
           <div class="form-group">
@@ -131,6 +141,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { login } from '../services/api.js';
 
 // Estado do formulário
 const email = ref('');
@@ -138,6 +149,7 @@ const password = ref('');
 const remember = ref(false);
 const showPassword = ref(false);
 const isLoading = ref(false);
+const errorMessage = ref('');
 
 // Router
 const router = useRouter();
@@ -167,61 +179,39 @@ const forgotPassword = () => {
 // Função de login
 const handleLogin = async () => {
   isLoading.value = true;
+  errorMessage.value = '';
   
   try {
-    // Simulando requisição com timeout
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Chamada real à API para autenticação
+    const response = await login(email.value, password.value);
     
-    // Aqui você implementaria a lógica real de autenticação
-    console.log('Login com:', { 
-      email: email.value, 
-      password: password.value, 
-      remember: remember.value 
-    });
+    console.log('Resposta do login:', response);
     
-    // Simular login bem-sucedido
-    localStorage.setItem('isAuthenticated', 'true');
-    
-    // Armazenar informações do usuário
-    // Em uma implementação real, estas informações viriam da resposta da API
-    const userEmail = email.value;
-    
-    // Melhorar extração do primeiro nome do usuário
-    const fullUsername = userEmail.split('@')[0];
-    
-    // Tenta identificar o primeiro nome usando padrões comuns
-    // Procura por padrões como: lucasvitalsilva, lucas.vital.silva, lucas_vital_silva, etc.
-    
-    // Primeiro, tenta encontrar nomes separados por caracteres especiais (., _, -)
-    let nameParts = fullUsername.split(/[._-]/);
-    
-    // Se não encontrou divisões ou só tem uma parte
-    if (nameParts.length === 1) {
-      // Tenta identificar usando camelCase (lucasVitalSilva -> lucas)
-      nameParts = fullUsername.split(/(?=[A-Z])/);
-      
-      // Se ainda não for possível dividir, tenta separar números
-      if (nameParts.length === 1) {
-        nameParts = fullUsername.split(/\d+/);
-        // Remove partes vazias que podem surgir após a divisão por números
-        nameParts = nameParts.filter(part => part.trim().length > 0);
-      }
+    // Armazenar o token
+    if (response.token) {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('isAuthenticated', 'true');
     }
     
-    // Pega a primeira parte como primeiro nome
-    let firstName = nameParts[0] || fullUsername;
-    
-    // Garantir que a primeira letra seja maiúscula e o resto minúscula
-    firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
-    
-    localStorage.setItem('userEmail', userEmail);
-    localStorage.setItem('userName', firstName);
+    // Armazenar informações do usuário
+    if (response.usuario) {
+      localStorage.setItem('userEmail', response.usuario.email || '');
+      localStorage.setItem('userName', response.usuario.nome?.split(' ')[0] || '');
+      
+      // Gerar avatar aleatório e armazenar
+      const avatarStyles = ['adventurer', 'avataaars', 'bottts', 'fun-emoji', 'lorelei', 'micah', 'personas', 'pixel-art'];
+      const randomStyle = avatarStyles[Math.floor(Math.random() * avatarStyles.length)];
+      const seed = Date.now() + Math.floor(Math.random() * 10000);
+      const avatarUrl = `https://api.dicebear.com/7.x/${randomStyle}/svg?seed=${seed}`;
+      localStorage.setItem('userAvatar', avatarUrl);
+    }
     
     // Redirecionar para a página principal
     router.push('/');
   } catch (error) {
     console.error('Erro no login:', error);
-    // Aqui você implementaria tratamento de erro
+    // Mostrar mensagem de erro
+    errorMessage.value = error.error || 'Erro ao fazer login. Por favor, tente novamente.';
   } finally {
     isLoading.value = false;
   }
@@ -535,6 +525,32 @@ onUnmounted(() => {
   font-size: 0.95rem;
   margin-bottom: 2rem;
   animation: fadeInUp 0.9s;
+}
+
+/* Mensagem de erro */
+.error-message {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  animation: shake 0.5s;
+}
+
+.error-message svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
 @keyframes fadeInUp {

@@ -24,8 +24,8 @@
           <!-- Perfil do usuário -->
           <div class="flex items-center space-x-2 relative">
             <span class="text-sm text-gray-700 dark:text-gray-300">{{ userName }}</span>
-            <div class="w-8 h-8 rounded-full bg-purple-600 dark:bg-purple-700 flex items-center justify-center cursor-pointer" @click="toggleUserMenu">
-              <span class="text-white text-sm">{{ userInitial }}</span>
+            <div class="w-8 h-8 rounded-full overflow-hidden cursor-pointer" @click="toggleUserMenu">
+              <img :src="userAvatar" alt="Avatar" class="w-full h-full object-cover" />
             </div>
             
             <!-- Menu do usuário -->
@@ -78,12 +78,7 @@ const userMenuOpen = ref(false)
 // Dados do usuário
 const userName = ref(localStorage.getItem('userName') || '')
 const userEmail = ref(localStorage.getItem('userEmail') || '')
-const userInitial = computed(() => {
-  if (userName.value) {
-    return userName.value.charAt(0).toUpperCase()
-  }
-  return 'U'
-})
+const userAvatar = ref(localStorage.getItem('userAvatar') || '')
 
 // Função para alternar o modo escuro
 const toggleTheme = () => {
@@ -111,7 +106,30 @@ onMounted(() => {
     localStorage.setItem('darkMode', prefersDark)
   }
   applyTheme()
+  
+  // Atualizar informações do usuário
+  refreshUserInfo()
 })
+
+// Função para atualizar as informações do usuário
+const refreshUserInfo = () => {
+  userName.value = localStorage.getItem('userName') || ''
+  userEmail.value = localStorage.getItem('userEmail') || ''
+  
+  // Verificar se existe um avatar ou gerar um novo
+  let storedAvatar = localStorage.getItem('userAvatar')
+  if (!storedAvatar && localStorage.getItem('isAuthenticated') === 'true') {
+    // Gerar avatar aleatório e armazenar
+    const avatarStyles = ['adventurer', 'avataaars', 'bottts', 'fun-emoji', 'lorelei', 'micah', 'personas', 'pixel-art'];
+    const randomStyle = avatarStyles[Math.floor(Math.random() * avatarStyles.length)];
+    const seed = Date.now() + Math.floor(Math.random() * 10000);
+    storedAvatar = `https://api.dicebear.com/7.x/${randomStyle}/svg?seed=${seed}`;
+    localStorage.setItem('userAvatar', storedAvatar);
+  }
+  
+  // Usar um avatar padrão se não estiver autenticado
+  userAvatar.value = storedAvatar || 'https://api.dicebear.com/7.x/identicon/svg?seed=guest';
+}
 
 // Observar mudanças no modo escuro
 watchEffect(() => {
@@ -140,13 +158,16 @@ window.addEventListener('click', (e) => {
   }
 })
 
-// Observar mudança de rota para remover classes específicas do body quando sair das páginas de auth
+// Observar mudança de rota
 watch(() => route.path, (newPath, oldPath) => {
   // Se estiver saindo de uma rota de autenticação
   if ((oldPath === '/login' || oldPath === '/signup') && 
       (newPath !== '/login' && newPath !== '/signup')) {
     document.body.classList.remove('auth-page-body');
   }
+  
+  // Atualizar informações do usuário quando a rota mudar
+  refreshUserInfo()
 }, { immediate: true });
 
 // Função para logout
@@ -154,6 +175,7 @@ const handleLogout = () => {
   localStorage.removeItem('isAuthenticated')
   localStorage.removeItem('userName')
   localStorage.removeItem('userEmail')
+  localStorage.removeItem('userAvatar')
   router.push('/login')
   userMenuOpen.value = false
 }
