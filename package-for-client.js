@@ -46,6 +46,10 @@ const filesToInclude = [
   'login_clint.py',
   'login_clint_vps.py',
   'schedule_login.py',
+  'playwright_token.py',      // Automação de captura de token JWT (Playwright)
+  'interceptor_token.py',     // Automação de captura de token JWT (Selenium Wire)
+  'get_jwt_token.py',         // Automação de captura de token JWT (localStorage)
+  'README_token_auto.md',     // Documentação da automação de token JWT
   
   // Frontend compilado (será gerado antes de empacotar)
   'dist/'
@@ -180,10 +184,14 @@ DB_NAME=clint_db
 PORT=3000
 NODE_ENV=development
 
-# Credenciais da API Clint
-email=
-senha=
+# Credenciais da API Clint (necessárias para automação de token JWT)
+email=seu_email@clint.com
+senha=sua_senha
 api-token=
+
+# Configurações de automação
+HEADLESS=true         # Executar navegador em modo invisível (true/false)
+TOKEN_TIMEOUT=12      # Tempo de validade do token em horas
 `;
   
   fs.writeFileSync(path.join(outputDir, '.env.example'), envContent);
@@ -245,20 +253,42 @@ Para mais detalhes, consulte o arquivo \`debian-instructions.md\` incluído nest
 
 Este pacote inclui scripts Python para automação de tarefas:
 
-- \`export_via_api.py\` - Exporta dados via API do Clint
-- \`export_via_api_json.py\` - Script para exportar dados via API (captura automaticamente o token JWT)
-- \`export_via_selenium.py\` - Script para exportar dados via automação com Selenium
-- \`get_jwt_token.py\` - Utilitário para extrair o token JWT
-- \`interceptor_token.py\` - Interceptação de requisições para captura do token
-- \`playwright_token.py\` - Captura automática de token com Playwright
+- \`export_via_api.py\` - Exporta dados via API do Clint (agora com captura automática de token)
+- \`playwright_token.py\` - Captura automática de token JWT com Playwright (recomendado)
+- \`interceptor_token.py\` - Captura automática de token JWT com Selenium Wire (alternativa)
+- \`get_jwt_token.py\` - Captura automática de token JWT via localStorage (alternativa)
 - \`login_clint.py\` - Script de automação para login
 - \`login_clint_vps.py\` - Versão otimizada para VPS
 - \`schedule_login.py\` - Agendamento de tarefas automatizadas
 
-Para usar os scripts Python, instale as dependências necessárias:
+### Captura automática de token JWT
+
+O sistema implementa três métodos em cascata para captura automática de tokens JWT:
+
+1. **Método Playwright (Recomendado)**: 
+   \`\`\`bash
+   python playwright_token.py
+   \`\`\`
+   
+2. **Método Selenium Wire**: 
+   \`\`\`bash
+   python interceptor_token.py
+   \`\`\`
+   
+3. **Método LocalStorage**: 
+   \`\`\`bash
+   python get_jwt_token.py
+   \`\`\`
+
+Consulte o arquivo \`README_token_auto.md\` para documentação detalhada.
+
+### Dependências necessárias
+
+Para usar os scripts Python, instale as dependências:
 
 \`\`\`bash
-pip install requests pandas openpyxl selenium webdriver_manager playwright python-dotenv unidecode
+pip install requests pandas openpyxl selenium webdriver_manager playwright python-dotenv unidecode seleniumwire
+playwright install chromium
 \`\`\`
 
 ## Suporte
