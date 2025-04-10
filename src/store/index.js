@@ -649,6 +649,29 @@ const store = {
     })
     
     return Array.from(tags)
+  },
+  
+  /**
+   * Processa dados CSV brutos (para uso com upload de arquivo)
+   * @param {Array} rawData - Dados brutos do CSV já parseados
+   * @returns {Array} Dados processados
+   */
+  processRawData(rawData) {
+    console.log('📊 Processando dados brutos do CSV...');
+    
+    if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+      console.error('❌ Dados inválidos fornecidos para processamento');
+      return [];
+    }
+    
+    // Processar os dados usando a função parseCSVData
+    const processedData = parseCSVData(rawData);
+    
+    // Atualizar o estado da store
+    state.rawData = processedData;
+    
+    console.log(`✅ Dados processados com sucesso: ${processedData.length} registros`);
+    return processedData;
   }
 }
 

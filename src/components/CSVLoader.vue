@@ -33,12 +33,35 @@
           </div>
         </div>
         
+        <!-- Opção de fazer upload do arquivo -->
+        <div class="mt-4">
+          <p class="mb-2 text-sm text-gray-600 dark:text-gray-400">Ou carregue um arquivo CSV diretamente:</p>
+          <div class="flex items-center space-x-2">
+            <label 
+              for="csv-upload" 
+              class="flex items-center px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600"
+            >
+              <span class="text-sm text-gray-700 dark:text-gray-300">Selecionar arquivo</span>
+              <input 
+                type="file" 
+                id="csv-upload" 
+                accept=".csv"
+                class="hidden" 
+                @change="handleFileUpload"
+              />
+            </label>
+            <span v-if="selectedFile" class="text-sm text-gray-600 dark:text-gray-400">
+              {{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})
+            </span>
+          </div>
+        </div>
+        
         <div v-if="error" class="mt-4 p-3 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
           <p class="font-semibold">Erro ao carregar dados:</p>
           <p>{{ error }}</p>
           <p class="text-sm mt-2">
             O arquivo de dados pode não ter sido gerado ainda. Execute a exportação 
-            para criar o arquivo CSV e tente novamente.
+            para criar o arquivo CSV e tente novamente ou faça upload manual do arquivo.
           </p>
         </div>
       </div>
@@ -56,6 +79,7 @@
 import { ref, computed, onMounted, provide } from 'vue'
 import FilterBar from './FilterBar.vue'
 import store from '../store'
+import Papa from 'papaparse'
 
 // Estado
 const getCSVUrl = () => {
@@ -66,11 +90,27 @@ const getCSVUrl = () => {
   const year = today.getFullYear();
   const formattedDate = `${day}-${month}-${year}`;
   
-  // Retorna a URL com a data atual
-  return `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`;
+  // Verifica se estamos em um ambiente de produção (VPS) ou desenvolvimento
+  const isProduction = window.location.hostname !== 'localhost';
+  
+  // Retorna a URL com a data atual, adaptando o caminho conforme o ambiente
+  if (isProduction) {
+    // Lista de caminhos possíveis para testar na produção
+    return [
+      `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
+      `/www/wwwroot/Clintr/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
+      `./resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
+      `../resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`
+    ];
+  } else {
+    // Em desenvolvimento, apenas o caminho padrão
+    return [`/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`];
+  }
 };
 
-const csvUrl = ref(getCSVUrl())
+// Array de URLs possíveis para tentar
+const possibleUrls = ref(getCSVUrl());
+const csvUrl = ref(possibleUrls.value[0]); // Inicialmente, usa a primeira URL da lista
 const csvLoaded = ref(false)
 const loading = ref(false)
 const error = ref(null)
@@ -107,7 +147,7 @@ const tryPreviousDates = async (daysToTry = 7) => {
   
   const today = new Date();
   
-  for (let i = 0; i < daysToTry; i++) {
+  for (let i = 1; i <= daysToTry; i++) { // Começar do dia anterior (i=1)
     // Tenta a data atual menos i dias
     const targetDate = new Date(today);
     targetDate.setDate(today.getDate() - i);
@@ -117,73 +157,212 @@ const tryPreviousDates = async (daysToTry = 7) => {
     const year = targetDate.getFullYear();
     const formattedDate = `${day}-${month}-${year}`;
     
-    const fileUrl = `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`;
-    csvUrl.value = fileUrl;
+    // Gerar URLs possíveis para esta data
+    const isProduction = window.location.hostname !== 'localhost';
+    const urls = isProduction ? [
+      `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
+      `/www/wwwroot/Clintr/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
+      `./resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`
+    ] : [
+      `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`
+    ];
     
-    try {
-      console.log(`Tentando carregar arquivo: ${fileUrl}`);
-      await store.loadCSVData(fileUrl);
-      csvLoaded.value = true;
-      loading.value = false;
-      console.log(`Arquivo carregado com sucesso: ${fileUrl}`);
-      break; // Sai do loop se carregar com sucesso
-    } catch (err) {
-      console.log(`Erro ao carregar ${fileUrl}: ${err.message}`);
-      // Continua tentando com a próxima data
+    console.log(`🔍 Tentando carregar arquivo de ${formattedDate}...`);
+    
+    // Tentar cada URL possível para esta data
+    for (const url of urls) {
+      try {
+        // Verificar primeiro se o arquivo existe e é um CSV válido
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.log(`❌ Arquivo não encontrado em: ${url}`);
+          continue;
+        }
+        
+        const text = await response.text();
+        if (!isValidCSV(text)) {
+          console.log(`❌ Conteúdo não parece ser um CSV válido em: ${url}`);
+          continue;
+        }
+        
+        // Arquivo válido encontrado, carregar com Papa Parse
+        csvUrl.value = url;
+        const data = await store.loadCSVData(url);
+        
+        csvLoaded.value = true;
+        loading.value = false;
+        console.log(`✅ Arquivo de ${formattedDate} carregado com sucesso: ${url}`);
+        console.log(`📊 Total de registros: ${data.length}`);
+        return; // Sair da função se carregou com sucesso
+      } catch (err) {
+        console.log(`❌ Erro ao carregar ${url}: ${err.message}`);
+        // Continuar com a próxima URL
+      }
     }
+    
+    // Se chegou aqui, nenhuma URL para esta data funcionou, tentar a próxima data
   }
   
   // Se chegou aqui e ainda não carregou, mostrar erro
   if (!csvLoaded.value) {
     error.value = "Não foi possível encontrar um arquivo CSV válido nos últimos dias.";
     loading.value = false;
+    console.error('❌ Falha ao carregar CSV: nenhum arquivo válido encontrado para os últimos ' + daysToTry + ' dias');
   }
 };
 
+// Verificar se o conteúdo parece um CSV válido
+const isValidCSV = (content) => {
+  // Verificar se o conteúdo começa com tags HTML
+  if (content.trim().toLowerCase().startsWith('<!doctype') || 
+      content.trim().toLowerCase().startsWith('<html')) {
+    console.error('❌ O arquivo não é um CSV válido, parece ser HTML');
+    return false;
+  }
+  
+  // Verificar se há pelo menos uma linha com delimitador
+  const primeiraLinha = content.split('\n')[0];
+  return primeiraLinha.includes(',') || primeiraLinha.includes(';') || primeiraLinha.includes('\t');
+};
+
 // Carregar dados do CSV
-const loadCSV = () => {
+const loadCSV = async () => {
   loading.value = true;
   error.value = null;
   
-  console.log(`Tentando carregar o arquivo: ${csvUrl.value}`);
+  // Tentar cada URL possível na lista
+  let loaded = false;
   
-  // Tenta o arquivo atual primeiro, depois tenta datas anteriores
-  store.loadCSVData(csvUrl.value)
-    .then((data) => {
+  for (let i = 0; i < possibleUrls.value.length; i++) {
+    const url = possibleUrls.value[i];
+    csvUrl.value = url;
+    
+    console.log(`🔍 Tentando carregar o arquivo: ${url}`);
+    
+    try {
+      // Primeiro verificar se o arquivo existe e é válido
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        console.log(`❌ Arquivo não encontrado em: ${url}`);
+        continue; // Tentar a próxima URL
+      }
+      
+      const text = await response.text();
+      
+      // Verificar se o conteúdo parece ser um CSV
+      if (!isValidCSV(text)) {
+        console.log(`❌ Conteúdo não parece ser um CSV válido em: ${url}`);
+        console.log('Primeiras linhas do conteúdo:');
+        console.log(text.split('\n').slice(0, 5).join('\n'));
+        continue; // Tentar a próxima URL
+      }
+      
+      // Verificar o número aproximado de linhas
+      const linhas = text.split('\n').length;
+      console.log(`ℹ️ Arquivo encontrado com aproximadamente ${linhas} linhas`);
+      
+      // Agora que validamos o arquivo, carregar com Papa Parse
+      const data = await store.loadCSVData(url);
+      
       csvLoaded.value = true;
       loading.value = false;
-      console.log(`✅ Arquivo carregado com sucesso: ${csvUrl.value}`);
+      console.log(`✅ Arquivo carregado com sucesso: ${url}`);
       console.log(`📊 Total de registros carregados: ${data.length}`);
       
-      // Verificar se há poucos registros (menos de 100)
-      if (data.length < 100) {
-        console.log(`⚠️ Atenção: Apenas ${data.length} registros foram carregados. Este valor parece baixo.`);
-        
-        // Examinar o CSV diretamente para verificar o problema
-        fetch(csvUrl.value)
-          .then(response => response.text())
-          .then(text => {
-            const linhas = text.split('\n').length;
-            console.log(`🔍 O arquivo original possui ${linhas} linhas (incluindo cabeçalho)`);
-            
-            // Mostrar as primeiras 5 linhas para diagnóstico
-            const primeiraLinhas = text.split('\n').slice(0, 5).join('\n');
-            console.log('📄 Primeiras linhas do arquivo:');
-            console.log(primeiraLinhas);
-            
-            if (linhas > data.length + 5) {
-              console.log(`⚠️ Possível problema de parsing: o arquivo tem ${linhas} linhas, mas apenas ${data.length} registros foram processados`);
-            }
-          })
-          .catch(err => {
-            console.log(`❌ Erro ao examinar arquivo diretamente: ${err.message}`);
-          });
+      // Se carregou com sucesso, sair do loop
+      loaded = true;
+      break;
+    } catch (err) {
+      console.log(`❌ Erro ao carregar ${url}: ${err.message}`);
+      // Continuar para tentar a próxima URL
+    }
+  }
+  
+  // Se nenhuma URL funcionou, tentar datas anteriores
+  if (!loaded) {
+    console.log('⚠️ Nenhuma das URLs funcionou. Tentando datas anteriores...');
+    tryPreviousDates();
+  }
+};
+
+// Variáveis para upload de arquivos
+const selectedFile = ref(null);
+
+// Função para formatar o tamanho do arquivo
+const formatFileSize = (bytes) => {
+  if (bytes < 1024) return bytes + ' bytes';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+};
+
+// Função para lidar com o upload de arquivos
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  selectedFile.value = file;
+  loading.value = true;
+  error.value = null;
+  
+  console.log(`📂 Arquivo selecionado: ${file.name} (${formatFileSize(file.size)})`);
+  
+  // Ler o arquivo como texto
+  const reader = new FileReader();
+  
+  reader.onload = async (e) => {
+    const content = e.target.result;
+    
+    // Verificar se o conteúdo parece ser um CSV válido
+    if (!isValidCSV(content)) {
+      console.error('❌ O arquivo não parece ser um CSV válido');
+      error.value = 'O arquivo selecionado não parece ser um CSV válido. Verifique o formato do arquivo.';
+      loading.value = false;
+      return;
+    }
+    
+    try {
+      // Processar o CSV usando PapaParse diretamente
+      const parseResult = Papa.parse(content, {
+        header: true,
+        skipEmptyLines: true
+      });
+      
+      if (parseResult.errors && parseResult.errors.length > 0) {
+        console.warn('⚠️ Avisos durante o parsing do CSV:', parseResult.errors);
       }
-    })
-    .catch(err => {
-      console.log(`Erro ao carregar o arquivo atual: ${err.message}. Tentando arquivos anteriores...`);
-      tryPreviousDates();
-    });
+      
+      if (!parseResult.data || parseResult.data.length === 0) {
+        error.value = 'O arquivo CSV está vazio ou não contém dados válidos';
+        loading.value = false;
+        return;
+      }
+      
+      console.log(`✅ CSV carregado com sucesso do arquivo local`);
+      console.log(`📊 Total de registros: ${parseResult.data.length}`);
+      
+      // Atualizar o store com os dados processados
+      const processedData = store.processRawData(parseResult.data);
+      
+      // Atualizar estado
+      csvLoaded.value = true;
+      loading.value = false;
+      
+    } catch (err) {
+      console.error('❌ Erro ao processar arquivo:', err);
+      error.value = `Erro ao processar o arquivo: ${err.message}`;
+      loading.value = false;
+    }
+  };
+  
+  reader.onerror = () => {
+    console.error('❌ Erro ao ler o arquivo');
+    error.value = 'Erro ao ler o arquivo. Verifique se o arquivo não está corrompido.';
+    loading.value = false;
+  };
+  
+  // Iniciar a leitura do arquivo
+  reader.readAsText(file);
 };
 
 // Checar se já temos dados no store
