@@ -56,9 +56,6 @@
           </div>
         </div>
         
-        <!-- Componente de download direto -->
-        <DownloadCSV />
-        
         <div v-if="error" class="mt-4 p-3 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
           <p class="font-semibold">Erro ao carregar dados:</p>
           <p>{{ error }}</p>
@@ -81,12 +78,11 @@
 <script setup>
 import { ref, computed, onMounted, provide } from 'vue'
 import FilterBar from './FilterBar.vue'
-import DownloadCSV from './DownloadCSV.vue'
 import store from '../store'
 import Papa from 'papaparse'
 
 // Estado
-const getCSVUrl = () => {
+const getDataUrls = () => {
   // Obtém a data atual no formato dd-mm-yyyy
   const today = new Date();
   const day = String(today.getDate()).padStart(2, '0');
@@ -94,26 +90,40 @@ const getCSVUrl = () => {
   const year = today.getFullYear();
   const formattedDate = `${day}-${month}-${year}`;
   
+  // Nome do arquivo base
+  const baseFileName = `[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}`;
+  
   // Verifica se estamos em um ambiente de produção (VPS) ou desenvolvimento
   const isProduction = window.location.hostname !== 'localhost';
   
-  // Retorna a URL com a data atual, adaptando o caminho conforme o ambiente
+  // Diferentes tipos de arquivos para tentar carregar
+  const fileExtensions = ['.json', '.csv'];
+  
   if (isProduction) {
-    // Lista de caminhos possíveis para testar na produção
-    return [
-      `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
-      `/www/wwwroot/Clintr/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
-      `./resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
-      `../resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`
-    ];
+    const urls = [];
+    
+    // Gerar combinações de caminhos e extensões
+    for (const ext of fileExtensions) {
+      urls.push(
+        `/resultados_api/${baseFileName}${ext}`,
+        `/www/wwwroot/Clintr/resultados_api/${baseFileName}${ext}`,
+        `./resultados_api/${baseFileName}${ext}`,
+        `../resultados_api/${baseFileName}${ext}`
+      );
+    }
+    
+    return urls;
   } else {
-    // Em desenvolvimento, apenas o caminho padrão
-    return [`/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`];
+    // Em desenvolvimento, apenas os caminhos padrão
+    return [
+      `/resultados_api/${baseFileName}.json`,
+      `/resultados_api/${baseFileName}.csv`
+    ];
   }
 };
 
 // Array de URLs possíveis para tentar
-const possibleUrls = ref(getCSVUrl());
+const possibleUrls = ref(getDataUrls());
 const csvUrl = ref(possibleUrls.value[0]); // Inicialmente, usa a primeira URL da lista
 const csvLoaded = ref(false)
 const loading = ref(false)
@@ -161,22 +171,38 @@ const tryPreviousDates = async (daysToTry = 7) => {
     const year = targetDate.getFullYear();
     const formattedDate = `${day}-${month}-${year}`;
     
+    // Nome do arquivo base para esta data
+    const baseFileName = `[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}`;
+    
     // Gerar URLs possíveis para esta data
     const isProduction = window.location.hostname !== 'localhost';
-    const urls = isProduction ? [
-      `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
-      `/www/wwwroot/Clintr/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`,
-      `./resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`
-    ] : [
-      `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`
-    ];
+    
+    // Diferentes tipos de arquivos para tentar carregar
+    const fileExtensions = ['.json', '.csv'];
+    
+    let urls = [];
+    
+    // Gerar combinações de caminhos e extensões
+    if (isProduction) {
+      for (const ext of fileExtensions) {
+        urls = urls.concat([
+          `/resultados_api/${baseFileName}${ext}`,
+          `/www/wwwroot/Clintr/resultados_api/${baseFileName}${ext}`,
+          `./resultados_api/${baseFileName}${ext}`
+        ]);
+      }
+    } else {
+      for (const ext of fileExtensions) {
+        urls.push(`/resultados_api/${baseFileName}${ext}`);
+      }
+    }
     
     console.log(`🔍 Tentando carregar arquivo de ${formattedDate}...`);
     
     // Tentar cada URL possível para esta data
     for (const url of urls) {
       try {
-        // Verificar primeiro se o arquivo existe e é um CSV válido
+        // Verificar primeiro se o arquivo existe e é um formato válido
         const response = await fetch(url);
         if (!response.ok) {
           console.log(`❌ Arquivo não encontrado em: ${url}`);
@@ -184,14 +210,31 @@ const tryPreviousDates = async (daysToTry = 7) => {
         }
         
         const text = await response.text();
-        if (!isValidCSV(text)) {
-          console.log(`❌ Conteúdo não parece ser um CSV válido em: ${url}`);
+        if (!isValidDataFile(text, url)) {
+          console.log(`❌ Conteúdo não parece ser válido em: ${url}`);
           continue;
         }
         
-        // Arquivo válido encontrado, carregar com Papa Parse
-        csvUrl.value = url;
-        const data = await store.loadCSVData(url);
+        // Verificar se é JSON ou CSV
+        const isJsonFile = url.toLowerCase().endsWith('.json');
+        
+        let data;
+        if (isJsonFile) {
+          // Processar JSON
+          console.log('📊 Processando arquivo JSON...');
+          try {
+            const jsonData = JSON.parse(text);
+            data = await store.processRawData(jsonData);
+          } catch (e) {
+            console.error('❌ Erro ao processar JSON:', e);
+            continue; // Tentar a próxima URL
+          }
+        } else {
+          // Arquivo válido encontrado, carregar com Papa Parse
+          console.log('📊 Processando arquivo CSV...');
+          csvUrl.value = url;
+          data = await store.loadCSVData(url);
+        }
         
         csvLoaded.value = true;
         loading.value = false;
@@ -209,27 +252,44 @@ const tryPreviousDates = async (daysToTry = 7) => {
   
   // Se chegou aqui e ainda não carregou, mostrar erro
   if (!csvLoaded.value) {
-    error.value = "Não foi possível encontrar um arquivo CSV válido nos últimos dias.";
+    error.value = "Não foi possível encontrar um arquivo CSV ou JSON válido nos últimos dias.";
     loading.value = false;
-    console.error('❌ Falha ao carregar CSV: nenhum arquivo válido encontrado para os últimos ' + daysToTry + ' dias');
+    console.error('❌ Falha ao carregar dados: nenhum arquivo válido encontrado para os últimos ' + daysToTry + ' dias');
   }
 };
 
-// Verificar se o conteúdo parece um CSV válido
-const isValidCSV = (content) => {
+// Verificar se o conteúdo parece um CSV ou JSON válido
+const isValidDataFile = (content, url) => {
+  // Se o conteúdo estiver vazio, não é válido
+  if (!content || typeof content !== 'string') return false;
+  
   // Verificar se o conteúdo começa com tags HTML
   if (content.trim().toLowerCase().startsWith('<!doctype') || 
       content.trim().toLowerCase().startsWith('<html')) {
-    console.error('❌ O arquivo não é um CSV válido, parece ser HTML');
+    console.error('❌ O arquivo não é válido, parece ser HTML');
     return false;
   }
   
-  // Verificar se há pelo menos uma linha com delimitador
-  const primeiraLinha = content.split('\n')[0];
-  return primeiraLinha.includes(',') || primeiraLinha.includes(';') || primeiraLinha.includes('\t');
+  // Verificar a extensão do arquivo
+  const isJsonFile = url.toLowerCase().endsWith('.json');
+  
+  if (isJsonFile) {
+    // Para arquivos JSON, verificar se é um JSON válido
+    try {
+      JSON.parse(content);
+      return true;
+    } catch (e) {
+      console.error('❌ O arquivo não é um JSON válido');
+      return false;
+    }
+  } else {
+    // Para arquivos CSV, verificar delimitadores
+    const primeiraLinha = content.split('\n')[0];
+    return primeiraLinha.includes(',') || primeiraLinha.includes(';') || primeiraLinha.includes('\t');
+  }
 };
 
-// Carregar dados do CSV
+// Carregar dados
 const loadCSV = async () => {
   loading.value = true;
   error.value = null;
@@ -254,20 +314,38 @@ const loadCSV = async () => {
       
       const text = await response.text();
       
-      // Verificar se o conteúdo parece ser um CSV
-      if (!isValidCSV(text)) {
-        console.log(`❌ Conteúdo não parece ser um CSV válido em: ${url}`);
+      // Verificar se o conteúdo parece ser um arquivo válido
+      if (!isValidDataFile(text, url)) {
+        console.log(`❌ Conteúdo não parece ser válido em: ${url}`);
         console.log('Primeiras linhas do conteúdo:');
         console.log(text.split('\n').slice(0, 5).join('\n'));
         continue; // Tentar a próxima URL
       }
       
-      // Verificar o número aproximado de linhas
-      const linhas = text.split('\n').length;
-      console.log(`ℹ️ Arquivo encontrado com aproximadamente ${linhas} linhas`);
+      // Verificar se é JSON ou CSV
+      const isJsonFile = url.toLowerCase().endsWith('.json');
       
-      // Agora que validamos o arquivo, carregar com Papa Parse
-      const data = await store.loadCSVData(url);
+      let data;
+      if (isJsonFile) {
+        // Processar JSON
+        console.log('📊 Processando arquivo JSON...');
+        try {
+          const jsonData = JSON.parse(text);
+          data = await store.processRawData(jsonData);
+        } catch (e) {
+          console.error('❌ Erro ao processar JSON:', e);
+          continue; // Tentar a próxima URL
+        }
+      } else {
+        // Processar CSV
+        console.log('📊 Processando arquivo CSV...');
+        // Verificar o número aproximado de linhas
+        const linhas = text.split('\n').length;
+        console.log(`ℹ️ Arquivo encontrado com aproximadamente ${linhas} linhas`);
+        
+        // Agora que validamos o arquivo, carregar com Papa Parse
+        data = await store.loadCSVData(url);
+      }
       
       csvLoaded.value = true;
       loading.value = false;
