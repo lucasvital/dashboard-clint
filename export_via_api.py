@@ -402,69 +402,163 @@ def tentar_exportacao(origin_id, origin_name, csv_dir, group_name, totalBulk):
         logger.error(f"Exceção durante exportação: {str(e)}")
         return None
 
+def formatar_datas_no_dataframe(df):
+    """
+    Formata as datas no DataFrame para o formato dd/mm/aaaa sem as horas
+    
+    Args:
+        df: DataFrame pandas contendo os dados
+        
+    Returns:
+        DataFrame com as datas formatadas
+    """
+    logger.info("Formatando datas no DataFrame...")
+    
+    if 'created_at' in df.columns:
+        logger.info(f"Encontrada coluna created_at com {df['created_at'].notna().sum()} valores não-nulos")
+        
+        # Função para formatar cada data
+        def formatar_data(data_str):
+            if pd.isna(data_str) or not isinstance(data_str, str):
+                return data_str
+                
+            # Extrai apenas a parte da data (dd/mm/aaaa) de strings no formato dd/mm/aaaa hh:mm:ss
+            match = re.match(r'(\d{2}/\d{2}/\d{4})(?:\s+\d{2}:\d{2}:\d{2})?', data_str)
+            if match:
+                return match.group(1)  # Retorna apenas a parte da data
+            return data_str
+        
+        # Aplica a formatação em todas as linhas
+        df['created_at'] = df['created_at'].apply(formatar_data)
+        logger.info("Datas formatadas com sucesso")
+    
+    # Verifica outras colunas de data que possam existir
+    for col in ['won_at', 'lost_at', 'purchase_created_at']:
+        if col in df.columns:
+            logger.info(f"Formatando datas na coluna {col}")
+            df[col] = df[col].apply(lambda x: formatar_data(x) if isinstance(x, str) else x)
+    
+    return df
+
 def download_csv(url, origin_id, origin_name, csv_dir, group_name):
     """
-    Faz o download de um arquivo CSV a partir de uma URL e salva em disco.
-    Inclui logs detalhados do processo de download.
+    Baixa o arquivo CSV do link de download e o salva localmente
+    
+    Args:
+        url: URL para download do CSV
+        origin_id: ID da origem
+        origin_name: Nome da origem
+        csv_dir: Diretório para salvar o CSV
+        group_name: Nome do grupo (opcional)
+        
+    Returns:
+        Caminho para o arquivo baixado ou None se falhar
     """
+    logger.info(f"Baixando CSV para origem: {origin_name} (ID: {origin_id})")
+    
     try:
-        logger.info(f"Iniciando download do CSV para origem '{origin_name}' (ID: {origin_id})...")
-        logger.info(f"URL de download: {url}")
+        # Preparar cabeçalhos para o download
+        headers = get_auth_headers()
         
-        # Obter a data atual no formato ANO-MES-DIA
-        data_atual = datetime.now().strftime("%Y%m%d_%H%M%S")
-        
-        # Normalizar o nome do grupo e da origem
-        grupo_normalizado = normalizar_nome_arquivo(group_name) if group_name else "Sem_Grupo"
+        # Normalizar o nome da origem para criar o nome do arquivo
         nome_normalizado = normalizar_nome_arquivo(origin_name)
+        if group_name:
+            grupo_normalizado = normalizar_nome_arquivo(group_name)
+            nome_normalizado = f"{grupo_normalizado}_{nome_normalizado}"
         
-        logger.info(f"Grupo normalizado para o arquivo: '{grupo_normalizado}'")
-        logger.info(f"Nome normalizado para o arquivo: '{nome_normalizado}'")
-        
-        # Criar o nome do arquivo com Grupo, Origem e data (sem o ID da origem no início)
-        nome_arquivo = f"{grupo_normalizado}_{nome_normalizado}_{data_atual}.csv"
+        # Adicionar timestamp para evitar conflitos
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        nome_arquivo = f"{nome_normalizado}_{timestamp}.csv"
         caminho_arquivo = os.path.join(csv_dir, nome_arquivo)
         
-        logger.info(f"Nome do arquivo alvo: {nome_arquivo}")
-        logger.info(f"Caminho completo do arquivo: {caminho_arquivo}")
+        logger.info(f"Iniciando download do CSV da URL: {url}")
+        logger.info(f"Arquivo de destino: {caminho_arquivo}")
         
-        # Obter os headers de autenticação
-        headers = get_auth_headers()
-        token = os.environ.get('CLINT_API_TOKEN') or os.environ.get('CLINT_MANUAL_TOKEN')
-        logger.info(f"Token de autenticação disponível: {'Sim' if token else 'Não'}")
-        
-        # Adicionar o header Accept para CSV
-        headers.update({
-            'Accept': 'text/csv,application/csv,application/octet-stream',
-        })
-        
-        logger.info(f"Headers de download configurados: {json.dumps(headers)}")
-        
-        # Fazer a requisição para obter o arquivo CSV
-        logger.info(f"Enviando requisição GET para download do CSV...")
+        # Realizar o download
         response = requests.get(url, headers=headers)
         
-        # Verificar se a requisição foi bem-sucedida
+        logger.info(f"Download concluído. Status code: {response.status_code}")
+        logger.info(f"Tamanho do conteúdo: {len(response.content)} bytes")
+        logger.info(f"Headers da resposta: {json.dumps(dict(response.headers))}")
+        
+        # Se o download for bem sucedido
         if response.status_code == 200:
-            logger.info(f"Download bem-sucedido (Status: {response.status_code})")
-            logger.info(f"Tamanho do conteúdo: {len(response.content)} bytes")
-            logger.info(f"Headers da resposta: {json.dumps(dict(response.headers))}")
-            
-            # Salvar o arquivo CSV
-            logger.info(f"Salvando conteúdo CSV em: {caminho_arquivo}")
-            with open(caminho_arquivo, 'wb') as f:
+            # Salvar o conteúdo em um arquivo temporário
+            temp_file_path = os.path.join(csv_dir, f"{nome_normalizado}_temp.csv")
+            with open(temp_file_path, 'wb') as f:
                 f.write(response.content)
             
-            logger.info(f"Arquivo salvo com sucesso em: {caminho_arquivo}")
-            return {
-                "success": True,
-                "file_path": caminho_arquivo,
-                "group_name": group_name,
-                "origin_name": origin_name,
-                "origin_id": origin_id,
-                "file_size": len(response.content),
-                "file_name": nome_arquivo
-            }
+            # Ler o CSV, processar as datas e salvar novamente
+            try:
+                # Tentar diferentes encodings para lidar com caracteres especiais
+                encodings = ['utf-8', 'latin1', 'ISO-8859-1']
+                df = None
+                
+                for encoding in encodings:
+                    try:
+                        df = pd.read_csv(temp_file_path, encoding=encoding)
+                        break  # Se conseguiu ler, sai do loop
+                    except UnicodeDecodeError:
+                        continue  # Tenta o próximo encoding
+                
+                if df is not None:
+                    # Processar as datas no DataFrame
+                    df = formatar_datas_no_dataframe(df)
+                    
+                    # Salvar o DataFrame processado
+                    df.to_csv(caminho_arquivo, index=False)
+                    
+                    # Remover arquivo temporário
+                    if os.path.exists(temp_file_path):
+                        os.remove(temp_file_path)
+                    
+                    logger.info(f"CSV baixado, processado e salvo com sucesso: {caminho_arquivo}")
+                    return {
+                        "success": True,
+                        "file_path": caminho_arquivo,
+                        "group_name": group_name,
+                        "origin_name": origin_name,
+                        "origin_id": origin_id,
+                        "file_size": len(response.content),
+                        "file_name": nome_arquivo
+                    }
+                else:
+                    # Se não conseguiu ler com nenhum encoding, usa o arquivo original
+                    with open(caminho_arquivo, 'wb') as f:
+                        f.write(response.content)
+                    
+                    if os.path.exists(temp_file_path):
+                        os.remove(temp_file_path)
+                        
+                    logger.warning(f"Não foi possível processar o CSV. Salvando arquivo original: {caminho_arquivo}")
+                    return {
+                        "success": True,
+                        "file_path": caminho_arquivo,
+                        "group_name": group_name,
+                        "origin_name": origin_name,
+                        "origin_id": origin_id,
+                        "file_size": len(response.content),
+                        "file_name": nome_arquivo
+                    }
+            
+            except Exception as e:
+                logger.error(f"Erro ao processar CSV: {str(e)}")
+                # Em caso de erro no processamento, mantém o arquivo original
+                with open(caminho_arquivo, 'wb') as f:
+                    f.write(response.content)
+                
+                if os.path.exists(temp_file_path):
+                    os.remove(temp_file_path)
+                
+                return {
+                    "success": True,
+                    "file_path": caminho_arquivo,
+                    "group_name": group_name,
+                    "origin_name": origin_name,
+                    "origin_id": origin_id,
+                    "file_size": len(response.content),
+                    "file_name": nome_arquivo
+                }
         else:
             logger.error(f"Erro ao baixar o CSV. Status: {response.status_code}")
             logger.error(f"Resposta: {response.text}")
@@ -662,12 +756,15 @@ def export_all_origins():
 
 def combinar_todos_csvs(csv_dir, results_dir, downloads_info):
     """
-    Combina todos os arquivos CSV em um único arquivo, adicionando colunas para grupo e origem
+    Combina todos os CSVs baixados em um único arquivo com informações adicionais
     
     Args:
-        csv_dir: Diretório onde os arquivos CSV estão localizados
-        results_dir: Diretório onde salvar o arquivo CSV combinado
-        downloads_info: Lista com informações dos downloads realizados
+        csv_dir: Diretório onde os CSVs estão salvos
+        results_dir: Diretório de resultados
+        downloads_info: Informações sobre downloads realizados
+        
+    Returns:
+        Path do arquivo CSV combinado
     """
     logger.info("Iniciando combinação de todos os arquivos CSV em um único arquivo...")
     
@@ -790,33 +887,28 @@ def combinar_todos_csvs(csv_dir, results_dir, downloads_info):
         except Exception as e:
             logger.error(f"Erro ao processar o arquivo {arquivo_csv}: {str(e)}")
     
-    # Salva o DataFrame combinado em um único arquivo CSV
-    if not df_combinado.empty:
-        # Formato de data brasileira para o nome do arquivo
-        data_br = datetime.now().strftime("%d-%m-%Y")
-        
-        # Usa o email do usuário no nome do arquivo
-        email_usuario = EMAIL.replace("@", "_at_")  # Substitui @ para evitar problemas no nome do arquivo
-        
-        # Nomes dos arquivos no formato solicitado
-        arquivo_combinado = os.path.join(results_dir, f"[{email_usuario}]_Dados_Gerais_{data_br}.csv")
-        arquivo_excel = os.path.join(results_dir, f"[{email_usuario}]_Dados_Gerais_{data_br}.xlsx")
-        
-        df_combinado.to_csv(arquivo_combinado, index=False, encoding='utf-8')
-        
-        logger.info(f"Arquivo CSV combinado salvo como: {arquivo_combinado}")
-        logger.info(f"Total de arquivos processados: {arquivos_processados}")
-        logger.info(f"Total de registros combinados: {registros_totais}")
-        logger.info(f"Total de colunas no arquivo final: {len(df_combinado.columns)}")
-        
-        # Também salva um arquivo Excel para facilitar a visualização
-        try:
-            df_combinado.to_excel(arquivo_excel, index=False)
-            logger.info(f"Arquivo Excel combinado salvo como: {arquivo_excel}")
-        except Exception as e:
-            logger.error(f"Erro ao salvar arquivo Excel: {str(e)}")
-    else:
-        logger.error("Não foi possível criar um arquivo combinado. Nenhum dado processado com sucesso.")
+    # Formatar as datas no DataFrame combinado
+    df_combinado = formatar_datas_no_dataframe(df_combinado)
+    
+    # Gerar nome do arquivo com a data atual
+    today = datetime.now().strftime("%d-%m-%Y")
+    output_filename = f"[{EMAIL.replace('@', '_at_')}]_Dados_Gerais_{today}.csv"
+    output_path = os.path.join(results_dir, output_filename)
+    
+    # Salvar o DataFrame combinado
+    df_combinado.to_csv(output_path, index=False)
+    
+    logger.info(f"Arquivo CSV combinado salvo como: {output_path}")
+    logger.info(f"Total de arquivos processados: {arquivos_processados}")
+    logger.info(f"Total de registros combinados: {registros_totais}")
+    logger.info(f"Total de colunas no arquivo final: {len(df_combinado.columns)}")
+    
+    # Também salva um arquivo Excel para facilitar a visualização
+    try:
+        df_combinado.to_excel(os.path.join(results_dir, f"[{EMAIL.replace('@', '_at_')}]_Dados_Gerais_{today}.xlsx"), index=False)
+        logger.info(f"Arquivo Excel combinado salvo como: [{EMAIL.replace('@', '_at_')}]_Dados_Gerais_{today}.xlsx")
+    except Exception as e:
+        logger.error(f"Erro ao salvar arquivo Excel: {str(e)}")
 
 if __name__ == "__main__":
     export_all_origins() 

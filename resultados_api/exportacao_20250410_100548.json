@@ -1,0 +1,331 @@
+{
+    "data_extracao": "2025-04-10 10:04:35",
+    "total_grupos": 2,
+    "total_origens": 20,
+    "grupos": [
+        {
+            "id": "6a86e59c-be36-48b7-97b4-407c2e2308fa",
+            "nome": "[Pay] Playbook Interativo",
+            "origens": [
+                {
+                    "id": "06ad055a-7211-48ea-87dd-05fabae21e91",
+                    "nome": "Compras expiradas"
+                },
+                {
+                    "id": "c44c1a04-d617-471c-95c2-2ced915748b0",
+                    "nome": "Assinaturas ativas"
+                },
+                {
+                    "id": "274d1c6a-a4ba-485c-90af-c153785bceed",
+                    "nome": "Lista Geral"
+                },
+                {
+                    "id": "b7059c51-f6a9-480e-9e19-682ebc38b46a",
+                    "nome": "Assinaturas canceladas"
+                },
+                {
+                    "id": "fb474bfc-e559-4d17-8085-a65059638940",
+                    "nome": "Compras em aberto"
+                },
+                {
+                    "id": "08f55cd5-f5a5-4139-a040-01d305e2ba3a",
+                    "nome": "Compras aprovadas"
+                },
+                {
+                    "id": "53b98c99-101f-4d20-8b46-4671b8a88fab",
+                    "nome": "Abandono de carrinho"
+                },
+                {
+                    "id": "fa3ccdf3-cd41-4b77-bbba-0c6cb78c111a",
+                    "nome": "Assinaturas em atraso"
+                },
+                {
+                    "id": "34958063-08c7-4de1-bbfc-8155b01f9d1d",
+                    "nome": "Reembolso/Chargeback"
+                },
+                {
+                    "id": "d2f42068-9b7c-4671-88ee-cdb8b9ccd8e3",
+                    "nome": "Cartão recusado"
+                }
+            ]
+        },
+        {
+            "id": "301ac137-5644-423c-8415-0d2b27fff384",
+            "nome": "Plateia Lotada",
+            "origens": [
+                {
+                    "id": "acf564e7-1680-4e51-96f4-0d0c00cda13d",
+                    "nome": "[Curso] Método Plateia Lotada"
+                },
+                {
+                    "id": "ffedfae2-7cc6-4a54-9243-015de9833443",
+                    "nome": "Mentoria em Grupo | Programa de Implementação Expoente"
+                },
+                {
+                    "id": "0581aa4d-94f7-4e4b-ba7c-34d20dee3f25",
+                    "nome": "Workshop Plateia Lotada 2024"
+                },
+                {
+                    "id": "e3003182-97e9-4668-b72d-90621b962815",
+                    "nome": "Alunos"
+                },
+                {
+                    "id": "329ab048-5347-4bd0-8c08-972da386e835",
+                    "nome": "Imersão Presencial Plateia Lotada"
+                },
+                {
+                    "id": "9a89078b-9753-4d65-b585-d1660dfb5473",
+                    "nome": "TESTE DE AUTOMAÇÃO"
+                },
+                {
+                    "id": "98ad802b-0897-4f2b-9758-31641d99c088",
+                    "nome": "Lançamento Gratuito 2024"
+                },
+                {
+                    "id": "c72008b8-0732-4e86-a534-1d0610db005d",
+                    "nome": "Leads - Master Renner Silva"
+                },
+                {
+                    "id": "14630133-b6bb-43d2-b4b9-f4f890cf8362",
+                    "nome": "Guia Prático | Playbook Interativo"
+                },
+                {
+                    "id": "e3c28cca-8c30-4764-8730-40f8cc09b0f3",
+                    "nome": "Instagram | Manychat"
+                }
+            ]
+        }
+    ],
+    "downloads": [
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Pay_Playbook_Interativo_Compras_expiradas_20250410_100438.csv",
+            "group_name": "[Pay] Playbook Interativo",
+            "origin_name": "Compras expiradas",
+            "origin_id": "06ad055a-7211-48ea-87dd-05fabae21e91",
+            "file_size": 1355,
+            "file_name": "Pay_Playbook_Interativo_Compras_expiradas_20250410_100438.csv",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "06ad055a-7211-48ea-87dd-05fabae21e91",
+            "origem": "Compras expiradas",
+            "status": "sucesso"
+        },
+        {
+            "success": false,
+            "error": "Falha na exportação",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "c44c1a04-d617-471c-95c2-2ced915748b0",
+            "origem": "Assinaturas ativas",
+            "status": "falha"
+        },
+        {
+            "success": false,
+            "error": "Falha na exportação",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "274d1c6a-a4ba-485c-90af-c153785bceed",
+            "origem": "Lista Geral",
+            "status": "falha"
+        },
+        {
+            "success": false,
+            "error": "Falha na exportação",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "b7059c51-f6a9-480e-9e19-682ebc38b46a",
+            "origem": "Assinaturas canceladas",
+            "status": "falha"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Pay_Playbook_Interativo_Compras_em_aberto_20250410_100454.csv",
+            "group_name": "[Pay] Playbook Interativo",
+            "origin_name": "Compras em aberto",
+            "origin_id": "fb474bfc-e559-4d17-8085-a65059638940",
+            "file_size": 78670,
+            "file_name": "Pay_Playbook_Interativo_Compras_em_aberto_20250410_100454.csv",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "fb474bfc-e559-4d17-8085-a65059638940",
+            "origem": "Compras em aberto",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Pay_Playbook_Interativo_Compras_aprovadas_20250410_100456.csv",
+            "group_name": "[Pay] Playbook Interativo",
+            "origin_name": "Compras aprovadas",
+            "origin_id": "08f55cd5-f5a5-4139-a040-01d305e2ba3a",
+            "file_size": 91810,
+            "file_name": "Pay_Playbook_Interativo_Compras_aprovadas_20250410_100456.csv",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "08f55cd5-f5a5-4139-a040-01d305e2ba3a",
+            "origem": "Compras aprovadas",
+            "status": "sucesso"
+        },
+        {
+            "success": false,
+            "error": "Falha na exportação",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "53b98c99-101f-4d20-8b46-4671b8a88fab",
+            "origem": "Abandono de carrinho",
+            "status": "falha"
+        },
+        {
+            "success": false,
+            "error": "Falha na exportação",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "fa3ccdf3-cd41-4b77-bbba-0c6cb78c111a",
+            "origem": "Assinaturas em atraso",
+            "status": "falha"
+        },
+        {
+            "success": false,
+            "error": "Falha na exportação",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "34958063-08c7-4de1-bbfc-8155b01f9d1d",
+            "origem": "Reembolso/Chargeback",
+            "status": "falha"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Pay_Playbook_Interativo_Cartao_recusado_20250410_100510.csv",
+            "group_name": "[Pay] Playbook Interativo",
+            "origin_name": "Cartão recusado",
+            "origin_id": "d2f42068-9b7c-4671-88ee-cdb8b9ccd8e3",
+            "file_size": 1071,
+            "file_name": "Pay_Playbook_Interativo_Cartao_recusado_20250410_100510.csv",
+            "grupo": "[Pay] Playbook Interativo",
+            "origem_id": "d2f42068-9b7c-4671-88ee-cdb8b9ccd8e3",
+            "origem": "Cartão recusado",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_Curso_Metodo_Plateia_Lotada_20250410_100513.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "[Curso] Método Plateia Lotada",
+            "origin_id": "acf564e7-1680-4e51-96f4-0d0c00cda13d",
+            "file_size": 902,
+            "file_name": "Plateia_Lotada_Curso_Metodo_Plateia_Lotada_20250410_100513.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "acf564e7-1680-4e51-96f4-0d0c00cda13d",
+            "origem": "[Curso] Método Plateia Lotada",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_Mentoria_em_Grupo_Programa_de_Implementacao_Expoente_20250410_100516.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "Mentoria em Grupo | Programa de Implementação Expoente",
+            "origin_id": "ffedfae2-7cc6-4a54-9243-015de9833443",
+            "file_size": 39323,
+            "file_name": "Plateia_Lotada_Mentoria_em_Grupo_Programa_de_Implementacao_Expoente_20250410_100516.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "ffedfae2-7cc6-4a54-9243-015de9833443",
+            "origem": "Mentoria em Grupo | Programa de Implementação Expoente",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_Workshop_Plateia_Lotada_2024_20250410_100521.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "Workshop Plateia Lotada 2024",
+            "origin_id": "0581aa4d-94f7-4e4b-ba7c-34d20dee3f25",
+            "file_size": 202063,
+            "file_name": "Plateia_Lotada_Workshop_Plateia_Lotada_2024_20250410_100521.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "0581aa4d-94f7-4e4b-ba7c-34d20dee3f25",
+            "origem": "Workshop Plateia Lotada 2024",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_Alunos_20250410_100524.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "Alunos",
+            "origin_id": "e3003182-97e9-4668-b72d-90621b962815",
+            "file_size": 541,
+            "file_name": "Plateia_Lotada_Alunos_20250410_100524.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "e3003182-97e9-4668-b72d-90621b962815",
+            "origem": "Alunos",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_Imersao_Presencial_Plateia_Lotada_20250410_100529.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "Imersão Presencial Plateia Lotada",
+            "origin_id": "329ab048-5347-4bd0-8c08-972da386e835",
+            "file_size": 153077,
+            "file_name": "Plateia_Lotada_Imersao_Presencial_Plateia_Lotada_20250410_100529.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "329ab048-5347-4bd0-8c08-972da386e835",
+            "origem": "Imersão Presencial Plateia Lotada",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_TESTE_DE_AUTOMACAO_20250410_100532.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "TESTE DE AUTOMAÇÃO",
+            "origin_id": "9a89078b-9753-4d65-b585-d1660dfb5473",
+            "file_size": 10728,
+            "file_name": "Plateia_Lotada_TESTE_DE_AUTOMACAO_20250410_100532.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "9a89078b-9753-4d65-b585-d1660dfb5473",
+            "origem": "TESTE DE AUTOMAÇÃO",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_Lancamento_Gratuito_2024_20250410_100537.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "Lançamento Gratuito 2024",
+            "origin_id": "98ad802b-0897-4f2b-9758-31641d99c088",
+            "file_size": 182676,
+            "file_name": "Plateia_Lotada_Lancamento_Gratuito_2024_20250410_100537.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "98ad802b-0897-4f2b-9758-31641d99c088",
+            "origem": "Lançamento Gratuito 2024",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_Leads_Master_Renner_Silva_20250410_100540.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "Leads - Master Renner Silva",
+            "origin_id": "c72008b8-0732-4e86-a534-1d0610db005d",
+            "file_size": 12459,
+            "file_name": "Plateia_Lotada_Leads_Master_Renner_Silva_20250410_100540.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "c72008b8-0732-4e86-a534-1d0610db005d",
+            "origem": "Leads - Master Renner Silva",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_Guia_Pratico_Playbook_Interativo_20250410_100544.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "Guia Prático | Playbook Interativo",
+            "origin_id": "14630133-b6bb-43d2-b4b9-f4f890cf8362",
+            "file_size": 154242,
+            "file_name": "Plateia_Lotada_Guia_Pratico_Playbook_Interativo_20250410_100544.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "14630133-b6bb-43d2-b4b9-f4f890cf8362",
+            "origem": "Guia Prático | Playbook Interativo",
+            "status": "sucesso"
+        },
+        {
+            "success": true,
+            "file_path": "resultados_api\\csvs\\Plateia_Lotada_Instagram_Manychat_20250410_100547.csv",
+            "group_name": "Plateia Lotada",
+            "origin_name": "Instagram | Manychat",
+            "origin_id": "e3c28cca-8c30-4764-8730-40f8cc09b0f3",
+            "file_size": 1103,
+            "file_name": "Plateia_Lotada_Instagram_Manychat_20250410_100547.csv",
+            "grupo": "Plateia Lotada",
+            "origem_id": "e3c28cca-8c30-4764-8730-40f8cc09b0f3",
+            "origem": "Instagram | Manychat",
+            "status": "sucesso"
+        }
+    ]
+}

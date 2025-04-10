@@ -1,12 +1,13 @@
-# Configuração do Banco de Dados para o Sistema Clint
+# Configuração do Banco de Dados PostgreSQL para o Sistema Clint
 
-Este diretório contém os scripts e instruções necessários para configurar o banco de dados do sistema Clint.
+Este diretório contém os scripts e instruções necessários para configurar o banco de dados PostgreSQL do sistema Clint.
 
 ## Requisitos
 
-- MySQL 5.7+ ou MariaDB 10.2+
+- PostgreSQL 12+ 
 - Node.js 14+ (para executar o script de configuração)
 - NPM ou Yarn
+- Ferramentas de linha de comando do PostgreSQL (`createdb`, `psql`)
 
 ## Arquivos Incluídos
 
@@ -16,16 +17,16 @@ Este diretório contém os scripts e instruções necessários para configurar o
 
 ## Instruções para Configuração Manual
 
-### Opção 1: Usando o MySQL CLI
+### Opção 1: Usando o PostgreSQL CLI
 
-1. Acesse o MySQL:
+1. Crie o banco de dados:
    ```bash
-   mysql -u seu_usuario -p
+   createdb -h localhost -U postgres clint_db
    ```
 
 2. Execute o script SQL:
-   ```sql
-   SOURCE path/to/schema.sql;
+   ```bash
+   psql -h localhost -U postgres -d clint_db -f schema.sql
    ```
 
 ### Opção 2: Usando o script Node.js automatizado
@@ -40,13 +41,19 @@ Este diretório contém os scripts e instruções necessários para configurar o
    ```javascript
    const dbConfig = {
      host: 'localhost',      // Host do banco de dados
-     user: 'root',           // Usuário do MySQL
-     password: '',           // Senha do MySQL
-     multipleStatements: true
+     user: 'postgres',       // Usuário do PostgreSQL
+     password: 'postgres',   // Senha do PostgreSQL
+     port: 5432              // Porta padrão do PostgreSQL
    };
    ```
 
-3. Execute o script de configuração:
+3. Se necessário, ajuste o caminho para os executáveis do PostgreSQL no arquivo `setup.js`:
+   ```javascript
+   // Caminho para os executáveis do PostgreSQL (ajuste conforme necessário)
+   const pgBinPath = ''; // Deixe vazio para usar as variáveis de ambiente
+   ```
+
+4. Execute o script de configuração:
    ```bash
    npm run setup
    ```
@@ -64,22 +71,20 @@ Para migrar o banco de dados para um ambiente de produção, siga estas etapas:
 
 3. Atualize as variáveis de ambiente no servidor para apontar para o novo banco de dados:
    ```
-   DB_HOST=seu_host_mysql
+   DB_HOST=seu_host_postgres
    DB_USER=seu_usuario
    DB_PASSWORD=sua_senha
+   DB_PORT=5432
    DB_NAME=clint_db
    ```
 
 ## Usuários Padrão
 
-O script cria automaticamente os seguintes usuários:
+O script cria automaticamente o seguinte usuário:
 
-| Nome        | Email                     | Senha    | Cargo        | Admin |
-|-------------|---------------------------|----------|--------------|-------|
-| Admin       | admin@clint.com           | admin123 | Administrador| Sim   |
-| Lucas Vital | lucasvitalsilva17@gmail.com | lucas123 | Gerente      | Não   |
-| João Silva  | joao.silva@exemplo.com    | joao123  | Analista     | Não   |
-| Maria Santos| maria.santos@exemplo.com  | maria123 | Assistente   | Não   |
+| Nome        | Email              | Senha    | Cargo        | Admin |
+|-------------|--------------------| ---------|--------------| ------|
+| Admin       | admin@admin.com    | admin123 | Administrador| Sim   |
 
 > **Importante:** Em ambiente de produção, é altamente recomendado alterar as senhas padrão destes usuários.
 
@@ -97,7 +102,7 @@ npm run generate-hash "minhasenha123"
 
 | Coluna           | Tipo         | Descrição                            |
 |------------------|--------------|--------------------------------------|
-| id               | INT          | ID único (chave primária)            |
+| id               | SERIAL       | ID único (chave primária)            |
 | nome             | VARCHAR(100) | Nome completo do usuário             |
 | email            | VARCHAR(100) | Email do usuário (único)             |
 | senha            | VARCHAR(255) | Senha hash do usuário                |
@@ -113,8 +118,8 @@ npm run generate-hash "minhasenha123"
 
 | Coluna     | Tipo         | Descrição                        |
 |------------|--------------|----------------------------------|
-| id         | INT          | ID único (chave primária)        |
-| usuario_id | INT          | ID do usuário (chave estrangeira)|
+| id         | SERIAL       | ID único (chave primária)        |
+| usuario_id | INTEGER      | ID do usuário (chave estrangeira)|
 | acao       | VARCHAR(100) | Tipo de ação realizada           |
 | descricao  | TEXT         | Descrição detalhada da ação      |
 | data_hora  | TIMESTAMP    | Data/hora da ação                |

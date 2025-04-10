@@ -3,19 +3,12 @@
  * Este módulo lida com operações de banco de dados relacionadas a usuários
  */
 
-const mysql = require('mysql2/promise');
+const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
+const config = require('../../config');
 
-// Configuração do pool de conexões
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'clint_db',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+// Configuração do pool de conexões PostgreSQL
+const pool = new Pool(config.db);
 
 /**
  * Verificar credenciais de usuário
@@ -25,17 +18,17 @@ const pool = mysql.createPool({
  */
 async function verificarCredenciais(email, senha) {
   try {
-    const [rows] = await pool.query(
-      'SELECT id, nome, email, senha, cargo, admin FROM usuarios WHERE email = ? AND ativo = TRUE',
+    const result = await pool.query(
+      'SELECT id, nome, email, senha, cargo, admin FROM usuarios WHERE email = $1 AND ativo = TRUE',
       [email]
     );
 
     // Se não encontrou o usuário
-    if (rows.length === 0) {
+    if (result.rows.length === 0) {
       return null;
     }
 
-    const usuario = rows[0];
+    const usuario = result.rows[0];
     
     // Verificar senha usando bcrypt
     const senhaValida = await bcrypt.compare(senha, usuario.senha);
@@ -65,12 +58,12 @@ async function verificarCredenciais(email, senha) {
 async function registrarLogin(usuarioId, ip = null) {
   try {
     await pool.query(
-      'UPDATE usuarios SET ultimo_login = CURRENT_TIMESTAMP WHERE id = ?',
+      'UPDATE usuarios SET ultimo_login = CURRENT_TIMESTAMP WHERE id = $1',
       [usuarioId]
     );
 
     await pool.query(
-      'INSERT INTO log_atividades (usuario_id, acao, descricao, ip) VALUES (?, ?, ?, ?)',
+      'INSERT INTO log_atividades (usuario_id, acao, descricao, ip) VALUES ($1, $2, $3, $4)',
       [usuarioId, 'LOGIN', 'Login realizado', ip]
     );
   } catch (error) {
@@ -86,12 +79,12 @@ async function registrarLogin(usuarioId, ip = null) {
  */
 async function buscarPorEmail(email) {
   try {
-    const [rows] = await pool.query(
-      'SELECT id, nome, email, cargo, admin, ultimo_login, data_criacao FROM usuarios WHERE email = ?',
+    const result = await pool.query(
+      'SELECT id, nome, email, cargo, admin, ultimo_login, data_criacao FROM usuarios WHERE email = $1',
       [email]
     );
 
-    return rows.length > 0 ? rows[0] : null;
+    return result.rows.length > 0 ? result.rows[0] : null;
   } catch (error) {
     console.error('Erro ao buscar usuário por email:', error);
     throw error;
@@ -105,12 +98,12 @@ async function buscarPorEmail(email) {
  */
 async function buscarPorId(id) {
   try {
-    const [rows] = await pool.query(
-      'SELECT id, nome, email, cargo, admin, ultimo_login, data_criacao FROM usuarios WHERE id = ?',
+    const result = await pool.query(
+      'SELECT id, nome, email, cargo, admin, ultimo_login, data_criacao FROM usuarios WHERE id = $1',
       [id]
     );
 
-    return rows.length > 0 ? rows[0] : null;
+    return result.rows.length > 0 ? result.rows[0] : null;
   } catch (error) {
     console.error('Erro ao buscar usuário por ID:', error);
     throw error;
@@ -139,14 +132,14 @@ async function criarUsuario({ nome, email, senha, cargo = null, admin = false })
     const senhaHash = await bcrypt.hash(senha, 10);
 
     // Inserir o usuário
-    const [result] = await pool.query(
-      'INSERT INTO usuarios (nome, email, senha, cargo, admin) VALUES (?, ?, ?, ?, ?)',
+    const result = await pool.query(
+      'INSERT INTO usuarios (nome, email, senha, cargo, admin) VALUES ($1, $2, $3, $4, $5) RETURNING id',
       [nome, email, senhaHash, cargo, admin]
     );
 
     // Retornar o usuário criado (sem a senha)
     return {
-      id: result.insertId,
+      id: result.rows[0].id,
       nome,
       email,
       cargo,
@@ -181,16 +174,17 @@ async function atualizarUsuario(id, dados) {
       return false;
     }
     
-    // Construir query de atualização
-    const setClauses = Object.keys(campos).map(campo => `${campo} = ?`).join(', ');
+    // Construir query de atualização para PostgreSQL
+    const setClauses = Object.keys(campos).map((campo, index) => `${campo} = $${index + 1}`).join(', ');
     const valores = [...Object.values(campos), id];
+    const paramIndex = Object.keys(campos).length + 1;
     
-    const [result] = await pool.query(
-      `UPDATE usuarios SET ${setClauses} WHERE id = ?`,
+    const result = await pool.query(
+      `UPDATE usuarios SET ${setClauses} WHERE id = $${paramIndex}`,
       valores
     );
     
-    return result.affectedRows > 0;
+    return result.rowCount > 0;
   } catch (error) {
     console.error('Erro ao atualizar usuário:', error);
     throw error;
@@ -207,13 +201,13 @@ async function atualizarUsuario(id, dados) {
 async function alterarSenha(id, senhaAtual, novaSenha) {
   try {
     // Verificar a senha atual
-    const [rows] = await pool.query('SELECT senha FROM usuarios WHERE id = ?', [id]);
+    const result = await pool.query('SELECT senha FROM usuarios WHERE id = $1', [id]);
     
-    if (rows.length === 0) {
+    if (result.rows.length === 0) {
       throw new Error('Usuário não encontrado');
     }
     
-    const senhaValida = await bcrypt.compare(senhaAtual, rows[0].senha);
+    const senhaValida = await bcrypt.compare(senhaAtual, result.rows[0].senha);
     
     if (!senhaValida) {
       throw new Error('Senha atual incorreta');
@@ -223,12 +217,12 @@ async function alterarSenha(id, senhaAtual, novaSenha) {
     const novaSenhaHash = await bcrypt.hash(novaSenha, 10);
     
     // Atualizar a senha
-    const [result] = await pool.query(
-      'UPDATE usuarios SET senha = ? WHERE id = ?',
+    const updateResult = await pool.query(
+      'UPDATE usuarios SET senha = $1 WHERE id = $2',
       [novaSenhaHash, id]
     );
     
-    return result.affectedRows > 0;
+    return updateResult.rowCount > 0;
   } catch (error) {
     console.error('Erro ao alterar senha:', error);
     throw error;
@@ -248,23 +242,31 @@ async function listarUsuarios(filtros = {}, limite = 100, offset = 0) {
     let query = `
       SELECT id, nome, email, cargo, admin, ativo, data_criacao, ultimo_login
       FROM usuarios
-      WHERE 1=1
     `;
     
+    const condicoes = [];
     const parametros = [];
+    let paramIndex = 1;
     
     // Aplicar filtros
     if (filtros.apenasAtivos) {
-      query += ' AND ativo = TRUE';
+      condicoes.push(`ativo = $${paramIndex++}`);
+      parametros.push(true);
     }
     
-    // Adicionar ordenação e limites
-    query += ' ORDER BY nome ASC LIMIT ? OFFSET ?';
+    if (condicoes.length > 0) {
+      query += ' WHERE ' + condicoes.join(' AND ');
+    }
+    
+    // Adicionar ordenação
+    query += ' ORDER BY nome ASC';
+    
+    // Adicionar paginação
+    query += ` LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
     parametros.push(limite, offset);
     
-    const [rows] = await pool.query(query, parametros);
-    
-    return rows;
+    const result = await pool.query(query, parametros);
+    return result.rows;
   } catch (error) {
     console.error('Erro ao listar usuários:', error);
     throw error;

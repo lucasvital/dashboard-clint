@@ -7,33 +7,53 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const config = require('./config');
+const dotenv = require('dotenv');
+
+// Carregar variáveis de ambiente
+dotenv.config();
 
 // Importar serviços
 const userService = require('./src/services/userService');
 
 // Inicializar o aplicativo Express
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = config.server.port;
 
 // Middlewares
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// API endpoint para login
-app.post('/api/auth/login', async (req, res) => {
+// Middleware de verificação de credenciais
+const verificarCredenciais = async (req, res, next) => {
+  const { email, senha } = req.body;
+  
+  // Verificar se as credenciais foram fornecidas
+  if (!email || !senha) {
+    return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+  }
+  
+  // Buscar usuário no banco de dados
   try {
-    const { email, senha } = req.body;
-    
-    if (!email || !senha) {
-      return res.status(400).json({ error: 'Email e senha são obrigatórios' });
-    }
-    
     const usuario = await userService.verificarCredenciais(email, senha);
     
     if (!usuario) {
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
+    
+    req.usuario = usuario;
+    next();
+  } catch (error) {
+    console.error('Erro ao verificar credenciais:', error);
+    return res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+};
+
+// API endpoint para login
+app.post('/api/auth/login', verificarCredenciais, async (req, res) => {
+  try {
+    const usuario = req.usuario;
     
     // Registrar o login
     await userService.registrarLogin(usuario.id, req.ip);
@@ -152,5 +172,6 @@ app.get('*', (req, res) => {
 // Iniciar o servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Ambiente: ${config.server.env}`);
   console.log(`Acesse: http://localhost:${PORT}`);
 }); 

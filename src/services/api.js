@@ -1,10 +1,27 @@
 /**
  * Módulo para lidar com chamadas de API relacionadas a autenticação
  */
+import axios from 'axios';
 
-// Importar o serviço de usuários diretamente (em produção seria substituído por chamadas de API REST)
-// Esta abordagem permite que você comece com banco de dados local e migre para uma API REST posteriormente
-const userService = require('./userService');
+// Configurar instância do Axios com a URL base da API
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Interceptor para incluir o token em todas as requisições
+apiClient.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
 
 /**
  * Realizar login do usuário
@@ -12,32 +29,19 @@ const userService = require('./userService');
  * @param {string} senha - Senha do usuário
  * @returns {Promise<Object>} Dados do usuário e token
  */
-async function login(email, senha) {
+export async function login(email, senha) {
   try {
-    // Verificar credenciais
-    const usuario = await userService.verificarCredenciais(email, senha);
+    const response = await apiClient.post('/auth/login', { email, senha });
     
-    if (!usuario) {
-      throw new Error('Credenciais inválidas');
+    // Armazenar o token no localStorage
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
     }
     
-    // Gerar token (em uma implementação real, usaria JWT ou similar)
-    const token = generateToken(usuario);
-    
-    // Retornar dados do usuário e token
-    return {
-      usuario: {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        cargo: usuario.cargo,
-        admin: usuario.admin
-      },
-      token
-    };
+    return response.data;
   } catch (error) {
     console.error('Erro no login:', error);
-    throw error;
+    throw error.response?.data || error;
   }
 }
 
@@ -46,54 +50,46 @@ async function login(email, senha) {
  * @param {Object} userData - Dados do usuário
  * @returns {Promise<Object>} Usuário criado e token
  */
-async function registrar(userData) {
+export async function registrar(userData) {
   try {
-    // Criar usuário
-    const usuario = await userService.criarUsuario(userData);
+    const response = await apiClient.post('/auth/signup', userData);
     
-    // Gerar token
-    const token = generateToken(usuario);
+    // Armazenar o token no localStorage
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+    }
     
-    // Retornar dados do usuário e token
-    return {
-      usuario,
-      token
-    };
+    return response.data;
   } catch (error) {
     console.error('Erro no registro:', error);
-    throw error;
+    throw error.response?.data || error;
   }
 }
 
 /**
- * Verificar se um token é válido
- * @param {string} token - Token do usuário
- * @returns {Promise<boolean>} Se o token é válido
+ * Verificar se um usuário está autenticado
+ * @returns {Promise<Object>} Dados do usuário autenticado
  */
-async function verificarToken(token) {
+export async function verificarAutenticacao() {
   try {
-    // Em uma implementação real, verificaria o token JWT
-    // Por enquanto, apenas verifica se há um token
-    return !!token;
+    const response = await apiClient.get('/auth/me');
+    return response.data;
   } catch (error) {
-    console.error('Erro ao verificar token:', error);
-    return false;
+    console.error('Erro ao verificar autenticação:', error);
+    throw error.response?.data || error;
   }
 }
 
 /**
- * Função auxiliar para gerar um token
- * @param {Object} usuario - Dados do usuário
- * @returns {string} Token gerado
+ * Realizar logout do usuário
  */
-function generateToken(usuario) {
-  // Em uma implementação real, usaria JWT
-  // Por enquanto, apenas retorna um token simulado
-  return `token_${usuario.id}_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+export function logout() {
+  localStorage.removeItem('token');
 }
 
-module.exports = {
+export default {
   login,
   registrar,
-  verificarToken
+  verificarAutenticacao,
+  logout
 }; 

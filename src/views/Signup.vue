@@ -35,6 +35,16 @@
         <h1 class="auth-title">Crie sua conta</h1>
         <p class="auth-subtitle">Comece a gerenciar seus leads hoje</p>
 
+        <!-- Mensagem de erro -->
+        <div v-if="errorMessage" class="error-message">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>{{ errorMessage }}</span>
+        </div>
+
         <!-- Formulário de cadastro com animação de slide-in -->
         <form @submit.prevent="handleSignup" class="auth-form">
           <!-- Nome completo -->
@@ -195,6 +205,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { registrar } from '../services/api.js'
 
 // Estado do formulário
 const name = ref('')
@@ -205,6 +216,7 @@ const terms = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const isLoading = ref(false)
+const errorMessage = ref('')
 
 // Router
 const router = useRouter()
@@ -246,33 +258,30 @@ const handleSignup = async () => {
   if (!canSubmit.value) return
   
   isLoading.value = true
+  errorMessage.value = ''
   
   try {
-    // Simulando requisição com timeout
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    // Simulação de cadastro
-    console.log('Cadastro com:', { 
-      name: name.value,
+    // Chamada real à API para cadastro
+    const response = await registrar({
+      nome: name.value,
       email: email.value,
-      password: password.value
+      senha: password.value,
+      cargo: 'Usuário' // Cargo padrão
     })
     
-    // Simular cadastro bem-sucedido
+    // Armazenar o token (já foi feito pela API)
     localStorage.setItem('isAuthenticated', 'true')
     
     // Armazenar informações do usuário
-    localStorage.setItem('userEmail', email.value)
-    
-    // Extrair apenas o primeiro nome fornecido
-    const firstName = name.value.split(' ')[0]
-    localStorage.setItem('userName', firstName)
+    localStorage.setItem('userEmail', response.usuario.email)
+    localStorage.setItem('userName', response.usuario.nome.split(' ')[0])
     
     // Redirecionar para a página principal
     router.push('/')
   } catch (error) {
     console.error('Erro no cadastro:', error)
-    // Aqui você implementaria tratamento de erro
+    // Mostrar mensagem de erro
+    errorMessage.value = error.error || 'Erro ao criar conta. Por favor, tente novamente.'
   } finally {
     isLoading.value = false
   }
@@ -873,5 +882,31 @@ onUnmounted(() => {
     width: 50px;
     height: 50px;
   }
+}
+
+/* Adicione o estilo para a mensagem de erro */
+.error-message {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  animation: shake 0.5s;
+}
+
+.error-message svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 </style> 
