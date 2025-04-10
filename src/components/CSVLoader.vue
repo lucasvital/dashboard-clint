@@ -145,11 +145,40 @@ const loadCSV = () => {
   loading.value = true;
   error.value = null;
   
+  console.log(`Tentando carregar o arquivo: ${csvUrl.value}`);
+  
   // Tenta o arquivo atual primeiro, depois tenta datas anteriores
   store.loadCSVData(csvUrl.value)
-    .then(() => {
+    .then((data) => {
       csvLoaded.value = true;
       loading.value = false;
+      console.log(`✅ Arquivo carregado com sucesso: ${csvUrl.value}`);
+      console.log(`📊 Total de registros carregados: ${data.length}`);
+      
+      // Verificar se há poucos registros (menos de 100)
+      if (data.length < 100) {
+        console.log(`⚠️ Atenção: Apenas ${data.length} registros foram carregados. Este valor parece baixo.`);
+        
+        // Examinar o CSV diretamente para verificar o problema
+        fetch(csvUrl.value)
+          .then(response => response.text())
+          .then(text => {
+            const linhas = text.split('\n').length;
+            console.log(`🔍 O arquivo original possui ${linhas} linhas (incluindo cabeçalho)`);
+            
+            // Mostrar as primeiras 5 linhas para diagnóstico
+            const primeiraLinhas = text.split('\n').slice(0, 5).join('\n');
+            console.log('📄 Primeiras linhas do arquivo:');
+            console.log(primeiraLinhas);
+            
+            if (linhas > data.length + 5) {
+              console.log(`⚠️ Possível problema de parsing: o arquivo tem ${linhas} linhas, mas apenas ${data.length} registros foram processados`);
+            }
+          })
+          .catch(err => {
+            console.log(`❌ Erro ao examinar arquivo diretamente: ${err.message}`);
+          });
+      }
     })
     .catch(err => {
       console.log(`Erro ao carregar o arquivo atual: ${err.message}. Tentando arquivos anteriores...`);

@@ -7,19 +7,83 @@ import Papa from 'papaparse'
  */
 export const parseCSV = (filePath) => {
   return new Promise((resolve, reject) => {
+    // Adicionar configurações detalhadas para melhor parsing
     Papa.parse(filePath, {
       download: true,
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
-      complete: (results) => {
-        resolve(results.data)
-      },
+      delimiter: ',',  // Definir explicitamente o delimitador
+      comments: '#',   // Ignorar linhas começando com #
+      encoding: 'UTF-8', // Garantir codificação correta
       error: (error) => {
-        reject(error)
+        console.error("❌ Erro durante o parsing do CSV:", error);
+        reject(error);
+      },
+      complete: (results) => {
+        console.log(`📊 CSV parseado com ${results.data.length} registros`);
+        if (results.errors && results.errors.length > 0) {
+          console.warn(`⚠️ Avisos durante o parsing:`, results.errors);
+        }
+        if (results.meta) {
+          console.log(`ℹ️ Metadados do CSV:`, {
+            delimitador: results.meta.delimiter,
+            linhasProcessadas: results.meta.cursor,
+            colunas: results.meta.fields
+          });
+        }
+        resolve(results.data);
       }
+    });
+  });
+}
+
+/**
+ * Função para examinar um arquivo CSV diretamente
+ * @param {String} filePath - Caminho para o arquivo CSV 
+ * @returns {Promise} Promise com informações sobre o arquivo
+ */
+export const examineCSV = (filePath) => {
+  return fetch(filePath)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar arquivo: ${response.status} ${response.statusText}`);
+      }
+      return response.text();
     })
-  })
+    .then(text => {
+      const linhas = text.split('\n');
+      const totalLinhas = linhas.length;
+      const primeiraLinha = linhas[0];
+      const colunas = primeiraLinha.split(',');
+      
+      // Verificar delimitador alternativo
+      const temTab = primeiraLinha.includes('\t');
+      const temPontoVirgula = primeiraLinha.includes(';');
+      
+      const deteccaoDelimitador = {
+        virgula: primeiraLinha.split(',').length,
+        pontoEVirgula: primeiraLinha.split(';').length,
+        tab: primeiraLinha.split('\t').length
+      };
+      
+      // Determinar o provável delimitador real
+      const delimitadores = Object.entries(deteccaoDelimitador);
+      delimitadores.sort((a, b) => b[1] - a[1]);
+      const provávelDelimitador = delimitadores[0][0];
+      
+      return {
+        totalLinhas,
+        colunas: colunas.length,
+        primeiraLinha,
+        ultimaLinha: linhas[totalLinhas - 1],
+        tamanhoArquivo: text.length,
+        temTab,
+        temPontoVirgula,
+        provávelDelimitador,
+        deteccaoDelimitador
+      };
+    });
 }
 
 /**

@@ -171,52 +171,109 @@ const store = {
       const fileName = url.split('/').pop();
       console.log(`🔄 Tentando carregar o arquivo CSV: ${fileName}`);
       
-      Papa.parse(url, {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          if (results.errors && results.errors.length > 0) {
-            // Decidir se deve continuar mesmo com erros, baseado na gravidade
-            const fatalErrors = results.errors.filter(e => e.type === 'Abort' || e.type === 'File');
-            if (fatalErrors.length > 0) {
-              const error = new Error(`Erro fatal ao processar CSV: ${fatalErrors[0].message}`)
-              reject(error)
-              return
+      // Primeiro vamos examinar o arquivo para detectar possíveis problemas
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Erro ao acessar arquivo (${response.status}): ${response.statusText}`);
+          }
+          return response.text();
+        })
+        .then(text => {
+          const linhas = text.split('\n');
+          const totalLinhas = linhas.length;
+          
+          if (totalLinhas <= 1) {
+            throw new Error('Arquivo CSV vazio ou com apenas cabeçalho');
+          }
+          
+          const primeiraLinha = linhas[0];
+          
+          // Detectar o delimitador mais provável
+          const delimitadores = {
+            virgula: primeiraLinha.split(',').length,
+            pontoEVirgula: primeiraLinha.split(';').length,
+            tab: primeiraLinha.split('\t').length
+          };
+          
+          let maiorContagem = 0;
+          let melhorDelimitador = ','; // padrão
+          
+          for (const [delim, contagem] of Object.entries(delimitadores)) {
+            if (contagem > maiorContagem) {
+              maiorContagem = contagem;
+              if (delim === 'virgula') melhorDelimitador = ',';
+              else if (delim === 'pontoEVirgula') melhorDelimitador = ';';
+              else if (delim === 'tab') melhorDelimitador = '\t';
             }
           }
           
-          if (!results.data || results.data.length === 0) {
-            const error = new Error('O arquivo CSV está vazio ou não contém dados válidos')
-            reject(error)
-            return
-          }
+          console.log(`🔍 Análise prévia do CSV: ${totalLinhas} linhas, delimitador provável: "${melhorDelimitador === '\t' ? 'TAB' : melhorDelimitador}"`);
           
-          console.log(`✅ CSV carregado com sucesso: ${fileName}`);
-          console.log(`📊 Total de registros: ${results.data.length}`);
-          state.rawData = parseCSVData(results.data)
-          resolve(state.rawData)
-        },
-        error: (error) => {
-          console.error('Erro ao carregar CSV:', error)
-          // Personaliza a mensagem de erro para ser mais amigável
-          let mensagemErro = 'Não foi possível carregar o arquivo CSV'
-          
-          if (error.code === 404 || (error.message && error.message.includes('not found'))) {
-            mensagemErro = 'Arquivo CSV não encontrado. Verifique se o caminho está correto.'
-          } else if (error.code === 401 || error.code === 403) {
-            mensagemErro = 'Sem permissão para acessar o arquivo CSV.'
-          } else if (error.message && error.message.includes('CORS')) {
-            mensagemErro = 'Erro de CORS: O servidor não permite acesso ao arquivo CSV.'
-          } else if (error.message && error.message.includes('timeout')) {
-            mensagemErro = 'O servidor demorou muito para responder. Tente novamente mais tarde.'
-          }
-          
-          const errorObj = new Error(mensagemErro)
-          errorObj.originalError = error
-          reject(errorObj)
-        }
-      })
+          // Agora podemos fazer o parsing com o delimitador correto
+          Papa.parse(url, {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            delimiter: melhorDelimitador,
+            encoding: 'UTF-8',
+            complete: (results) => {
+              if (results.errors && results.errors.length > 0) {
+                // Decidir se deve continuar mesmo com erros, baseado na gravidade
+                const fatalErrors = results.errors.filter(e => e.type === 'Abort' || e.type === 'File');
+                if (fatalErrors.length > 0) {
+                  const error = new Error(`Erro fatal ao processar CSV: ${fatalErrors[0].message}`)
+                  reject(error)
+                  return
+                }
+                
+                // Registrar erros não-fatais
+                console.warn('⚠️ Avisos durante o parsing do CSV:', results.errors);
+              }
+              
+              if (!results.data || results.data.length === 0) {
+                const error = new Error('O arquivo CSV está vazio ou não contém dados válidos')
+                reject(error)
+                return
+              }
+              
+              // Verificar discrepância entre linhas do arquivo e registros processados
+              if (results.data.length < totalLinhas - 10) { // considerando cabeçalho e algumas linhas em branco
+                console.warn(`⚠️ Possível perda de dados: arquivo tem ${totalLinhas} linhas, mas apenas ${results.data.length} registros foram processados`);
+              }
+              
+              console.log(`✅ CSV carregado com sucesso: ${fileName}`);
+              console.log(`📊 Total de registros: ${results.data.length}`);
+              console.log(`📋 Metadados: ${results.meta.fields?.length || 0} colunas, delimitador: "${results.meta.delimiter === '\t' ? 'TAB' : results.meta.delimiter}"`);
+              
+              state.rawData = parseCSVData(results.data)
+              resolve(state.rawData)
+            },
+            error: (error) => {
+              console.error('❌ Erro ao carregar CSV:', error)
+              // Personaliza a mensagem de erro para ser mais amigável
+              let mensagemErro = 'Não foi possível carregar o arquivo CSV'
+              
+              if (error.code === 404 || (error.message && error.message.includes('not found'))) {
+                mensagemErro = 'Arquivo CSV não encontrado. Verifique se o caminho está correto.'
+              } else if (error.code === 401 || error.code === 403) {
+                mensagemErro = 'Sem permissão para acessar o arquivo CSV.'
+              } else if (error.message && error.message.includes('CORS')) {
+                mensagemErro = 'Erro de CORS: O servidor não permite acesso ao arquivo CSV.'
+              } else if (error.message && error.message.includes('timeout')) {
+                mensagemErro = 'O servidor demorou muito para responder. Tente novamente mais tarde.'
+              }
+              
+              const errorObj = new Error(mensagemErro)
+              errorObj.originalError = error
+              reject(errorObj)
+            }
+          })
+        })
+        .catch(error => {
+          console.error('❌ Erro ao examinar arquivo CSV:', error);
+          reject(error);
+        });
     })
   },
   
