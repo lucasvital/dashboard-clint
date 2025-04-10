@@ -45,8 +45,30 @@ npm run build
 1. Instale as dependências necessárias:
 
 ```bash
-pip install selenium python-dotenv schedule
+pip install selenium python-dotenv schedule requests pandas openpyxl unidecode playwright
+pip install seleniumwire  # Opcional, para método alternativo de captura
+playwright install chromium
 ```
+
+### Automação de Captura de Token JWT
+
+O sistema agora inclui uma solução automatizada para capturar tokens JWT utilizados nas requisições à API GraphQL do Clint Digital, eliminando a necessidade de atualização manual dos tokens.
+
+- **Abordagem em Cascata**: Três métodos diferentes são tentados em sequência:
+  1. **Playwright** (`playwright_token.py`) - Mais eficiente e recomendado
+  2. **Selenium Wire** (`interceptor_token.py`) - Método alternativo
+  3. **Selenium LocalStorage** (`get_jwt_token.py`) - Fallback adicional
+
+- **Configuração**:
+  1. Certifique-se de que as credenciais estão no arquivo `.env`
+  2. Execute `python playwright_token.py` para o primeiro login e captura
+  3. O sistema gerencia automaticamente a validade do token (renova quando necessário)
+
+- **Uso Automático**:
+  - O script `export_via_api.py` agora utiliza automaticamente este sistema
+  - Não é necessário atualizar manualmente o token no código
+
+Para mais detalhes, consulte [README_token_auto.md](README_token_auto.md).
 
 ### Arquivo de Configuração
 
@@ -145,7 +167,12 @@ git push -u origin main
 ├── login_clint.py          # Script de login com interface
 ├── login_clint_vps.py      # Script de login headless
 ├── schedule_login.py       # Script de agendamento
-└── export_via_api.py       # Script de exportação via API
+├── export_via_api.py       # Script de exportação via API
+├── playwright_token.py     # Automação de captura de token JWT (Playwright)
+├── interceptor_token.py    # Automação de captura de token JWT (Selenium Wire)
+├── get_jwt_token.py        # Automação de captura de token JWT (localStorage)
+├── token_data.json         # Dados do token JWT capturado (ignorado no Git)
+└── README_token_auto.md    # Documentação da automação de token JWT
 ```
 
 ## Contribuição
