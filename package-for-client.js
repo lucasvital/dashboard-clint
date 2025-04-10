@@ -16,16 +16,33 @@ const outputDir = path.join(__dirname, 'dist-package');
 const filesToInclude = [
   // Arquivos de setup e configuração
   'setup-all.js',
+  'fix-build.js',
+  'fix-debian.js',
+  'debian-instructions.md',
   'config.js',
   'server.js',
   'package.json',
   'package-lock.json',
   '.env.example',
+  'vite.config.js',
+  'postcss.config.js',
+  'tailwind.config.js',
+  'index.html',
   
   // Diretório do banco de dados (excluindo node_modules)
   'database/schema.sql',
   'database/setup.js',
   'database/package.json',
+  
+  // Código fonte do frontend (necessário para gerar o build)
+  'src/',
+  'public/',
+  
+  // Scripts Python para exportação e automação
+  'export_via_api.py',
+  'login_clint.py',
+  'login_clint_vps.py',
+  'schedule_login.py',
   
   // Frontend compilado (será gerado antes de empacotar)
   'dist/'
@@ -158,7 +175,7 @@ DB_NAME=clint_db
 
 # Configurações do servidor
 PORT=3000
-NODE_ENV=production
+NODE_ENV=development
 
 # Credenciais da API Clint
 email=
@@ -176,12 +193,13 @@ async function criarReadme() {
   
   const readmeContent = `# Clint Dashboard - Instalação
 
-Este pacote contém o sistema Clint Dashboard pronto para instalação.
+Este pacote contém o sistema Clint Dashboard completo pronto para instalação.
 
 ## Requisitos
 
 - Node.js 14 ou superior
 - PostgreSQL 12 ou superior
+- Python 3.6 ou superior (para scripts de automação)
 
 ## Passos para Instalação
 
@@ -202,7 +220,30 @@ Comandos úteis do PM2:
 - \`pm2 stop clint-dashboard\` - Parar o servidor
 - \`pm2 delete clint-dashboard\` - Remover o servidor do PM2
 
-Durante a instalação, o sistema também tentará configurar o PM2 para iniciar automaticamente quando o servidor for reiniciado.
+## Correção de Problemas de Build em Servidores Debian
+
+Se você estiver instalando em um servidor Debian e encontrar problemas com o build relacionados a \`crypto.getRandomValues\`, execute:
+
+\`\`\`bash
+node fix-debian.js
+\`\`\`
+
+Para mais detalhes, consulte o arquivo \`debian-instructions.md\` incluído neste pacote.
+
+## Scripts Python para Automação
+
+Este pacote inclui scripts Python para automação de tarefas:
+
+- \`export_via_api.py\` - Exporta dados via API do Clint
+- \`login_clint.py\` - Script de automação para login
+- \`login_clint_vps.py\` - Versão otimizada para VPS
+- \`schedule_login.py\` - Agendamento de tarefas automatizadas
+
+Para usar os scripts Python, instale as dependências necessárias:
+
+\`\`\`bash
+pip install requests pandas openpyxl selenium webdriver_manager
+\`\`\`
 
 ## Suporte
 
