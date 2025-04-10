@@ -39,7 +39,7 @@ const config = {
   db_name: 'clint_db',
   
   // Configurações gerais
-  node_env: 'production'
+  node_env: 'development'
 };
 
 console.log('🚀 Iniciando configuração do Sistema Clint para VPS');
@@ -325,7 +325,7 @@ async function compilarFrontend() {
 
 // Função para iniciar o servidor
 async function iniciarServidor() {
-  console.log('\n�� Iniciando servidor com PM2...');
+  console.log('\n🚀 Iniciando servidor com PM2...');
   
   try {
     // Verificar se já existe uma instância do app rodando no PM2
@@ -402,7 +402,11 @@ async function configuracaoInterativa() {
   // URLs e portas
   config.frontend_url = await pergunta(`URL do frontend (${config.frontend_url}): `) || config.frontend_url;
   config.backend_url = await pergunta(`URL do backend (${config.backend_url}): `) || config.backend_url;
-  config.api_url = await pergunta(`URL da API (${config.api_url}): `) || config.api_url;
+  
+  // Definir API URL automaticamente com base no backend
+  config.api_url = `${config.backend_url}/api`;
+  console.log(`URL da API configurada automaticamente: ${config.api_url}`);
+  
   config.port = await pergunta(`Porta do servidor (${config.port}): `) || config.port;
   
   // Banco de dados
