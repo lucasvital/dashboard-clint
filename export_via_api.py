@@ -116,8 +116,51 @@ def obter_token_por_login():
 def get_auth_headers():
     """
     Retorna os headers de autenticação para as requisições à API,
-    garantindo que o token de autorização esteja no formato correto
+    garantindo que o token de autorização esteja no formato correto.
+    Agora usa o método de interceptação de requisições com Playwright.
     """
+    try:
+        # Primeiro tenta o método usando Playwright
+        try:
+            from playwright_token import get_cached_auth_headers
+            headers = get_cached_auth_headers()
+            if headers:
+                logger.info("Headers de autenticação obtidos via Playwright")
+                return headers
+        except ImportError:
+            logger.warning("Módulo playwright_token não encontrado, tentando método alternativo...")
+        except Exception as e:
+            logger.warning(f"Erro ao obter headers via Playwright: {str(e)}")
+            
+        # Em segundo lugar, tenta o método usando Selenium Wire
+        try:
+            from interceptor_token import get_auth_headers_from_intercepted_token
+            headers = get_auth_headers_from_intercepted_token()
+            if headers:
+                logger.info("Headers de autenticação obtidos via interceptação de requisições")
+                return headers
+        except ImportError:
+            logger.warning("Módulo interceptor_token não encontrado, tentando método alternativo...")
+        except Exception as e:
+            logger.warning(f"Erro ao obter headers via interceptor: {str(e)}")
+        
+        # Por último, tenta o método baseado em localStorage
+        try:
+            from get_jwt_token import get_auth_headers_from_extracted_token
+            headers = get_auth_headers_from_extracted_token()
+            if headers:
+                logger.info("Headers de autenticação obtidos via localStorage")
+                return headers
+        except ImportError:
+            logger.warning("Módulo get_jwt_token não encontrado, usando token estático...")
+        except Exception as e:
+            logger.warning(f"Erro ao obter headers via localStorage: {str(e)}")
+    except Exception as e:
+        logger.warning(f"Erro ao obter headers via métodos automáticos: {str(e)}")
+    
+    logger.info("Usando token estático como fallback")
+    
+    # Fallback para o caso de erro nos métodos automáticos
     # Token JWT fornecido pelo usuário
     jwt_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVjNWVjNDg5LWI0OWYtNDk4My1iZjcyLWMzYzk5MzUzMzdmYiIsIm93bmVyX2lkIjoiNzQzNDUxOWEtZTkwMS00MDBmLTg2MWUtMGRkYTZmNWQzYTYyIiwic3ViIjoiZWM1ZWM0ODktYjQ5Zi00OTgzLWJmNzItYzNjOTkzNTMzN2ZiIiwiZW1haWwiOiJhbGJlcnRvQHNob3J0bWlkaWEuY29tLmJyIiwiaHR0cHM6Ly9oYXN1cmEuaW8vand0L2NsYWltcyI6eyJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbImFnZW5jeSIsImFub255bW91cyJdLCJ4LWhhc3VyYS1kZWZhdWx0LXJvbGUiOiJhZ2VuY3kiLCJ4LWhhc3VyYS11c2VyLWlkIjoiZWM1ZWM0ODktYjQ5Zi00OTgzLWJmNzItYzNjOTkzNTMzN2ZiIiwieC1oYXN1cmEtb3duZXItaWQiOiI3NDM0NTE5YS1lOTAxLTQwMGYtODYxZS0wZGRhNmY1ZDNhNjIifSwicm9sZXMiOlsiYWdlbmN5IiwiYW5vbnltb3VzIl0sImlhdCI6MTc0MzYxNTQ1N30.TUbI9cGcysWa3L3kuKuFBlnn_Kje5c095K24GWNCycA"
     
@@ -135,7 +178,7 @@ def get_auth_headers():
     }
     
     # Log para confirmar que está usando o token correto
-    logger.info(f"Usando token de autenticação (primeiros 20 caracteres): {auth_token[:20]}...")
+    logger.info(f"Usando token estático de autenticação (primeiros 20 caracteres): {auth_token[:20]}...")
     
     return headers
 

@@ -246,6 +246,11 @@ Para mais detalhes, consulte o arquivo \`debian-instructions.md\` incluído nest
 Este pacote inclui scripts Python para automação de tarefas:
 
 - \`export_via_api.py\` - Exporta dados via API do Clint
+- \`export_via_api_json.py\` - Script para exportar dados via API (captura automaticamente o token JWT)
+- \`export_via_selenium.py\` - Script para exportar dados via automação com Selenium
+- \`get_jwt_token.py\` - Utilitário para extrair o token JWT
+- \`interceptor_token.py\` - Interceptação de requisições para captura do token
+- \`playwright_token.py\` - Captura automática de token com Playwright
 - \`login_clint.py\` - Script de automação para login
 - \`login_clint_vps.py\` - Versão otimizada para VPS
 - \`schedule_login.py\` - Agendamento de tarefas automatizadas
@@ -253,7 +258,7 @@ Este pacote inclui scripts Python para automação de tarefas:
 Para usar os scripts Python, instale as dependências necessárias:
 
 \`\`\`bash
-pip install requests pandas openpyxl selenium webdriver_manager
+pip install requests pandas openpyxl selenium webdriver_manager playwright python-dotenv unidecode
 \`\`\`
 
 ## Suporte
