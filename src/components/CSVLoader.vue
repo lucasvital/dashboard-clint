@@ -58,7 +58,19 @@ import FilterBar from './FilterBar.vue'
 import store from '../store'
 
 // Estado
-const csvUrl = ref('/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_09-04-2025.csv')
+const getCSVUrl = () => {
+  // Obtém a data atual no formato dd-mm-yyyy
+  const today = new Date();
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const year = today.getFullYear();
+  const formattedDate = `${day}-${month}-${year}`;
+  
+  // Retorna a URL com a data atual
+  return `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`;
+};
+
+const csvUrl = ref(getCSVUrl())
 const csvLoaded = ref(false)
 const loading = ref(false)
 const error = ref(null)
@@ -88,21 +100,62 @@ const tags = computed(() => {
   return Array.from(uniqueTags).sort()
 })
 
+// Tenta carregar arquivos com datas anteriores se o arquivo atual não existir
+const tryPreviousDates = async (daysToTry = 7) => {
+  // Se o arquivo já foi carregado, não fazer nada
+  if (csvLoaded.value) return;
+  
+  const today = new Date();
+  
+  for (let i = 0; i < daysToTry; i++) {
+    // Tenta a data atual menos i dias
+    const targetDate = new Date(today);
+    targetDate.setDate(today.getDate() - i);
+    
+    const day = String(targetDate.getDate()).padStart(2, '0');
+    const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+    const year = targetDate.getFullYear();
+    const formattedDate = `${day}-${month}-${year}`;
+    
+    const fileUrl = `/resultados_api/[alberto_at_shortmidia.com.br]_Dados_Gerais_${formattedDate}.csv`;
+    csvUrl.value = fileUrl;
+    
+    try {
+      console.log(`Tentando carregar arquivo: ${fileUrl}`);
+      await store.loadCSVData(fileUrl);
+      csvLoaded.value = true;
+      loading.value = false;
+      console.log(`Arquivo carregado com sucesso: ${fileUrl}`);
+      break; // Sai do loop se carregar com sucesso
+    } catch (err) {
+      console.log(`Erro ao carregar ${fileUrl}: ${err.message}`);
+      // Continua tentando com a próxima data
+    }
+  }
+  
+  // Se chegou aqui e ainda não carregou, mostrar erro
+  if (!csvLoaded.value) {
+    error.value = "Não foi possível encontrar um arquivo CSV válido nos últimos dias.";
+    loading.value = false;
+  }
+};
+
 // Carregar dados do CSV
 const loadCSV = () => {
-  loading.value = true
-  error.value = null
+  loading.value = true;
+  error.value = null;
   
+  // Tenta o arquivo atual primeiro, depois tenta datas anteriores
   store.loadCSVData(csvUrl.value)
     .then(() => {
-      csvLoaded.value = true
-      loading.value = false
+      csvLoaded.value = true;
+      loading.value = false;
     })
     .catch(err => {
-      error.value = err.message
-      loading.value = false
-    })
-}
+      console.log(`Erro ao carregar o arquivo atual: ${err.message}. Tentando arquivos anteriores...`);
+      tryPreviousDates();
+    });
+};
 
 // Checar se já temos dados no store
 onMounted(() => {
