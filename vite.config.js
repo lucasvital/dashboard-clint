@@ -8,9 +8,14 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'crypto': 'crypto-browserify'
     },
   },
   server: {
     port: 5173
+  },
+  build: {
+    sourcemap: true,
+    minify: false
   }
 }) 
