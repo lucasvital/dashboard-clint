@@ -30,78 +30,34 @@ const state = reactive({
  * @returns {Array} Dados formatados
  */
 function parseCSVData(data) {
-  console.log('Processando dados CSV:', data.length, 'registros');
-  
   return data.map(item => {
-    // Formata datas nos dados
     const parsedItem = { ...item }
     
-    // Converte strings de data para objetos Date usando o campo created_at
+    // Converte strings de data para objetos Date de forma simplificada
+    // Os CSVs já vêm formatados corretamente, então apenas criamos o objeto Date
     if (parsedItem.created_at) {
       try {
-        // Tenta processar o formato brasileiro: dd/mm/aaaa hh:mm:ss
-        const dateParts = parsedItem.created_at.split(' ');
-        if (dateParts.length >= 1) {
-          const dateComponent = dateParts[0];
-          const [day, month, year] = dateComponent.split('/').map(num => parseInt(num, 10));
-          
-          // Se conseguiu extrair dia, mês e ano corretamente
-          if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-            // Cria a data (mês em JavaScript é 0-based)
-            let date;
-            
-            // Se tiver componente de horário
-            if (dateParts.length > 1) {
-              const timeComponent = dateParts[1];
-              const [hours, minutes, seconds] = timeComponent.split(':').map(num => parseInt(num, 10));
-              
-              // Cria data com horário
-              date = new Date(year, month - 1, day, 
-                             !isNaN(hours) ? hours : 0, 
-                             !isNaN(minutes) ? minutes : 0, 
-                             !isNaN(seconds) ? seconds : 0);
-            } else {
-              // Cria data sem horário
-              date = new Date(year, month - 1, day);
-            }
-            
-            if (!isNaN(date.getTime())) {
-              parsedItem.dataObj = date;
-              console.log(`Data processada com sucesso: ${parsedItem.created_at} -> ${date.toLocaleDateString()}`);
-            } else {
-              console.warn(`Data inválida após processamento: ${parsedItem.created_at}`);
-              // Fallback para o parser padrão
-              const fallbackDate = new Date(parsedItem.created_at);
-              if (!isNaN(fallbackDate.getTime())) {
-                parsedItem.dataObj = fallbackDate;
-              }
-            }
-          } else {
-            // Fallback para o parser padrão
-            const fallbackDate = new Date(parsedItem.created_at);
-            if (!isNaN(fallbackDate.getTime())) {
-              parsedItem.dataObj = fallbackDate;
-            } else {
-              console.warn(`Não foi possível processar a data: ${parsedItem.created_at}`);
-            }
-          }
+        // Formato esperado: dd/mm/aaaa
+        const [day, month, year] = parsedItem.created_at.split(' ')[0].split('/').map(num => parseInt(num, 10));
+        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+          parsedItem.dataObj = new Date(year, month - 1, day);
+        } else {
+          // Fallback para formato padrão
+          parsedItem.dataObj = new Date(parsedItem.created_at);
         }
       } catch (error) {
-        console.error('Erro ao formatar data:', error, parsedItem.created_at);
+        // Silenciosamente falha e continua
       }
     }
-    // Suporte legado para o formato dd/mm/yyyy
     else if (parsedItem.data) {
       try {
-        const [day, month, year] = parsedItem.data.split('/').map(num => parseInt(num, 10))
-        const date = new Date(year, month - 1, day)
-        
+        const [day, month, year] = parsedItem.data.split('/').map(num => parseInt(num, 10));
+        const date = new Date(year, month - 1, day);
         if (!isNaN(date)) {
-          parsedItem.dataObj = date
-          parsedItem.data = formatDate(date)
+          parsedItem.dataObj = date;
         }
       } catch (error) {
-        console.error('Erro ao formatar data legada:', error)
+        // Silenciosamente falha e continua
       }
     }
     
@@ -139,16 +95,6 @@ const store = {
    * Retorna dados filtrados com base nos filtros atuais
    */
   getFilteredData() {
-    // Para debugging 
-    console.log('Aplicando filtros em getFilteredData com:',
-      'grupo:', state.selectedGroup,
-      'origem:', state.selectedOrigin,
-      'usuário:', state.filters.user,
-      'tags:', state.filters.tags,
-      'data início:', state.filters.dateRange.start ? state.filters.dateRange.start.toLocaleDateString() : 'não definido',
-      'data fim:', state.filters.dateRange.end ? state.filters.dateRange.end.toLocaleDateString() : 'não definido'
-    );
-    
     return state.rawData.filter(item => {
       // Filtro de texto de busca (verifica em múltiplos campos)
       if (state.filters.searchText.trim()) {
@@ -214,12 +160,9 @@ const store = {
    */
   loadCSVData(url) {
     return new Promise((resolve, reject) => {
-      console.log(`Iniciando carregamento do CSV: ${url}`)
-      
       // Verifica se a URL é válida
       if (!url) {
         const error = new Error('URL do CSV não fornecida')
-        console.error(error)
         reject(error)
         return
       }
@@ -230,7 +173,6 @@ const store = {
         skipEmptyLines: true,
         complete: (results) => {
           if (results.errors && results.errors.length > 0) {
-            console.error('Erros ao processar CSV:', results.errors)
             // Decidir se deve continuar mesmo com erros, baseado na gravidade
             const fatalErrors = results.errors.filter(e => e.type === 'Abort' || e.type === 'File');
             if (fatalErrors.length > 0) {
@@ -242,7 +184,6 @@ const store = {
           
           if (!results.data || results.data.length === 0) {
             const error = new Error('O arquivo CSV está vazio ou não contém dados válidos')
-            console.error(error)
             reject(error)
             return
           }
