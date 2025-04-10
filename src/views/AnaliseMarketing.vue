@@ -309,133 +309,73 @@ const roiMarketing = computed(() => {
 
 // Gráficos
 const conversaoPorCanalChart = computed(() => {
-  // Agrupa conversões por canal/origem
-  const origens = {}
-  const conversoes = {}
+  // Forçar recálculo quando os filtros mudam
+  const update = triggerUpdate.value;
   
-  filteredData.value.forEach(item => {
-    const origem = item.nome_origem || 'Não especificado'
-    
-    if (!origens[origem]) {
-      origens[origem] = 0
-      conversoes[origem] = 0
-    }
-    
-    origens[origem]++
-    
-    if (item.status && (item.status.toLowerCase() === 'ganho' || item.status.toLowerCase() === 'won')) {
-      conversoes[origem]++
-    }
-  })
-  
-  // Calcula taxa de conversão para cada origem
-  const taxas = Object.keys(origens).map(origem => {
-    const taxa = origens[origem] ? (conversoes[origem] / origens[origem]) * 100 : 0
-    return {
-      origem,
-      taxa: parseFloat(taxa.toFixed(1))
-    }
-  })
-  
-  // Ordenar por taxa de conversão (maior para menor) e pegar os 10 principais
-  const principaisOrigens = taxas
-    .sort((a, b) => b.taxa - a.taxa)
-    .slice(0, 10)
-  
-  return {
-    type: 'bar',
-    data: {
-      labels: principaisOrigens.map(item => item.origem),
-      datasets: [{
-        label: 'Taxa de Conversão (%)',
-        data: principaisOrigens.map(item => item.taxa),
-        backgroundColor: 'rgba(99, 102, 241, 0.7)',
-        borderColor: 'rgb(99, 102, 241)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: {
-        legend: {
-          display: false
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `${context.formattedValue}%`
-            }
-          }
-        }
-      },
-      scales: {
-        x: {
-          beginAtZero: true,
-          max: 100,
-          ticks: {
-            callback: function(value) {
-              return value + '%'
-            }
-          }
-        }
-      }
-    }
+  const dadosConversao = {
+    'Social Media': filteredData.value.filter(item => 
+      item.source && item.source.toLowerCase().includes('social')).length,
+    'Email': filteredData.value.filter(item => 
+      item.source && item.source.toLowerCase().includes('email')).length,
+    'Busca Orgânica': filteredData.value.filter(item => 
+      item.source && item.source.toLowerCase().includes('organic')).length,
+    'Referência': filteredData.value.filter(item => 
+      item.source && item.source.toLowerCase().includes('referral')).length,
+    'Direto': filteredData.value.filter(item => 
+      item.source && item.source.toLowerCase().includes('direct')).length
   }
+  
+  // Usar createDoughnutChart em vez de configuração manual
+  return createDoughnutChart(
+    Object.keys(dadosConversao),
+    Object.values(dadosConversao),
+    '65%'
+  )
 })
 
 const leadsPorDiaChart = computed(() => {
-  // Agrupa leads por dia dos últimos 30 dias
-  const hoje = new Date()
-  const leadsPorDia = {}
+  // Forçar recálculo quando os filtros mudam
+  const update = triggerUpdate.value;
   
-  // Inicializa últimos 30 dias com 0
+  const dataAtual = new Date();
+  const dias = [];
+  const valores = [];
+  
+  // Obtém dados para os últimos 30 dias
   for (let i = 29; i >= 0; i--) {
-    const data = new Date(hoje)
-    data.setDate(hoje.getDate() - i)
-    const dataStr = formatarData(data)
-    leadsPorDia[dataStr] = 0
+    const data = new Date();
+    data.setDate(dataAtual.getDate() - i);
+    const dataFormatada = data.toISOString().split('T')[0];
+    
+    // Formata a data para exibição (DD/MM)
+    const dia = data.getDate().toString().padStart(2, '0');
+    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+    dias.push(`${dia}/${mes}`);
+    
+    // Conta os leads para esta data
+    const leadsNoDia = filteredData.value.filter(item => {
+      if (!item.created_at) return false;
+      return item.created_at.includes(dataFormatada);
+    }).length;
+    
+    valores.push(leadsNoDia);
   }
-  
-  // Preenche dados reais
-  filteredData.value.forEach(item => {
-    if (item.dataObj) {
-      const diffTime = Math.abs(hoje - item.dataObj)
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      
-      if (diffDays <= 30) {
-        const dataStr = formatarData(item.dataObj)
-        if (leadsPorDia[dataStr] !== undefined) {
-          leadsPorDia[dataStr]++
-        }
-      }
-    }
-  })
-  
-  // Converte para arrays para o gráfico
-  const datas = Object.keys(leadsPorDia)
-  const valores = Object.values(leadsPorDia)
   
   return {
     type: 'line',
     data: {
-      labels: datas,
+      labels: dias,
       datasets: [{
-        label: 'Leads',
+        label: 'Novos leads',
         data: valores,
-        borderColor: '#8b5cf6',
-        backgroundColor: 'rgba(139, 92, 246, 0.2)',
-        tension: 0.3,
-        fill: true
+        backgroundColor: chartColors.primary,
+        borderColor: chartColors.borders.primary,
+        fill: true,
+        tension: 0.3
       }]
     },
     options: {
       responsive: true,
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
       scales: {
         y: {
           beginAtZero: true,

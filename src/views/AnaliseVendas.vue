@@ -613,14 +613,14 @@ const vendasPorStatusChart = computed(() => {
       datasets: [{
         data: [statusCount.ganho, statusCount.perdido, statusCount.aberto],
         backgroundColor: [
-          'rgba(72, 187, 120, 0.7)',
-          'rgba(237, 100, 166, 0.7)',
-          'rgba(66, 153, 225, 0.7)'
+          chartColors.status.success,
+          chartColors.status.danger,
+          chartColors.status.info
         ],
         borderColor: [
-          'rgb(72, 187, 120)',
-          'rgb(237, 100, 166)',
-          'rgb(66, 153, 225)'
+          chartColors.status.borders.success,
+          chartColors.status.borders.danger,
+          chartColors.status.borders.info
         ],
         borderWidth: 1
       }]

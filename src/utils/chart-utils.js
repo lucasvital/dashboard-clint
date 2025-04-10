@@ -76,11 +76,24 @@ export const chartColors = {
   secondary: 'rgba(167, 139, 250, 0.6)',  // Purple-400 com transparência
   tertiary: 'rgba(192, 132, 252, 0.5)',  // Purple-300 com transparência
   quaternary: 'rgba(216, 180, 254, 0.4)', // Purple-200 com transparência
+  quinary: 'rgba(233, 213, 255, 0.4)',   // Purple-100 com transparência
   borders: {
     primary: 'rgba(139, 92, 246, 1)',    // Purple-500 sólido
     secondary: 'rgba(167, 139, 250, 1)',  // Purple-400 sólido
     tertiary: 'rgba(192, 132, 252, 1)',  // Purple-300 sólido
-    quaternary: 'rgba(216, 180, 254, 1)'  // Purple-200 sólido
+    quaternary: 'rgba(216, 180, 254, 1)', // Purple-200 sólido
+    quinary: 'rgba(233, 213, 255, 1)'     // Purple-100 sólido
+  },
+  // Cores para os status (substituindo as cores padrão de verde, vermelho, azul)
+  status: {
+    success: 'rgba(139, 92, 246, 0.7)',     // Roxo para status "ganho" (em vez de verde)
+    danger: 'rgba(167, 139, 250, 0.6)',     // Roxo mais claro para status "perdido" (em vez de vermelho)
+    info: 'rgba(192, 132, 252, 0.5)',       // Roxo ainda mais claro para status "aberto" (em vez de azul)
+    borders: {
+      success: 'rgba(139, 92, 246, 1)',     // Roxo sólido
+      danger: 'rgba(167, 139, 250, 1)',     // Roxo mais claro sólido
+      info: 'rgba(192, 132, 252, 1)'        // Roxo ainda mais claro sólido
+    }
   }
 }
 
@@ -188,92 +201,65 @@ export const createLineChart = (groupedData, label) => {
 }
 
 /**
- * Criar gráfico de barras
- * @param {Array} labels - Rótulos para o eixo X
- * @param {Array} values - Valores para as barras
- * @param {String} label - Rótulo para o dataset
+ * Criar gráfico de barras para exibir dados de desempenho por mês
+ * @param {Array} data - Dados agrupados por mês
  * @returns {Object} Configuração do gráfico de barras
  */
-export const createBarChart = (labels, values, label) => {
+export const createBarChart = (data, label = 'Valor') => {
   return {
     type: 'bar',
     data: {
-      labels: labels,
+      labels: data.labels,
       datasets: [{
         label: label,
-        data: values,
-        backgroundColor: chartColors.secondary,
-        borderColor: chartColors.borders.secondary,
-        borderWidth: 1,
-        borderRadius: 4
+        data: data.values,
+        backgroundColor: chartColors.primary,
+        borderColor: chartColors.borders.primary,
+        borderWidth: 1
       }]
     },
-    options: {
-      ...baseChartOptions,
-      scales: {
-        ...baseChartOptions.scales,
-        y: {
-          ...baseChartOptions.scales.y,
-          beginAtZero: true
-        }
-      }
-    }
+    options: baseChartOptions
   }
 }
 
 /**
- * Criar gráfico de pizza/doughnut
- * @param {Array} labels - Rótulos para as fatias
- * @param {Array} values - Valores para as fatias
- * @param {String} label - Rótulo para o dataset
- * @param {Boolean} isDoughnut - Se verdadeiro, cria um gráfico de rosca, senão um de pizza
- * @returns {Object} Configuração do gráfico de pizza
+ * Criar configuração para gráfico de rosca com cores personalizadas
+ * @param {Array} labels - Rótulos para o gráfico
+ * @param {Array} data - Dados numéricos
+ * @returns {Object} Configuração do gráfico
  */
-export const createPieChart = (labels, values, label, isDoughnut = true) => {
+export const createDoughnutChart = (labels, data, cutoutPercentage = '70%') => {
+  // Gerar cores diferentes com base na paleta roxa
+  const backgroundColors = [
+    chartColors.primary,
+    chartColors.secondary,
+    chartColors.tertiary,
+    chartColors.quaternary,
+    chartColors.quinary
+  ];
+  
+  const borderColors = [
+    chartColors.borders.primary,
+    chartColors.borders.secondary,
+    chartColors.borders.tertiary,
+    chartColors.borders.quaternary,
+    chartColors.borders.quinary
+  ];
+  
   return {
-    type: isDoughnut ? 'doughnut' : 'pie',
+    type: 'doughnut',
     data: {
       labels: labels,
       datasets: [{
-        label: label,
-        data: values,
-        backgroundColor: [
-          chartColors.primary,
-          chartColors.secondary,
-          chartColors.tertiary,
-          chartColors.quaternary,
-          'rgba(236, 72, 153, 0.6)',   // Rosa
-          'rgba(59, 130, 246, 0.6)',    // Azul
-          'rgba(245, 158, 11, 0.6)',    // Âmbar
-          'rgba(16, 185, 129, 0.6)',    // Verde
-          'rgba(251, 113, 133, 0.6)',   // Rosa claro
-          'rgba(99, 102, 241, 0.6)'     // Índigo
-        ],
-        borderColor: [
-          chartColors.borders.primary,
-          chartColors.borders.secondary,
-          chartColors.borders.tertiary,
-          chartColors.borders.quaternary,
-          'rgba(236, 72, 153, 1)',
-          'rgba(59, 130, 246, 1)',
-          'rgba(245, 158, 11, 1)',
-          'rgba(16, 185, 129, 1)',
-          'rgba(251, 113, 133, 1)',
-          'rgba(99, 102, 241, 1)'
-        ],
+        data: data,
+        backgroundColor: backgroundColors,
+        borderColor: borderColors,
         borderWidth: 1
       }]
     },
     options: {
       ...baseChartOptions,
-      cutout: isDoughnut ? '60%' : 0,
-      plugins: {
-        ...baseChartOptions.plugins,
-        legend: {
-          ...baseChartOptions.plugins.legend,
-          position: 'right'
-        }
-      }
+      cutout: cutoutPercentage
     }
   }
 } 
