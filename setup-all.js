@@ -315,11 +315,38 @@ async function compilarFrontend() {
   console.log('\n🔨 Compilando front-end...');
   
   try {
-    await execPromise('npm run build');
+    // Verificar se estamos em um ambiente Debian
+    const { platform, distro } = await detectarSistemaOperacional();
+    
+    if (distro === 'debian' || distro === 'ubuntu') {
+      console.log('\n🔧 Ambiente Debian/Ubuntu detectado, aplicando correções específicas para build...');
+      
+      // Verificar se o script debian-build-fix.sh existe
+      if (fs.existsSync(path.join(__dirname, 'debian-build-fix.sh'))) {
+        console.log('Executando script de correção para Debian...');
+        await execPromise('chmod +x debian-build-fix.sh && ./debian-build-fix.sh');
+        console.log('✅ Correções para Debian aplicadas com sucesso');
+        
+        // Usar o script de build direto criado pelo debian-build-fix.sh
+        await execPromise('./build.sh');
+      } else {
+        // Instalar dependências necessárias
+        console.log('Instalando dependências para build em Debian...');
+        await execPromise('npm install --save crypto-browserify');
+        await execPromise('npm install --save-dev cross-env stream-browserify assert buffer process util');
+        
+        // Executar build com NODE_ENV explícito
+        await execPromise('NODE_ENV=development npx vite build --mode development');
+      }
+    } else {
+      // Para outros sistemas, executar build normal
+      await execPromise('npm run build');
+    }
+    
     console.log('✅ Front-end compilado com sucesso');
   } catch (error) {
     console.error('❌ Erro ao compilar front-end:', error);
-    process.exit(1);
+    throw error;
   }
 }
 

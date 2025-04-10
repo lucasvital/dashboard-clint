@@ -18,6 +18,8 @@ const filesToInclude = [
   'setup-all.js',
   'fix-build.js',
   'fix-debian.js',
+  'debian-build-fix.sh',
+  'install-deps.js',
   'debian-instructions.md',
   'config.js',
   'server.js',
