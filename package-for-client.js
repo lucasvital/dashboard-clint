@@ -189,16 +189,20 @@ Este pacote contém o sistema Clint Dashboard pronto para instalação.
 2. Abra um terminal no diretório extraído
 3. Execute o comando: \`node setup-all.js\`
 4. Siga as instruções na tela para configurar o sistema
-5. O sistema será instalado e iniciado automaticamente
+5. O sistema será instalado e iniciado automaticamente com PM2
 
-## Configuração em Produção
+## Gerenciamento com PM2
 
-Para servidores Linux, o script cria um serviço systemd para manter o sistema executando, mesmo após reinicializações.
+O sistema utiliza PM2 para gerenciar o processo Node.js em produção. Isso garante que o sistema continue rodando e seja reiniciado automaticamente em caso de falhas.
 
-Comandos úteis:
-- \`sudo systemctl status clint-dashboard\` - Verificar status
-- \`sudo systemctl restart clint-dashboard\` - Reiniciar o serviço
-- \`sudo systemctl stop clint-dashboard\` - Parar o serviço
+Comandos úteis do PM2:
+- \`pm2 status\` - Verificar status do servidor
+- \`pm2 logs clint-dashboard\` - Ver logs em tempo real
+- \`pm2 restart clint-dashboard\` - Reiniciar o servidor
+- \`pm2 stop clint-dashboard\` - Parar o servidor
+- \`pm2 delete clint-dashboard\` - Remover o servidor do PM2
+
+Durante a instalação, o sistema também tentará configurar o PM2 para iniciar automaticamente quando o servidor for reiniciado.
 
 ## Suporte
 

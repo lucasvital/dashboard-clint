@@ -117,6 +117,16 @@ async function verificarDependencias() {
     // Verificar npm
     await execPromise('npm --version');
     
+    // Verificar PM2
+    try {
+      await execPromise('pm2 --version');
+      console.log('✅ PM2 encontrado');
+    } catch (error) {
+      console.log('⚠️ PM2 não encontrado. Será instalado automaticamente.');
+      await execPromise('npm install -g pm2');
+      console.log('✅ PM2 instalado globalmente');
+    }
+    
     // Verificar PostgreSQL
     try {
       await execPromise('psql --version');
@@ -315,73 +325,74 @@ async function compilarFrontend() {
 
 // Função para iniciar o servidor
 async function iniciarServidor() {
-  console.log('\n🚀 Iniciando servidor...');
+  console.log('\n�� Iniciando servidor com PM2...');
   
-  if (process.platform === 'linux') {
-    console.log('\n📄 Configurando systemd service para iniciar automaticamente...');
-    
-    // Criar arquivo de serviço
-    const serviceContent = `[Unit]
-Description=Clint Dashboard
-After=network.target
-
-[Service]
-Environment=NODE_ENV=production
-Type=simple
-User=root
-ExecStart=/usr/bin/node ${path.join(__dirname, 'server.js')}
-WorkingDirectory=${__dirname}
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-`;
-    
-    // Salvar arquivo service
-    const servicePath = '/etc/systemd/system/clint-dashboard.service';
-    
+  try {
+    // Verificar se já existe uma instância do app rodando no PM2
     try {
-      fs.writeFileSync('clint-dashboard.service', serviceContent);
-      await execPromise('sudo mv clint-dashboard.service /etc/systemd/system/');
-      await execPromise('sudo systemctl daemon-reload');
-      await execPromise('sudo systemctl enable clint-dashboard');
-      await execPromise('sudo systemctl start clint-dashboard');
-      
-      console.log('✅ Serviço systemd configurado e iniciado');
-      console.log(`Para verificar status: sudo systemctl status clint-dashboard`);
-      console.log(`Para parar: sudo systemctl stop clint-dashboard`);
-      console.log(`Para reiniciar: sudo systemctl restart clint-dashboard`);
-    } catch (error) {
-      console.error('⚠️ Erro ao configurar serviço systemd:', error);
-      console.log('Iniciando servidor manualmente...');
-      
-      const servidor = spawn('node', ['server.js'], {
-        stdio: 'inherit'
-      });
-      
-      servidor.on('error', (error) => {
-        console.error('❌ Erro ao iniciar servidor:', error);
-      });
-    }
-  } else {
-    const servidor = spawn('node', ['server.js'], {
-      stdio: 'inherit'
-    });
-    
-    servidor.on('error', (error) => {
-      console.error('❌ Erro ao iniciar servidor:', error);
-      process.exit(1);
-    });
-    
-    servidor.on('exit', (code) => {
-      if (code !== 0) {
-        console.error(`❌ Servidor encerrado com código ${code}`);
-        process.exit(1);
+      const { stdout } = await execPromise('pm2 list');
+      if (stdout.includes('clint-dashboard')) {
+        // Se já existir, recarregar
+        console.log('Aplicação já existe no PM2, recarregando...');
+        await execPromise('pm2 reload clint-dashboard');
+      } else {
+        // Caso contrário, iniciar
+        console.log('Iniciando aplicação no PM2...');
+        await execPromise(`pm2 start ${path.join(__dirname, 'server.js')} --name clint-dashboard`);
       }
-    });
+    } catch (error) {
+      // Se houver erro ao verificar, tentar iniciar
+      console.log('Iniciando aplicação no PM2...');
+      await execPromise(`pm2 start ${path.join(__dirname, 'server.js')} --name clint-dashboard`);
+    }
+    
+    // Configurar PM2 para iniciar no boot do sistema
+    if (process.platform === 'linux' || process.platform === 'darwin') {
+      try {
+        console.log('\n🔄 Configurando PM2 para iniciar no boot do sistema...');
+        const startupCommand = await execPromise('pm2 startup');
+        
+        // Extrair comando sudo se necessário
+        const cmdMatch = startupCommand.stdout.match(/sudo\s+.+/);
+        if (cmdMatch) {
+          const sudoCmd = cmdMatch[0];
+          console.log(`Execute o seguinte comando com privilégios de administrador para habilitar o início automático:`);
+          console.log(`\n${sudoCmd}\n`);
+        }
+        
+        // Salvar configuração atual
+        await execPromise('pm2 save');
+        console.log('✅ PM2 configurado para iniciar automaticamente');
+      } catch (error) {
+        console.log('⚠️ Não foi possível configurar o início automático do PM2.');
+        console.log('Execute manualmente: pm2 startup && pm2 save');
+      }
+    } else if (process.platform === 'win32') {
+      try {
+        console.log('\n🔄 Configurando PM2 para iniciar automaticamente no Windows...');
+        await execPromise('pm2-startup install');
+        await execPromise('pm2 save');
+        console.log('✅ PM2 configurado para iniciar automaticamente');
+      } catch (error) {
+        console.log('⚠️ Não foi possível configurar o início automático do PM2.');
+        console.log('Execute manualmente: pm2-startup install && pm2 save');
+      }
+    }
+    
+    // Mostrar status do PM2
+    await execPromise('pm2 status');
+    
+    console.log(`\n✅ Servidor Clint iniciado com PM2 e configurado!`);
+    console.log(`\nComandos úteis do PM2:`);
+    console.log(`- 'pm2 status' - Verificar status do servidor`);
+    console.log(`- 'pm2 logs clint-dashboard' - Ver logs em tempo real`);
+    console.log(`- 'pm2 restart clint-dashboard' - Reiniciar o servidor`);
+    console.log(`- 'pm2 stop clint-dashboard' - Parar o servidor`);
+    console.log(`- 'pm2 delete clint-dashboard' - Remover o servidor do PM2`);
+  } catch (error) {
+    console.error('❌ Erro ao iniciar servidor com PM2:', error);
+    throw error;
   }
-  
-  console.log(`✅ Sistema Clint configurado! Acesse: ${config.frontend_url}`);
 }
 
 // Função para configuração interativa
