@@ -56,6 +56,9 @@
           </div>
         </div>
         
+        <!-- Componente de download direto -->
+        <DownloadCSV />
+        
         <div v-if="error" class="mt-4 p-3 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
           <p class="font-semibold">Erro ao carregar dados:</p>
           <p>{{ error }}</p>
@@ -78,6 +81,7 @@
 <script setup>
 import { ref, computed, onMounted, provide } from 'vue'
 import FilterBar from './FilterBar.vue'
+import DownloadCSV from './DownloadCSV.vue'
 import store from '../store'
 import Papa from 'papaparse'
 
