@@ -167,6 +167,10 @@ const store = {
         return
       }
       
+      // Extrair o nome do arquivo da URL para exibição
+      const fileName = url.split('/').pop();
+      console.log(`🔄 Tentando carregar o arquivo CSV: ${fileName}`);
+      
       Papa.parse(url, {
         download: true,
         header: true,
@@ -188,7 +192,8 @@ const store = {
             return
           }
           
-          console.log(`CSV carregado com sucesso: ${results.data.length} registros`)
+          console.log(`✅ CSV carregado com sucesso: ${fileName}`);
+          console.log(`📊 Total de registros: ${results.data.length}`);
           state.rawData = parseCSVData(results.data)
           resolve(state.rawData)
         },

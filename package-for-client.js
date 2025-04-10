@@ -16,6 +16,7 @@ const outputDir = path.join(__dirname, 'dist-package');
 const filesToInclude = [
   // Arquivos de setup e configuração
   'setup-all.js',
+  'setup-alt.js',
   'fix-build.js',
   'fix-debian.js',
   'debian-build-fix.sh',
@@ -205,11 +206,19 @@ Este pacote contém o sistema Clint Dashboard completo pronto para instalação.
 
 ## Passos para Instalação
 
+### Opção 1: Configuração Padrão (Completa)
 1. Extraia este pacote em um diretório no servidor
 2. Abra um terminal no diretório extraído
 3. Execute o comando: \`node setup-all.js\`
 4. Siga as instruções na tela para configurar o sistema
 5. O sistema será instalado e iniciado automaticamente com PM2
+
+### Opção 2: Configuração Simplificada
+Configuração alternativa que pergunta apenas URL base e portas:
+
+1. Execute o comando: \`node setup-alt.js\`
+2. Informe apenas a URL base (sem http://) e as portas para frontend e backend
+3. As demais configurações são derivadas automaticamente
 
 ## Gerenciamento com PM2
 
