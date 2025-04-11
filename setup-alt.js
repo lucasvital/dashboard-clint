@@ -187,11 +187,8 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
     
     // Configurar Nginx para tamanho máximo de upload
     console.log('⚙️ Configurando Nginx para uploads grandes...');
-    await executarComando(`
-      cat > /etc/nginx/conf.d/clint-dashboard.conf << 'END'
-      client_max_body_size 100M;
-      END
-    `);
+    const configNginx = `client_max_body_size 100M;`;
+    fs.writeFileSync('/etc/nginx/conf.d/clint-dashboard.conf', configNginx);
     
     // Extrair nomes de domínio (remover https:// e porta)
     const frontendDomain = new URL(frontendUrl).hostname;
@@ -199,57 +196,57 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
     
     // Criar configuração Nginx para o backend
     console.log(`🔧 Configurando Nginx para o backend (${backendDomain})...`);
-    await executarComando(`
-      cat > /etc/nginx/sites-available/clint-backend << 'END'
-      server {
-        server_name ${backendDomain};
-        
-        location / {
-          proxy_pass http://127.0.0.1:${backendPort};
-          proxy_http_version 1.1;
-          proxy_set_header Upgrade \\$http_upgrade;
-          proxy_set_header Connection 'upgrade';
-          proxy_set_header Host \\$host;
-          proxy_set_header X-Real-IP \\$remote_addr;
-          proxy_set_header X-Forwarded-Proto \\$scheme;
-          proxy_set_header X-Forwarded-For \\$proxy_add_x_forwarded_for;
-          proxy_cache_bypass \\$http_upgrade;
-        }
-      }
-      END
-    `);
+    const configBackend = `server {
+  server_name ${backendDomain};
+  
+  location / {
+    proxy_pass http://127.0.0.1:${backendPort};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_cache_bypass $http_upgrade;
+  }
+}`;
+    
+    fs.writeFileSync('/etc/nginx/sites-available/clint-backend', configBackend);
     
     // Criar link simbólico para habilitar o site backend
     await executarComando('ln -sf /etc/nginx/sites-available/clint-backend /etc/nginx/sites-enabled');
     
     // Criar configuração Nginx para o frontend
     console.log(`🔧 Configurando Nginx para o frontend (${frontendDomain})...`);
-    await executarComando(`
-      cat > /etc/nginx/sites-available/clint-frontend << 'END'
-      server {
-        server_name ${frontendDomain};
-        
-        location / {
-          proxy_pass http://127.0.0.1:${frontendPort};
-          proxy_http_version 1.1;
-          proxy_set_header Upgrade \\$http_upgrade;
-          proxy_set_header Connection 'upgrade';
-          proxy_set_header Host \\$host;
-          proxy_set_header X-Real-IP \\$remote_addr;
-          proxy_set_header X-Forwarded-Proto \\$scheme;
-          proxy_set_header X-Forwarded-For \\$proxy_add_x_forwarded_for;
-          proxy_cache_bypass \\$http_upgrade;
-        }
-      }
-      END
-    `);
+    const configFrontend = `server {
+  server_name ${frontendDomain};
+  
+  location / {
+    proxy_pass http://127.0.0.1:${frontendPort};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_cache_bypass $http_upgrade;
+  }
+}`;
+    
+    fs.writeFileSync('/etc/nginx/sites-available/clint-frontend', configFrontend);
     
     // Criar link simbólico para habilitar o site frontend
     await executarComando('ln -sf /etc/nginx/sites-available/clint-frontend /etc/nginx/sites-enabled');
     
+    // Verificar configuração do Nginx antes de reiniciar
+    console.log('✅ Testando configuração do Nginx...');
+    await executarComando('nginx -t');
+    
     // Reiniciar Nginx
     console.log('🔄 Reiniciando Nginx...');
-    await executarComando('service nginx restart');
+    await executarComando('systemctl restart nginx');
     
     // Configurar SSL com Certbot
     console.log('🔒 Configurando certificados SSL com Certbot...');
@@ -266,6 +263,29 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
   } catch (error) {
     console.error('❌ Erro ao configurar domínios:', error.message);
     console.log('⚠️ Você precisará configurar os domínios manualmente.');
+    
+    // Tentar detectar e resolver problemas de configuração do Nginx
+    try {
+      console.log('\n🔍 Verificando erros na configuração do Nginx...');
+      const { stdout } = await execPromise('nginx -t');
+      console.log('Resultado do teste de configuração:', stdout);
+      
+      console.log('\n📋 Verificando status do Nginx:');
+      await executarComando('systemctl status nginx');
+      
+      console.log('\n🛠️ Executando diagnóstico adicional:');
+      console.log('Verificando portas utilizadas:');
+      await executarComando('netstat -tuln | grep ":80\\|:443"');
+    } catch (e) {
+      console.log('Não foi possível realizar diagnóstico completo:', e.message);
+    }
+    
+    console.log('\n📋 Instruções para configuração manual:');
+    console.log(`1. Edite /etc/nginx/sites-available/clint-frontend e configure para o domínio ${new URL(frontendUrl).hostname}`);
+    console.log(`2. Edite /etc/nginx/sites-available/clint-backend e configure para o domínio ${new URL(backendUrl).hostname}`);
+    console.log('3. Verifique erros: sudo nginx -t');
+    console.log('4. Reinicie o Nginx: sudo systemctl restart nginx');
+    console.log('5. Configure SSL: sudo certbot --nginx');
     
     const prosseguir = await pergunta('Deseja prosseguir mesmo sem a configuração de domínios? (s/n): ');
     return prosseguir.toLowerCase() === 's';
@@ -370,6 +390,92 @@ buildProcess.stderr.on('data', (data) => {
   }
 }
 
+// Criar usuário com privilégios sudo
+async function criarUsuarioSudo() {
+  console.log('\n👤 Configurando usuário administrador...');
+  
+  try {
+    const username = await pergunta('Nome do usuário sudo a ser criado: ');
+    
+    if (!username || username.trim() === '') {
+      console.log('⚠️ Nome de usuário inválido, pulando criação de usuário.');
+      return false;
+    }
+    
+    // Verificar se o usuário já existe
+    try {
+      const { stdout } = await execPromise(`id ${username} &>/dev/null && echo "exists" || echo "not exists"`);
+      if (stdout.trim() === 'exists') {
+        console.log(`⚠️ Usuário ${username} já existe. Deseja pular ou reconfigurar?`);
+        const pular = await pergunta('Pular criação de usuário? (s/n) [s]: ') || 's';
+        if (pular.toLowerCase() === 's') {
+          console.log('✅ Usando usuário existente');
+          return true;
+        }
+      }
+    } catch (e) {
+      // Usuário não existe, prosseguir com a criação
+    }
+    
+    // Criar senha segura para o novo usuário
+    const senha = await pergunta('Senha para o novo usuário: ');
+    if (!senha || senha.length < 6) {
+      console.log('⚠️ A senha deve ter pelo menos 6 caracteres!');
+      return await criarUsuarioSudo();
+    }
+    
+    // Confirmar senha
+    const confirmaSenha = await pergunta('Confirme a senha: ');
+    if (senha !== confirmaSenha) {
+      console.log('⚠️ As senhas não coincidem!');
+      return await criarUsuarioSudo();
+    }
+    
+    // Criar o usuário
+    console.log(`📝 Criando usuário ${username}...`);
+    await executarComando(`useradd -m -s /bin/bash ${username}`);
+    
+    // Definir senha para o usuário (de forma segura)
+    console.log('🔐 Configurando senha...');
+    const comandoSenha = `echo "${username}:${senha}" | chpasswd`;
+    await executarComando(comandoSenha);
+    
+    // Adicionar usuário ao grupo sudo
+    console.log('🔑 Adicionando ao grupo sudo...');
+    await executarComando(`usermod -aG sudo ${username}`);
+    
+    // Permitir sudo sem senha (opcional)
+    const sudoSemSenha = await pergunta('Permitir sudo sem senha? (s/n) [n]: ') || 'n';
+    if (sudoSemSenha.toLowerCase() === 's') {
+      console.log('📝 Configurando sudo sem senha...');
+      await executarComando(`echo "${username} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${username}`);
+      await executarComando(`chmod 0440 /etc/sudoers.d/${username}`);
+    }
+    
+    console.log(`✅ Usuário ${username} criado com privilégios sudo!`);
+    console.log(`🔑 Você pode fazer login com: ssh ${username}@seu-servidor`);
+    
+    // Copiar o script para o diretório do novo usuário
+    if (fs.existsSync(__filename)) {
+      console.log(`📄 Copiando script de configuração para o diretório do usuário ${username}...`);
+      const destDir = `/home/${username}`;
+      const scriptName = path.basename(__filename);
+      await executarComando(`cp ${__filename} ${destDir}/${scriptName}`);
+      await executarComando(`chown ${username}:${username} ${destDir}/${scriptName}`);
+      console.log(`✅ Script copiado para ${destDir}/${scriptName}`);
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('❌ Erro ao criar usuário:', error.message);
+    const continuar = await pergunta('Tentar novamente? (s/n): ');
+    if (continuar.toLowerCase() === 's') {
+      return await criarUsuarioSudo();
+    }
+    return false;
+  }
+}
+
 // Função principal
 async function main() {
   try {
@@ -383,6 +489,12 @@ async function main() {
       if (continuar.toLowerCase() !== 's') {
         rl.close();
         return;
+      }
+    } else {
+      // Perguntar se deseja criar um usuário com privilégios sudo
+      const criarUsuario = await pergunta('\n⚙️ Deseja criar um usuário com privilégios sudo? (s/n) [s]: ') || 's';
+      if (criarUsuario.toLowerCase() === 's') {
+        await criarUsuarioSudo();
       }
     }
     
