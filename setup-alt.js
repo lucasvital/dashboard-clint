@@ -272,6 +272,104 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
   }
 }
 
+// Função para criar scripts para Debian/Ubuntu
+async function criarScriptsDebian() {
+  console.log('\n📝 Criando scripts de build para Debian/Ubuntu...');
+  
+  try {
+    // Criar backup do vite.config.js
+    console.log('📝 Criando backup do vite.config.js...');
+    if (fs.existsSync(path.join(__dirname, 'vite.config.js'))) {
+      fs.copyFileSync(
+        path.join(__dirname, 'vite.config.js'),
+        path.join(__dirname, 'vite.config.js.backup')
+      );
+    }
+    
+    // Criar script de build direto
+    console.log('📝 Criando script de build direto...');
+    const buildScript = `#!/bin/bash
+export NODE_OPTIONS=--openssl-legacy-provider
+npx vite build
+`;
+    fs.writeFileSync(path.join(__dirname, 'build.sh'), buildScript);
+    await executarComando('chmod +x build.sh');
+    
+    // Criar script node-build.js
+    console.log('📝 Criando patch para crypto...');
+    const nodeBuildScript = `const { exec } = require('child_process');
+
+console.log('🔨 Iniciando build com configurações para Debian/Ubuntu...');
+
+// Definir variáveis de ambiente
+process.env.NODE_OPTIONS = '--openssl-legacy-provider';
+
+// Executar build
+const buildProcess = exec('npx vite build', (error, stdout, stderr) => {
+  if (error) {
+    console.error(\`❌ Erro durante o build: \${error.message}\`);
+    return;
+  }
+  
+  if (stderr) {
+    console.log(\`Build warnings: \${stderr}\`);
+  }
+  
+  console.log(stdout);
+  console.log('✅ Build concluído com sucesso!');
+});
+
+buildProcess.stdout.on('data', (data) => {
+  process.stdout.write(data);
+});
+
+buildProcess.stderr.on('data', (data) => {
+  process.stderr.write(data);
+});
+`;
+    fs.writeFileSync(path.join(__dirname, 'node-build.js'), nodeBuildScript);
+    
+    // Atualizar vite.config.js para resolver problemas de crypto no Debian
+    if (fs.existsSync(path.join(__dirname, 'vite.config.js'))) {
+      console.log('📝 Atualizando vite.config.js...');
+      let viteConfig = fs.readFileSync(path.join(__dirname, 'vite.config.js'), 'utf8');
+      
+      // Verificar se já tem a configuração resolve
+      if (!viteConfig.includes('resolve:')) {
+        // Adicionar configuração para crypto-browserify
+        viteConfig = viteConfig.replace(
+          'export default defineConfig({',
+          `export default defineConfig({
+  resolve: {
+    alias: {
+      crypto: 'crypto-browserify',
+      stream: 'stream-browserify',
+      assert: 'assert',
+      buffer: 'buffer',
+      process: 'process',
+      util: 'util'
+    }
+  },`
+        );
+        
+        fs.writeFileSync(path.join(__dirname, 'vite.config.js'), viteConfig);
+        console.log('✅ vite.config.js atualizado');
+      }
+    }
+    
+    console.log('🎉 Todas as correções foram aplicadas!');
+    console.log('\n🚀 Agora você pode executar o build usando:');
+    console.log('   ./build.sh');
+    console.log('   ou');
+    console.log('   node node-build.js');
+    
+    return true;
+  } catch (error) {
+    console.error('❌ Erro ao criar scripts de build:', error.message);
+    return false;
+  }
+}
+
 // Função principal
 async function main() {
   try {
@@ -465,14 +563,16 @@ TOKEN_TIMEOUT=3600
       console.log('\n🔨 Compilando front-end...');
       if (distro === 'debian' || distro === 'ubuntu') {
         console.log('Detectado sistema Debian/Ubuntu, aplicando correções específicas...');
-        if (fs.existsSync(path.join(__dirname, 'debian-build-fix.sh'))) {
-          await executarComando('chmod +x debian-build-fix.sh && ./debian-build-fix.sh');
-          await executarComando('./build.sh');
-        } else {
-          await executarComando('npm install --save crypto-browserify');
-          await executarComando('npm install --save-dev cross-env stream-browserify assert buffer process util');
-          await executarComando('NODE_ENV=production npx vite build');
-        }
+        
+        // Criar scripts de build específicos para Debian/Ubuntu
+        await criarScriptsDebian();
+        
+        // Instalar dependências necessárias
+        await executarComando('npm install --save crypto-browserify');
+        await executarComando('npm install --save-dev cross-env stream-browserify assert buffer process util');
+        
+        // Executar o build com o script criado
+        await executarComando('./build.sh');
       } else {
         await executarComando('npm run build');
       }
