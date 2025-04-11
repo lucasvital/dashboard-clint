@@ -21,9 +21,15 @@ const userService = require('./src/services/userService');
 const app = express();
 const PORT = config.server.port;
 
-// Middlewares
-app.use(cors());
+// Middlewares - Usar configurações CORS do arquivo config
+app.use(cors(config.cors));
 app.use(bodyParser.json());
+
+// Log para monitorar requisições
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} | ${req.method} ${req.url}`);
+  next();
+});
 
 // Middleware para servir arquivos CSV com o Content-Type correto
 app.use((req, res, next) => {
@@ -213,5 +219,6 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
   console.log(`Ambiente: ${config.server.env}`);
-  console.log(`Acesse: http://localhost:${PORT}`);
+  console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:' + PORT}`);
+  console.log(`CORS permitido para: ${config.cors.origin}`);
 }); 

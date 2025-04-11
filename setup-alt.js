@@ -189,21 +189,24 @@ async function main() {
     
     console.log('\n⚙️ Configuração do sistema');
     
-    // URL base (sem protocolo, apenas domínio ou IP)
-    const urlBase = await pergunta(`URL base (IP ou domínio sem http://) [localhost]: `) || 'localhost';
+    // Configuração de URL para frontend e backend
+    console.log('\n🌐 Configuração de URLs:');
+    console.log('Você pode configurar o frontend e backend em URLs diferentes se necessário.');
     
     // Frontend
-    console.log('\n🌐 Configuração do Frontend:');
+    const frontendUrlBase = await pergunta(`URL base do Frontend (IP ou domínio sem http://) [localhost]: `) || 'localhost';
     const portaFrontend = await pergunta(`Porta do Frontend [3000]: `) || '3000';
     
     // Backend
     console.log('\n🖥️ Configuração do Backend:');
+    console.log('O Backend e API podem estar em um servidor diferente do Frontend.');
+    const backendUrlBase = await pergunta(`URL base do Backend (IP ou domínio sem http://) [${frontendUrlBase}]: `) || frontendUrlBase;
     const portaBackend = await pergunta(`Porta do Backend [3001]: `) || '3001';
     
     // Gerar URLs completas
     const config = {
-      frontend_url: `http://${urlBase}:${portaFrontend}`,
-      backend_url: `http://${urlBase}:${portaBackend}`,
+      frontend_url: `http://${frontendUrlBase}:${portaFrontend}`,
+      backend_url: `http://${backendUrlBase}:${portaBackend}`,
       port: portaBackend,
       node_env: 'production'
     };
@@ -240,6 +243,11 @@ async function main() {
     console.log(`Porta do servidor: ${config.port}`);
     console.log(`Database: PostgreSQL em ${config.db_host}:${config.db_port}/${config.db_name}`);
     
+    if (frontendUrlBase !== backendUrlBase) {
+      console.log(`\n⚠️ NOTA: Frontend e Backend estão em servidores diferentes.`);
+      console.log(`Certifique-se de configurar CORS corretamente e que o frontend possa acessar o backend.`);
+    }
+    
     const confirma = await pergunta('\nAs configurações estão corretas? (s/n): ');
     if (confirma.toLowerCase() !== 's') {
       rl.close();
@@ -252,7 +260,9 @@ async function main() {
 
 # URLs
 VITE_API_URL=${config.api_url}
+VITE_BACKEND_URL=${config.backend_url}
 BACKEND_URL=${config.backend_url}
+FRONTEND_URL=${config.frontend_url}
 
 # Banco de dados PostgreSQL
 DB_HOST=${config.db_host}
@@ -264,6 +274,9 @@ DB_NAME=${config.db_name}
 # Configurações do servidor
 PORT=${config.port}
 NODE_ENV=${config.node_env}
+
+# Configuração de CORS (para servidores frontend/backend separados)
+CORS_ORIGIN=${config.frontend_url}
 
 # Credenciais da API Clint
 email=${config.clint_email}
@@ -375,6 +388,14 @@ TOKEN_TIMEOUT=3600
       console.log(`\n🌐 Frontend disponível em: ${config.frontend_url}`);
       console.log(`🖥️ Backend disponível em: ${config.backend_url}`);
       console.log(`🔌 API disponível em: ${config.api_url}`);
+      
+      if (frontendUrlBase !== backendUrlBase) {
+        console.log(`\n⚠️ IMPORTANTE: Como você configurou o frontend e backend em servidores diferentes,`);
+        console.log(`   verifique se a configuração CORS está funcionando corretamente.`);
+        console.log(`   Se houver problemas de conexão entre frontend e backend, verifique:`);
+        console.log(`   1. O firewall está permitindo conexões externas`);
+        console.log(`   2. O servidor backend está configurado para aceitar requisições da URL frontend`);
+      }
       
       console.log('\n🔒 Configuração de Firewall:');
       console.log(`Se você estiver usando UFW, execute os seguintes comandos para abrir as portas necessárias:`);

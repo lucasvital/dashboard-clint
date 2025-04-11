@@ -22,11 +22,20 @@ const dbConfig = {
 const serverConfig = {
   port: parseInt(process.env.PORT || '3000'),
   env: process.env.NODE_ENV || 'development',
-  apiUrl: process.env.BACKEND_URL || 'http://localhost:3000'
+  apiUrl: process.env.VITE_API_URL || process.env.API_URL || 'http://localhost:3000/api',
+  backendUrl: process.env.BACKEND_URL || 'http://localhost:3000',
+  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000'
+};
+
+// Configurações de CORS
+const corsConfig = {
+  origin: process.env.CORS_ORIGIN || process.env.FRONTEND_URL || '*',
+  credentials: true
 };
 
 // Exportar configurações
 module.exports = {
   db: dbConfig,
-  server: serverConfig
+  server: serverConfig,
+  cors: corsConfig
 }; 
