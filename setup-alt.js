@@ -168,19 +168,96 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
   console.log('\n🔒 Configurando Nginx e SSL para seus domínios...');
   
   try {
+    // Verificar se as portas necessárias estão livres
+    console.log('🔍 Verificando portas utilizadas...');
+    try {
+      const { stdout: portCheck } = await execPromise('netstat -tuln | grep ":80\\s"');
+      if (portCheck) {
+        console.log('⚠️ A porta 80 já está em uso por outro serviço:');
+        console.log(portCheck);
+        
+        // Tentar identificar o serviço que está usando a porta 80
+        const { stdout: pidInfo } = await execPromise("lsof -i :80 | grep LISTEN");
+        if (pidInfo) {
+          console.log('Processo utilizando a porta 80:');
+          console.log(pidInfo);
+          
+          const serviceName = await pergunta('Deseja parar o serviço que está usando a porta 80? (s/n): ');
+          if (serviceName.toLowerCase() === 's') {
+            // Tentar parar o serviço Apache se estiver rodando
+            console.log('Tentando parar serviços comuns que usam a porta 80...');
+            await executarComando('systemctl stop apache2 2>/dev/null || true');
+            await executarComando('systemctl stop httpd 2>/dev/null || true');
+            
+            // Verificar se a porta foi liberada
+            try {
+              const { stdout: checkAgain } = await execPromise('netstat -tuln | grep ":80\\s"');
+              if (checkAgain) {
+                console.log('⚠️ A porta 80 ainda está em uso. Tentando identificar o PID do processo...');
+                const { stdout: pidOutput } = await execPromise("lsof -i :80 | grep LISTEN | awk '{print $2}'");
+                if (pidOutput) {
+                  const pid = pidOutput.trim();
+                  const matarProcesso = await pergunta(`Deseja encerrar o processo com PID ${pid}? (s/n): `);
+                  if (matarProcesso.toLowerCase() === 's') {
+                    await executarComando(`kill -9 ${pid}`);
+                    console.log(`✅ Processo ${pid} encerrado`);
+                  }
+                }
+              } else {
+                console.log('✅ Porta 80 liberada com sucesso!');
+              }
+            } catch (e) {
+              // Se ocorrer um erro, provavelmente a porta foi liberada
+              console.log('✅ Porta 80 parece estar liberada agora');
+            }
+          } else {
+            const usarOutraPorta = await pergunta('Deseja configurar o Nginx para usar outra porta? (s/n): ');
+            if (usarOutraPorta.toLowerCase() === 's') {
+              // Nota: Implementação para usar outra porta além da 80 exigiria modificações no arquivo de configuração
+              // que estão além do escopo atual
+              console.log('⚠️ Configuração de portas alternativas não implementada. Prosseguindo com o setup padrão.');
+            }
+          }
+        }
+      } else {
+        console.log('✅ Porta 80 está livre para o Nginx');
+      }
+    } catch (e) {
+      // Erro ao verificar portas, provavelmente a porta está livre
+      console.log('✅ Porta 80 parece estar disponível');
+    }
+    
     // Verificar se Nginx está instalado
     const nginxInstalado = await verificarInstalacao('nginx');
     if (!nginxInstalado) {
       console.log('📦 Instalando Nginx...');
       await executarComando('apt-get install -y nginx');
-      await executarComando('rm -f /etc/nginx/sites-enabled/default');
+    } else {
+      console.log('✅ Nginx já está instalado');
+      
+      // Tentar parar e reiniciar o Nginx para garantir que ele esteja em um estado limpo
+      console.log('🔄 Parando Nginx para garantir configuração limpa...');
+      await executarComando('systemctl stop nginx');
     }
+    
+    // Remover configurações padrão que possam interferir
+    console.log('🧹 Removendo configurações padrão do Nginx...');
+    await executarComando('rm -f /etc/nginx/sites-enabled/default');
     
     // Verificar se Certbot está instalado
     const certbotInstalado = await verificarInstalacao('certbot');
     if (!certbotInstalado) {
       console.log('📦 Instalando Certbot...');
       await executarComando('apt-get remove certbot');
+      
+      // Verificar se snap está instalado
+      const snapInstalado = await verificarInstalacao('snap');
+      if (!snapInstalado) {
+        console.log('📦 Instalando Snap...');
+        await executarComando('apt-get install -y snapd');
+        await executarComando('systemctl enable --now snapd.socket');
+      }
+      
       await executarComando('snap install --classic certbot');
       await executarComando('ln -sf /snap/bin/certbot /usr/bin/certbot');
     }
@@ -248,6 +325,18 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
     console.log('🔄 Reiniciando Nginx...');
     await executarComando('systemctl restart nginx');
     
+    // Verificar se Nginx está rodando
+    try {
+      const { stdout: nginxStatus } = await execPromise('systemctl is-active nginx');
+      if (nginxStatus.trim() !== 'active') {
+        throw new Error('Nginx não está rodando após reiniciar');
+      }
+      console.log('✅ Nginx reiniciado com sucesso!');
+    } catch (e) {
+      console.error('⚠️ Nginx não está rodando. Tentando iniciar...');
+      await executarComando('systemctl start nginx');
+    }
+    
     // Configurar SSL com Certbot
     console.log('🔒 Configurando certificados SSL com Certbot...');
     if (frontendDomain === backendDomain) {
@@ -276,16 +365,26 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
       console.log('\n🛠️ Executando diagnóstico adicional:');
       console.log('Verificando portas utilizadas:');
       await executarComando('netstat -tuln | grep ":80\\|:443"');
+      
+      console.log('\nVerificando processos que usam as portas Web:');
+      await executarComando('lsof -i :80 -i :443');
+      
+      console.log('\nVerificando logs de erro do Nginx:');
+      await executarComando('tail -n 50 /var/log/nginx/error.log');
     } catch (e) {
       console.log('Não foi possível realizar diagnóstico completo:', e.message);
     }
     
     console.log('\n📋 Instruções para configuração manual:');
-    console.log(`1. Edite /etc/nginx/sites-available/clint-frontend e configure para o domínio ${new URL(frontendUrl).hostname}`);
-    console.log(`2. Edite /etc/nginx/sites-available/clint-backend e configure para o domínio ${new URL(backendUrl).hostname}`);
-    console.log('3. Verifique erros: sudo nginx -t');
-    console.log('4. Reinicie o Nginx: sudo systemctl restart nginx');
-    console.log('5. Configure SSL: sudo certbot --nginx');
+    console.log('1. Verifique qual serviço está usando a porta 80:');
+    console.log('   sudo lsof -i :80');
+    console.log('2. Pare o serviço que está usando a porta 80:');
+    console.log('   sudo systemctl stop [nome-do-serviço]');
+    console.log(`3. Edite /etc/nginx/sites-available/clint-frontend e configure para o domínio ${new URL(frontendUrl).hostname}`);
+    console.log(`4. Edite /etc/nginx/sites-available/clint-backend e configure para o domínio ${new URL(backendUrl).hostname}`);
+    console.log('5. Verifique erros: sudo nginx -t');
+    console.log('6. Reinicie o Nginx: sudo systemctl restart nginx');
+    console.log('7. Configure SSL: sudo certbot --nginx');
     
     const prosseguir = await pergunta('Deseja prosseguir mesmo sem a configuração de domínios? (s/n): ');
     return prosseguir.toLowerCase() === 's';
