@@ -163,6 +163,115 @@ async function configurarPostgreSQL(dbUser, dbPassword, dbName) {
   }
 }
 
+// Configurar Nginx e SSL com Certbot
+async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendPort, email) {
+  console.log('\n🔒 Configurando Nginx e SSL para seus domínios...');
+  
+  try {
+    // Verificar se Nginx está instalado
+    const nginxInstalado = await verificarInstalacao('nginx');
+    if (!nginxInstalado) {
+      console.log('📦 Instalando Nginx...');
+      await executarComando('apt-get install -y nginx');
+      await executarComando('rm -f /etc/nginx/sites-enabled/default');
+    }
+    
+    // Verificar se Certbot está instalado
+    const certbotInstalado = await verificarInstalacao('certbot');
+    if (!certbotInstalado) {
+      console.log('📦 Instalando Certbot...');
+      await executarComando('apt-get remove certbot');
+      await executarComando('snap install --classic certbot');
+      await executarComando('ln -sf /snap/bin/certbot /usr/bin/certbot');
+    }
+    
+    // Configurar Nginx para tamanho máximo de upload
+    console.log('⚙️ Configurando Nginx para uploads grandes...');
+    await executarComando(`
+      cat > /etc/nginx/conf.d/clint-dashboard.conf << 'END'
+      client_max_body_size 100M;
+      END
+    `);
+    
+    // Extrair nomes de domínio (remover https:// e porta)
+    const frontendDomain = new URL(frontendUrl).hostname;
+    const backendDomain = new URL(backendUrl).hostname;
+    
+    // Criar configuração Nginx para o backend
+    console.log(`🔧 Configurando Nginx para o backend (${backendDomain})...`);
+    await executarComando(`
+      cat > /etc/nginx/sites-available/clint-backend << 'END'
+      server {
+        server_name ${backendDomain};
+        
+        location / {
+          proxy_pass http://127.0.0.1:${backendPort};
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade \\$http_upgrade;
+          proxy_set_header Connection 'upgrade';
+          proxy_set_header Host \\$host;
+          proxy_set_header X-Real-IP \\$remote_addr;
+          proxy_set_header X-Forwarded-Proto \\$scheme;
+          proxy_set_header X-Forwarded-For \\$proxy_add_x_forwarded_for;
+          proxy_cache_bypass \\$http_upgrade;
+        }
+      }
+      END
+    `);
+    
+    // Criar link simbólico para habilitar o site backend
+    await executarComando('ln -sf /etc/nginx/sites-available/clint-backend /etc/nginx/sites-enabled');
+    
+    // Criar configuração Nginx para o frontend
+    console.log(`🔧 Configurando Nginx para o frontend (${frontendDomain})...`);
+    await executarComando(`
+      cat > /etc/nginx/sites-available/clint-frontend << 'END'
+      server {
+        server_name ${frontendDomain};
+        
+        location / {
+          proxy_pass http://127.0.0.1:${frontendPort};
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade \\$http_upgrade;
+          proxy_set_header Connection 'upgrade';
+          proxy_set_header Host \\$host;
+          proxy_set_header X-Real-IP \\$remote_addr;
+          proxy_set_header X-Forwarded-Proto \\$scheme;
+          proxy_set_header X-Forwarded-For \\$proxy_add_x_forwarded_for;
+          proxy_cache_bypass \\$http_upgrade;
+        }
+      }
+      END
+    `);
+    
+    // Criar link simbólico para habilitar o site frontend
+    await executarComando('ln -sf /etc/nginx/sites-available/clint-frontend /etc/nginx/sites-enabled');
+    
+    // Reiniciar Nginx
+    console.log('🔄 Reiniciando Nginx...');
+    await executarComando('service nginx restart');
+    
+    // Configurar SSL com Certbot
+    console.log('🔒 Configurando certificados SSL com Certbot...');
+    if (frontendDomain === backendDomain) {
+      // Se for o mesmo domínio, configurar apenas uma vez
+      await executarComando(`certbot --nginx --agree-tos --non-interactive -m ${email} --domains ${frontendDomain}`);
+    } else {
+      // Se forem domínios diferentes, configurar ambos
+      await executarComando(`certbot --nginx --agree-tos --non-interactive -m ${email} --domains ${frontendDomain},${backendDomain}`);
+    }
+    
+    console.log('✅ Domínios configurados com sucesso!');
+    return true;
+  } catch (error) {
+    console.error('❌ Erro ao configurar domínios:', error.message);
+    console.log('⚠️ Você precisará configurar os domínios manualmente.');
+    
+    const prosseguir = await pergunta('Deseja prosseguir mesmo sem a configuração de domínios? (s/n): ');
+    return prosseguir.toLowerCase() === 's';
+  }
+}
+
 // Função principal
 async function main() {
   try {
@@ -196,6 +305,8 @@ async function main() {
     // Frontend
     const frontendUrlBase = await pergunta(`URL base do Frontend (IP ou domínio sem http://) [localhost]: `) || 'localhost';
     const portaFrontend = await pergunta(`Porta do Frontend [3000]: `) || '3000';
+    const usarHttps = await pergunta(`Usar HTTPS para os domínios? (s/n) [s]: `) || 's';
+    const protocolo = usarHttps.toLowerCase() === 's' ? 'https' : 'http';
     
     // Backend
     console.log('\n🖥️ Configuração do Backend:');
@@ -205,9 +316,11 @@ async function main() {
     
     // Gerar URLs completas
     const config = {
-      frontend_url: `http://${frontendUrlBase}:${portaFrontend}`,
-      backend_url: `http://${backendUrlBase}:${portaBackend}`,
+      frontend_url: `${protocolo}://${frontendUrlBase}`,
+      backend_url: `${protocolo}://${backendUrlBase}`,
       port: portaBackend,
+      frontend_port: portaFrontend,
+      backend_port: portaBackend,
       node_env: 'production'
     };
     
@@ -234,6 +347,26 @@ async function main() {
     config.clint_email = 'alberto@shortmidia.com.br';
     config.clint_senha = 'zenkaJ-jyghyg-gojqo0';
     config.clint_token = 'U2FsdGVkX1++EGmKUX1DI+e5KAB399FRzzdz50p/pzZg9E6jco79favQHXzIct2fZg5Vop+5UEct0XnXfAbzmA==';
+    
+    // Perguntar se quer configurar Nginx e SSL
+    if (usarHttps.toLowerCase() === 's' && (frontendUrlBase !== 'localhost' && backendUrlBase !== 'localhost')) {
+      const configurarSSL = await pergunta('\nDeseja configurar Nginx e certificados SSL automaticamente? (s/n) [s]: ') || 's';
+      
+      if (configurarSSL.toLowerCase() === 's') {
+        const email = await pergunta('Email para registros de certificado SSL: ');
+        const dominiosOk = await configurarDominio(
+          config.frontend_url, 
+          config.backend_url, 
+          config.frontend_port, 
+          config.backend_port,
+          email
+        );
+        
+        if (!dominiosOk) {
+          console.log('⚠️ Prosseguindo sem configuração completa de domínios');
+        }
+      }
+    }
     
     // Resumo das configurações
     console.log('\n📝 Resumo da configuração:');
@@ -263,6 +396,10 @@ VITE_API_URL=${config.api_url}
 VITE_BACKEND_URL=${config.backend_url}
 BACKEND_URL=${config.backend_url}
 FRONTEND_URL=${config.frontend_url}
+
+# Portas locais para serviços
+FRONTEND_PORT=${config.frontend_port}
+BACKEND_PORT=${config.backend_port}
 
 # Banco de dados PostgreSQL
 DB_HOST=${config.db_host}
