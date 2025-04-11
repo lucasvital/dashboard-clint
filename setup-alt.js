@@ -929,6 +929,29 @@ TOKEN_TIMEOUT=3600
       await executarComando('npx playwright install chromium');
       console.log('✅ Playwright instalado com sucesso');
       
+      // Instalando dependências Python para os scripts de automação
+      console.log('\n📦 Verificando e instalando Python e dependências...');
+      try {
+        // Verificar se Python está instalado
+        const { stdout: pythonVersion } = await execPromise('python3 --version || python --version');
+        console.log(`Python detectado: ${pythonVersion.trim()}`);
+        
+        // Verificar se pip está instalado
+        await execPromise('pip --version || pip3 --version');
+        console.log('Pip detectado, instalando dependências Python...');
+        
+        // Instalar dependências do requirements.txt
+        if (fs.existsSync(path.join(__dirname, 'requirements.txt'))) {
+          await executarComando('pip install -r requirements.txt || pip3 install -r requirements.txt');
+          console.log('✅ Dependências Python instaladas com sucesso');
+        } else {
+          console.log('⚠️ Arquivo requirements.txt não encontrado, pulando instalação de dependências Python');
+        }
+      } catch (error) {
+        console.log(`⚠️ Erro ao configurar Python: ${error.message}`);
+        console.log('Você precisará instalar Python e as dependências manualmente para usar os scripts de automação');
+      }
+      
       // Compilar frontend com tratamento para Debian
       console.log('\n🔨 Compilando front-end...');
       if (distro === 'debian' || distro === 'ubuntu') {

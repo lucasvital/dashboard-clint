@@ -104,6 +104,52 @@ fi
 NODE_VERSION=$(node -v)
 log_message "Node.js versão $NODE_VERSION está sendo utilizado."
 
+# Verificar se o Python está instalado
+log_message "Verificando instalação do Python..."
+if command -v python3 &>/dev/null; then
+  PYTHON_VERSION=$(python3 --version)
+  log_message "$PYTHON_VERSION já está instalado."
+  
+  # Verificar se o pip está instalado
+  if command -v pip3 &>/dev/null; then
+    log_message "pip está instalado, verificando dependências Python..."
+    
+    # Instalar dependências Python do requirements.txt
+    if [ -f "requirements.txt" ]; then
+      log_message "Instalando dependências Python do arquivo requirements.txt..."
+      pip3 install -r requirements.txt
+    else
+      log_warning "Arquivo requirements.txt não encontrado. Ignorando dependências Python."
+    fi
+  else
+    log_warning "pip não encontrado. Tentando instalar..."
+    if [[ "$OS" == *"Ubuntu"* ]] || [[ "$OS" == *"Debian"* ]]; then
+      apt-get update
+      apt-get install -y python3-pip
+      pip3 install -r requirements.txt
+    elif [[ "$OS" == *"CentOS"* ]] || [[ "$OS" == *"Red Hat"* ]] || [[ "$OS" == *"Fedora"* ]]; then
+      yum install -y python3-pip
+      pip3 install -r requirements.txt
+    else
+      log_warning "Não foi possível instalar pip automaticamente."
+      log_warning "Alguns recursos de automação podem não funcionar."
+    fi
+  fi
+else
+  log_warning "Python 3 não encontrado. Tentando instalar..."
+  if [[ "$OS" == *"Ubuntu"* ]] || [[ "$OS" == *"Debian"* ]]; then
+    apt-get update
+    apt-get install -y python3 python3-pip
+    pip3 install -r requirements.txt
+  elif [[ "$OS" == *"CentOS"* ]] || [[ "$OS" == *"Red Hat"* ]] || [[ "$OS" == *"Fedora"* ]]; then
+    yum install -y python3 python3-pip
+    pip3 install -r requirements.txt
+  else
+    log_warning "Python 3 não instalado. Scripts de automação não funcionarão."
+    log_warning "Você precisará instalar Python 3 manualmente."
+  fi
+fi
+
 # Verificar se o setup-alt.js existe
 if [ ! -f "setup-alt.js" ]; then
   log_error "O arquivo setup-alt.js não foi encontrado no diretório atual."

@@ -73,6 +73,30 @@ if not exist setup-alt.js (
 :: Verificando e instalando dependências
 echo %GREEN%[INFO]%NC% Verificando dependências necessárias...
 
+:: Verificando se o Python está instalado
+where python >nul 2>nul
+if %ERRORLEVEL% EQU 0 (
+    for /f "tokens=*" %%i in ('python -V') do set PYTHON_VERSION=%%i
+    echo %GREEN%[INFO]%NC% !PYTHON_VERSION! já está instalado.
+    
+    :: Verificar se tem pip instalado
+    python -m pip --version >nul 2>nul
+    if %ERRORLEVEL% EQU 0 (
+        echo %GREEN%[INFO]%NC% pip está instalado, verificando dependências Python...
+        if exist requirements.txt (
+            echo %GREEN%[INFO]%NC% Instalando dependências Python do arquivo requirements.txt...
+            python -m pip install -r requirements.txt
+        ) else (
+            echo %YELLOW%[AVISO]%NC% Arquivo requirements.txt não encontrado. Ignorando dependências Python.
+        )
+    ) else (
+        echo %YELLOW%[AVISO]%NC% pip não encontrado. Alguns recursos de automação podem não funcionar.
+    )
+) else (
+    echo %YELLOW%[AVISO]%NC% Python não encontrado. Scripts de automação não funcionarão.
+    echo %YELLOW%[AVISO]%NC% Você precisará instalar Python manualmente em https://python.org
+)
+
 :: Instalando dependências globais úteis
 echo %GREEN%[INFO]%NC% Instalando dependências globais...
 call npm install -g npm@latest

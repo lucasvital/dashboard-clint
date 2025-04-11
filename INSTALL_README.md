@@ -10,6 +10,7 @@ Este diretório contém scripts de instalação automatizada para configurar o C
   - macOS
 - Conexão com a internet
 - Privilégios de administrador (recomendado)
+- Python 3.7+ (para scripts de automação e exportação de dados)
 
 ## Instruções de Instalação
 
@@ -51,8 +52,23 @@ Os scripts de instalação automatizam as seguintes tarefas:
 2. Se não estiver instalado:
    - No Windows: Baixam e instalam o Node.js automaticamente
    - No Linux/macOS: Instalam o NVM (Node Version Manager) e, em seguida, instalam a versão LTS do Node.js
-3. Verificam a existência do arquivo de configuração `setup-alt.js`
-4. Executam o script de configuração `setup-alt.js` para configurar o Clint Dashboard
+3. Verificam se o Python 3 está instalado (necessário para scripts de automação)
+4. Instalam as dependências Python do arquivo requirements.txt
+5. Verificam a existência do arquivo de configuração `setup-alt.js`
+6. Executam o script de configuração `setup-alt.js` para configurar o Clint Dashboard
+
+## Dependências Python
+
+O sistema inclui scripts de automação e exportação que dependem do Python 3. Os scripts de instalação tentarão instalar:
+
+- Python 3.7+
+- pip (gerenciador de pacotes Python)
+- Dependências listadas no arquivo requirements.txt:
+  - requests, pandas (manipulação de dados)
+  - selenium, playwright (automação de navegador)
+  - E outras bibliotecas auxiliares
+
+Se a instalação automática de Python falhar, você precisará instalá-lo manualmente para usar os recursos de automação.
 
 ## Resolução de Problemas
 
@@ -60,6 +76,7 @@ Os scripts de instalação automatizam as seguintes tarefas:
 
 - **"Windows protegeu o seu PC"**: Clique em "Mais informações" e depois em "Executar assim mesmo"
 - **Falha ao baixar o Node.js**: Certifique-se de que você está conectado à internet. Se o problema persistir, baixe o Node.js manualmente do site oficial: [https://nodejs.org/](https://nodejs.org/)
+- **Falha na instalação do Python**: Baixe e instale o Python manualmente de [https://python.org](https://python.org)
 
 ### Erros comuns no Linux/macOS:
 
@@ -69,6 +86,10 @@ Os scripts de instalação automatizam as seguintes tarefas:
   ```
 - **"Command not found"**: Certifique-se de que você está no diretório correto e que o arquivo existe
 - **Falha ao instalar o NVM**: Se o NVM falhar, o script tentará instalar o Node.js diretamente via gerenciador de pacotes
+- **Falha ao instalar dependências Python**: Você pode instalá-las manualmente com:
+  ```
+  pip3 install -r requirements.txt
+  ```
 
 ## Suporte
 
