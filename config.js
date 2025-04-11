@@ -29,7 +29,7 @@ const serverConfig = {
 
 // Configurações de CORS
 const corsConfig = {
-  origin: process.env.CORS_ORIGIN || process.env.FRONTEND_URL || '*',
+  origin: process.env.CORS_ORIGIN || process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 };
 
