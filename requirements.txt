@@ -8,7 +8,7 @@ xlsxwriter>=3.0.0
 
 # Dependências para automação do navegador
 selenium>=4.0.0
-seleniumwire>=4.0.0
+selenium-wire>=4.0.0
 playwright>=1.22.0
 
 # Utilitários
@@ -19,4 +19,8 @@ beautifulsoup4>=4.9.0
 webdriver-manager>=3.5.0
 
 # Leitura e escrita de arquivos
-xlrd>=2.0.1 
+xlrd>=2.0.1
+
+# Certificados e segurança
+certifi>=2020.12.5
+pyopenssl>=20.0.0 

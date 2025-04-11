@@ -942,7 +942,7 @@ TOKEN_TIMEOUT=3600
         
         // Instalar dependências do requirements.txt
         if (fs.existsSync(path.join(__dirname, 'requirements.txt'))) {
-          await executarComando('pip install -r requirements.txt || pip3 install -r requirements.txt');
+          await executarComando('pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt || pip3 install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt');
           console.log('✅ Dependências Python instaladas com sucesso');
         } else {
           console.log('⚠️ Arquivo requirements.txt não encontrado, pulando instalação de dependências Python');

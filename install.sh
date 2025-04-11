@@ -117,7 +117,7 @@ if command -v python3 &>/dev/null; then
     # Instalar dependências Python do requirements.txt
     if [ -f "requirements.txt" ]; then
       log_message "Instalando dependências Python do arquivo requirements.txt..."
-      pip3 install -r requirements.txt
+      pip3 install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
     else
       log_warning "Arquivo requirements.txt não encontrado. Ignorando dependências Python."
     fi

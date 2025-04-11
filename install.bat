@@ -85,7 +85,7 @@ if %ERRORLEVEL% EQU 0 (
         echo %GREEN%[INFO]%NC% pip está instalado, verificando dependências Python...
         if exist requirements.txt (
             echo %GREEN%[INFO]%NC% Instalando dependências Python do arquivo requirements.txt...
-            python -m pip install -r requirements.txt
+            python -m pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt
         ) else (
             echo %YELLOW%[AVISO]%NC% Arquivo requirements.txt não encontrado. Ignorando dependências Python.
         )
