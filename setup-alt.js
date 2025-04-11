@@ -490,9 +490,9 @@ TOKEN_TIMEOUT=3600
         setupContent = setupContent.replace(/const dbName = '.*?';/, `const dbName = '${config.db_name}';`);
         fs.writeFileSync(setupDbPath, setupContent);
         
-        await executarComando('node setup.js', {
-          cwd: path.join(__dirname, 'database')
-        });
+        // Corrigindo o caminho para o diretório database
+        const databaseDir = path.join(__dirname, 'database');
+        await executarComando('node setup.js', databaseDir);
       }
       
       // Iniciar servidor com PM2
