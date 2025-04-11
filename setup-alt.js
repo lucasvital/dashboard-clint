@@ -163,11 +163,51 @@ async function configurarPostgreSQL(dbUser, dbPassword, dbName) {
   }
 }
 
+// Verificar se um domínio tem registros DNS válidos
+async function verificarDNS(dominio) {
+  console.log(`🔍 Verificando registros DNS para ${dominio}...`);
+  try {
+    const { stdout } = await execPromise(`dig +short ${dominio}`);
+    if (stdout && stdout.trim()) {
+      console.log(`✅ Domínio ${dominio} tem registros DNS válidos: ${stdout.trim()}`);
+      return true;
+    } else {
+      console.log(`⚠️ Domínio ${dominio} não tem registros DNS!`);
+      return false;
+    }
+  } catch (error) {
+    console.log(`⚠️ Não foi possível verificar registros DNS para ${dominio}: ${error.message}`);
+    return false;
+  }
+}
+
 // Configurar Nginx e SSL com Certbot
 async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendPort, email) {
   console.log('\n🔒 Configurando Nginx e SSL para seus domínios...');
   
   try {
+    // Extrair nomes de domínio para verificação antecipada
+    const frontendDomain = new URL(frontendUrl).hostname;
+    const backendDomain = new URL(backendUrl).hostname;
+    
+    // Verificar registros DNS antes de prosseguir
+    const frontendDNSOk = await verificarDNS(frontendDomain);
+    const backendDNSOk = await verificarDNS(backendDomain);
+    
+    if (!frontendDNSOk || !backendDNSOk) {
+      console.log("\n⚠️ AVISO: Um ou mais domínios não têm registros DNS válidos!");
+      console.log("Isso impedirá a configuração correta do SSL com o Let's Encrypt.");
+      
+      const continuar = await pergunta("Deseja continuar sem configurar SSL? Você poderá configurar SSL manualmente mais tarde. (s/n): ");
+      if (continuar.toLowerCase() !== 's') {
+        console.log("🛑 Configuração de domínio cancelada pelo usuário.");
+        return false;
+      }
+
+      // Se o usuário optar por continuar sem SSL, definimos uma flag
+      var ignorarSSL = true;
+    }
+    
     // Verificar se as portas necessárias estão livres
     console.log('🔍 Verificando portas utilizadas...');
     try {
@@ -176,46 +216,70 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
         console.log('⚠️ A porta 80 já está em uso por outro serviço:');
         console.log(portCheck);
         
-        // Tentar identificar o serviço que está usando a porta 80
-        const { stdout: pidInfo } = await execPromise("lsof -i :80 | grep LISTEN");
-        if (pidInfo) {
-          console.log('Processo utilizando a porta 80:');
-          console.log(pidInfo);
+        // Verificar se é Docker que está usando a porta
+        const { stdout: dockerCheck } = await execPromise('lsof -i :80 | grep docker');
+        if (dockerCheck) {
+          console.log('⚠️ Docker está usando a porta 80. Isso pode causar conflitos.');
           
-          const serviceName = await pergunta('Deseja parar o serviço que está usando a porta 80? (s/n): ');
-          if (serviceName.toLowerCase() === 's') {
-            // Tentar parar o serviço Apache se estiver rodando
-            console.log('Tentando parar serviços comuns que usam a porta 80...');
-            await executarComando('systemctl stop apache2 2>/dev/null || true');
-            await executarComando('systemctl stop httpd 2>/dev/null || true');
-            
-            // Verificar se a porta foi liberada
-            try {
-              const { stdout: checkAgain } = await execPromise('netstat -tuln | grep ":80\\s"');
-              if (checkAgain) {
-                console.log('⚠️ A porta 80 ainda está em uso. Tentando identificar o PID do processo...');
-                const { stdout: pidOutput } = await execPromise("lsof -i :80 | grep LISTEN | awk '{print $2}'");
-                if (pidOutput) {
-                  const pid = pidOutput.trim();
-                  const matarProcesso = await pergunta(`Deseja encerrar o processo com PID ${pid}? (s/n): `);
-                  if (matarProcesso.toLowerCase() === 's') {
-                    await executarComando(`kill -9 ${pid}`);
-                    console.log(`✅ Processo ${pid} encerrado`);
-                  }
-                }
-              } else {
-                console.log('✅ Porta 80 liberada com sucesso!');
-              }
-            } catch (e) {
-              // Se ocorrer um erro, provavelmente a porta foi liberada
-              console.log('✅ Porta 80 parece estar liberada agora');
-            }
+          const pararDocker = await pergunta('Deseja parar o Docker para liberar a porta 80? (s/n): ');
+          if (pararDocker.toLowerCase() === 's') {
+            console.log('🛑 Parando Docker...');
+            await executarComando('systemctl stop docker');
+            await executarComando('systemctl stop docker.socket');
           } else {
-            const usarOutraPorta = await pergunta('Deseja configurar o Nginx para usar outra porta? (s/n): ');
-            if (usarOutraPorta.toLowerCase() === 's') {
-              // Nota: Implementação para usar outra porta além da 80 exigiria modificações no arquivo de configuração
-              // que estão além do escopo atual
-              console.log('⚠️ Configuração de portas alternativas não implementada. Prosseguindo com o setup padrão.');
+            // Se o Docker não for parado, necessário usar outra porta para o Nginx
+            console.log('⚠️ O Nginx não poderá usar a porta 80. A configuração de SSL pode falhar.');
+            console.log('Recomendamos parar o Docker temporariamente ou configurar manualmente depois.');
+            
+            const prosseguir = await pergunta('Deseja prosseguir mesmo assim? (s/n): ');
+            if (prosseguir.toLowerCase() !== 's') {
+              console.log("🛑 Configuração de domínio cancelada pelo usuário.");
+              return false;
+            }
+            
+            // Se o usuário escolher prosseguir, também ignoramos SSL
+            ignorarSSL = true;
+          }
+        } else {
+          // Tentar identificar o serviço que está usando a porta 80
+          const { stdout: pidInfo } = await execPromise("lsof -i :80 | grep LISTEN");
+          if (pidInfo) {
+            console.log('Processo utilizando a porta 80:');
+            console.log(pidInfo);
+            
+            const serviceName = await pergunta('Deseja parar o serviço que está usando a porta 80? (s/n): ');
+            if (serviceName.toLowerCase() === 's') {
+              // Tentar parar serviços comuns
+              console.log('Tentando parar serviços comuns que usam a porta 80...');
+              await executarComando('systemctl stop apache2 2>/dev/null || true');
+              await executarComando('systemctl stop httpd 2>/dev/null || true');
+              
+              // Verificar se a porta foi liberada
+              try {
+                const { stdout: checkAgain } = await execPromise('netstat -tuln | grep ":80\\s"');
+                if (checkAgain) {
+                  console.log('⚠️ A porta 80 ainda está em uso. Tentando identificar o PID do processo...');
+                  const { stdout: pidOutput } = await execPromise("lsof -i :80 | grep LISTEN | awk '{print $2}'");
+                  if (pidOutput) {
+                    const pid = pidOutput.trim();
+                    const matarProcesso = await pergunta(`Deseja encerrar o processo com PID ${pid}? (s/n): `);
+                    if (matarProcesso.toLowerCase() === 's') {
+                      await executarComando(`kill -9 ${pid}`);
+                      console.log(`✅ Processo ${pid} encerrado`);
+                    } else {
+                      ignorarSSL = true;
+                    }
+                  }
+                } else {
+                  console.log('✅ Porta 80 liberada com sucesso!');
+                }
+              } catch (e) {
+                // Se ocorrer um erro, provavelmente a porta foi liberada
+                console.log('✅ Porta 80 parece estar liberada agora');
+              }
+            } else {
+              // Se o usuário optar por não parar o serviço, ignoramos SSL
+              ignorarSSL = true;
             }
           }
         }
@@ -240,36 +304,46 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
       await executarComando('systemctl stop nginx');
     }
     
+    // Limpar configurações anteriores para os mesmos domínios
+    console.log('🧹 Verificando se já existem configurações para estes domínios...');
+    const configsExistentes = await execPromise('ls -la /etc/nginx/sites-available/');
+    
+    if (configsExistentes.stdout.includes(frontendDomain) || configsExistentes.stdout.includes(backendDomain)) {
+      console.log('⚠️ Encontradas configurações de domínio anteriores. Removendo...');
+      await executarComando(`rm -f /etc/nginx/sites-available/*${frontendDomain}* 2>/dev/null || true`);
+      await executarComando(`rm -f /etc/nginx/sites-enabled/*${frontendDomain}* 2>/dev/null || true`);
+      await executarComando(`rm -f /etc/nginx/sites-available/*${backendDomain}* 2>/dev/null || true`);
+      await executarComando(`rm -f /etc/nginx/sites-enabled/*${backendDomain}* 2>/dev/null || true`);
+    }
+    
     // Remover configurações padrão que possam interferir
     console.log('🧹 Removendo configurações padrão do Nginx...');
     await executarComando('rm -f /etc/nginx/sites-enabled/default');
     
-    // Verificar se Certbot está instalado
-    const certbotInstalado = await verificarInstalacao('certbot');
-    if (!certbotInstalado) {
-      console.log('📦 Instalando Certbot...');
-      await executarComando('apt-get remove certbot');
-      
-      // Verificar se snap está instalado
-      const snapInstalado = await verificarInstalacao('snap');
-      if (!snapInstalado) {
-        console.log('📦 Instalando Snap...');
-        await executarComando('apt-get install -y snapd');
-        await executarComando('systemctl enable --now snapd.socket');
+    // Verificar se Certbot está instalado (apenas se não ignorar SSL)
+    if (!ignorarSSL) {
+      const certbotInstalado = await verificarInstalacao('certbot');
+      if (!certbotInstalado) {
+        console.log('📦 Instalando Certbot...');
+        await executarComando('apt-get remove certbot');
+        
+        // Verificar se snap está instalado
+        const snapInstalado = await verificarInstalacao('snap');
+        if (!snapInstalado) {
+          console.log('📦 Instalando Snap...');
+          await executarComando('apt-get install -y snapd');
+          await executarComando('systemctl enable --now snapd.socket');
+        }
+        
+        await executarComando('snap install --classic certbot');
+        await executarComando('ln -sf /snap/bin/certbot /usr/bin/certbot');
       }
-      
-      await executarComando('snap install --classic certbot');
-      await executarComando('ln -sf /snap/bin/certbot /usr/bin/certbot');
     }
     
     // Configurar Nginx para tamanho máximo de upload
     console.log('⚙️ Configurando Nginx para uploads grandes...');
     const configNginx = `client_max_body_size 100M;`;
     fs.writeFileSync('/etc/nginx/conf.d/clint-dashboard.conf', configNginx);
-    
-    // Extrair nomes de domínio (remover https:// e porta)
-    const frontendDomain = new URL(frontendUrl).hostname;
-    const backendDomain = new URL(backendUrl).hostname;
     
     // Criar configuração Nginx para o backend
     console.log(`🔧 Configurando Nginx para o backend (${backendDomain})...`);
@@ -337,17 +411,34 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
       await executarComando('systemctl start nginx');
     }
     
-    // Configurar SSL com Certbot
-    console.log('🔒 Configurando certificados SSL com Certbot...');
-    if (frontendDomain === backendDomain) {
-      // Se for o mesmo domínio, configurar apenas uma vez
-      await executarComando(`certbot --nginx --agree-tos --non-interactive -m ${email} --domains ${frontendDomain}`);
+    // Configurar SSL com Certbot apenas se não estiver ignorando SSL
+    if (!ignorarSSL) {
+      console.log('🔒 Configurando certificados SSL com Certbot...');
+      if (frontendDomain === backendDomain) {
+        // Se for o mesmo domínio, configurar apenas uma vez
+        await executarComando(`certbot --nginx --agree-tos --non-interactive -m ${email} --domains ${frontendDomain}`);
+      } else {
+        // Se forem domínios diferentes, configurar ambos
+        await executarComando(`certbot --nginx --agree-tos --non-interactive -m ${email} --domains ${frontendDomain},${backendDomain}`);
+      }
+      console.log('✅ Configuração SSL concluída com sucesso!');
     } else {
-      // Se forem domínios diferentes, configurar ambos
-      await executarComando(`certbot --nginx --agree-tos --non-interactive -m ${email} --domains ${frontendDomain},${backendDomain}`);
+      console.log('⚠️ Configuração SSL ignorada devido a problemas detectados.');
+      console.log('Você poderá configurar SSL manualmente mais tarde usando:');
+      console.log(`sudo certbot --nginx -d ${frontendDomain} -d ${backendDomain}`);
     }
     
     console.log('✅ Domínios configurados com sucesso!');
+    
+    // Criar entrada no hosts local para facilitar testes
+    const configurarHosts = await pergunta('\nDeseja adicionar entradas no arquivo /etc/hosts para testes locais? (s/n): ');
+    if (configurarHosts.toLowerCase() === 's') {
+      console.log('📝 Adicionando entradas ao arquivo /etc/hosts...');
+      await executarComando(`grep -q "${frontendDomain}" /etc/hosts || echo "127.0.0.1 ${frontendDomain}" >> /etc/hosts`);
+      await executarComando(`grep -q "${backendDomain}" /etc/hosts || echo "127.0.0.1 ${backendDomain}" >> /etc/hosts`);
+      console.log('✅ Entradas adicionadas ao arquivo /etc/hosts');
+    }
+    
     return true;
   } catch (error) {
     console.error('❌ Erro ao configurar domínios:', error.message);
@@ -371,6 +462,11 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
       
       console.log('\nVerificando logs de erro do Nginx:');
       await executarComando('tail -n 50 /var/log/nginx/error.log');
+      
+      console.log('\nVerificando se os domínios apontam para este servidor:');
+      await executarComando(`dig +short ${new URL(frontendUrl).hostname}`);
+      await executarComando(`dig +short ${new URL(backendUrl).hostname}`);
+      
     } catch (e) {
       console.log('Não foi possível realizar diagnóstico completo:', e.message);
     }
@@ -385,6 +481,69 @@ async function configurarDominio(frontendUrl, backendUrl, frontendPort, backendP
     console.log('5. Verifique erros: sudo nginx -t');
     console.log('6. Reinicie o Nginx: sudo systemctl restart nginx');
     console.log('7. Configure SSL: sudo certbot --nginx');
+    console.log('\n8. Verifique se seus domínios têm registros DNS apontando para este servidor:');
+    console.log(`   dig +short ${new URL(frontendUrl).hostname}`);
+    console.log(`   dig +short ${new URL(backendUrl).hostname}`);
+    
+    // Perguntar se deseja criar configuração alternativa para IP em vez de domínio
+    const usarIP = await pergunta('\nDeseja configurar o acesso por IP até que os domínios estejam disponíveis? (s/n): ');
+    if (usarIP.toLowerCase() === 's') {
+      try {
+        // Obter IP do servidor
+        const { stdout: ipAddr } = await execPromise("hostname -I | awk '{print $1}'");
+        const serverIP = ipAddr.trim();
+        
+        console.log(`🔧 Configurando Nginx para acesso direto por IP (${serverIP})...`);
+        
+        // Criar configuração simples para acesso direto por IP
+        const configIP = `server {
+  listen 80;
+  server_name ${serverIP};
+  
+  location / {
+    proxy_pass http://127.0.0.1:${new URL(frontendUrl).port || 3000};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_cache_bypass $http_upgrade;
+  }
+}
+
+server {
+  listen 80;
+  server_name ${serverIP}:${new URL(backendUrl).port || 3001};
+  
+  location / {
+    proxy_pass http://127.0.0.1:${new URL(backendUrl).port || 3001};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_cache_bypass $http_upgrade;
+  }
+}`;
+        
+        fs.writeFileSync('/etc/nginx/sites-available/clint-ip-access', configIP);
+        await executarComando('ln -sf /etc/nginx/sites-available/clint-ip-access /etc/nginx/sites-enabled');
+        
+        // Testar e reiniciar Nginx
+        await executarComando('nginx -t');
+        await executarComando('systemctl restart nginx');
+        
+        console.log(`✅ Configuração por IP concluída. Você pode acessar:`);
+        console.log(`Frontend: http://${serverIP}`);
+        console.log(`Backend: http://${serverIP}:${new URL(backendUrl).port || 3001}`);
+      } catch (ipError) {
+        console.error('❌ Erro ao configurar acesso por IP:', ipError.message);
+      }
+    }
     
     const prosseguir = await pergunta('Deseja prosseguir mesmo sem a configuração de domínios? (s/n): ');
     return prosseguir.toLowerCase() === 's';
@@ -815,7 +974,7 @@ TOKEN_TIMEOUT=3600
         if (stdout.includes('clint-dashboard')) {
           await executarComando('pm2 reload clint-dashboard');
         } else {
-          await executarComando(`pm2 start ${path.join(__dirname, 'server.js')} --name clint-dashboard`);
+          await executarComando(`pm2 start npm --name clint-dashboard -- run start`);
         }
         
         // Configurar inicialização automática com o sistema
